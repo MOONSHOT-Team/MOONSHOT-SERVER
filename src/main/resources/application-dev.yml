@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DATABASE_ENDPOINT_URL}:3306/${DATABASE_NAME}?serverTimezone=UTC&characterEncoding=UTF-8
+    username: ${DATABASE_USER}
+    password: ${DATABASE_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        auto_quote_keyword: true
+
+  config:
+    import: optional:application-secret.properties
+    activate:
+      on-profile: dev
+
+kakao:
+  client-id: ${CLIENT_ID}
+  url: ${KAKAO_URL}
