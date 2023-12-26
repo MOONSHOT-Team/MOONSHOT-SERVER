@@ -46,7 +46,7 @@ public class LoggerConfig {
             throw t;
         } finally {
             if (result instanceof ResponseEntity) {
-                ResponseEntity responseEntity = (현ResponseEntity) result;
+                ResponseEntity responseEntity = (ResponseEntity) result;
 
                 if (responseEntity.getStatusCode() == OK || responseEntity.getStatusCode() == CREATED || responseEntity.getStatusCode() == NO_CONTENT) {
                     customLog.setResult("success-" + responseEntity.getStatusCode());
