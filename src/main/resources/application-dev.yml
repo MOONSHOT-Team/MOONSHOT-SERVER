@@ -20,3 +20,7 @@ spring:
 kakao:
   client-id: ${CLIENT_ID}
   url: ${KAKAO_URL}
+
+server:
+  ip: ${SERVER_IP}
+  domain: ${SERVER_DOMAIN}
