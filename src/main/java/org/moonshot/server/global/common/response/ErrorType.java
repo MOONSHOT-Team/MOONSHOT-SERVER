@@ -13,6 +13,12 @@ public enum ErrorType {
     400 BAD REQUEST
      */
 
+    REQUEST_VALIDATION_EXCEPTION(HttpStatus.BAD_REQUEST, "잘못된 요청입니다"),
+    INVALID_TYPE(HttpStatus.BAD_REQUEST, "잘못된 타입이 입력되었습니다."),
+    INVALID_MISSING_HEADER(HttpStatus.BAD_REQUEST, "요청에 필요한 헤더값이 존재하지 않습니다."),
+    INVALID_HTTP_REQUEST(HttpStatus.BAD_REQUEST, "허용되지 않는 문자열이 입력되었습니다."),
+    INVALID_HTTP_METHOD(HttpStatus.BAD_REQUEST, "지원되지 않는 HTTP method 요청입니다."),
+
     /**
      * 404 NOT FOUND
      */
