@@ -7,8 +7,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-22.04
-    env:
-      working-directory: moonshot
 
     steps:
     - name: checkout
@@ -24,11 +22,9 @@ jobs:
       run: |
           cd src/main/resources
           echo "${{ secrets.APPLICATION }}" > ./application-deploy.yaml
-      working-directory: ${{ env.working-directory }}
 
     - name: build
       run: |
           chmod +x gradlew
           ./gradlew clean build
-      working-directory: ${{ env.working-directory }}
       shell: bash
