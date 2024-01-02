@@ -1,4 +1,4 @@
-package org.moonshot.server.global.common.model.util;
+package org.moonshot.server.global.common.util;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
