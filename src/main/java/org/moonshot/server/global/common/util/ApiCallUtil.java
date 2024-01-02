@@ -1,4 +1,4 @@
-package org.moonshot.server.global.common.model.util;
+package org.moonshot.server.global.common.util;
 
 import java.io.IOException;
 import java.io.OutputStream;
