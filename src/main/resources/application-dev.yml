@@ -24,3 +24,8 @@ kakao:
 server:
   ip: ${SERVER_IP}
   domain: ${SERVER_DOMAIN}
+
+logging:
+  discord:
+    webhook-uri: ${DISCORD_WEBHOOK_URI}
+  config: classpath:logback-dev.xml
