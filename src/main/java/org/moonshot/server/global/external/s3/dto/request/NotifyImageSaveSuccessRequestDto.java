@@ -1,4 +1,4 @@
-package org.moonshot.server.domain.image.dto.request;
+package org.moonshot.server.global.external.s3.dto.request;
 
 public record NotifyImageSaveSuccessRequestDto(
         String key,
