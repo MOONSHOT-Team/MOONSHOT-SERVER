@@ -1,5 +1,5 @@
 # 🌜 MOONSHOT 🌛
-<img width="648" alt="MOONSHOT" src="https://github.com/MOONSHOT-Team/MOONSHOT-SERVER/assets/48898994/7db4826b-8b8a-4bef-a100-18efb5095a31">
+<img width="648" alt="MOONSHOT" src="https://github.com/MOONSHOT-Team/MOONSHOT-SERVER/assets/75068759/cfa9befc-2ed8-4ed6-a8a2-758da9ee7526">
 
 ```
 유난한 도전을 꿈꾸는 당신을 위한 프레임워크, Moonshot
@@ -26,7 +26,9 @@
 <br/>
 
 ### 💬 Code Convention
-[Code Convention](https://naver.github.io/hackday-conventions-java/)   
+[Code Convention](https://naver.github.io/hackday-conventions-java/)
+
+<br/>
 
 ### 🌳 Commit Convention
 
@@ -42,6 +44,7 @@
 [Remove]: 파일 삭제
 [Chore]: 그 이외의 잡일/ 버전 코드 수정, 패키지 구조 변경, 파일 이동, 파일이름 변경
 [Docs]: README나 WIKI 등의 문서 개정
+[Setting]: 프로젝트 관련 세팅
 ```
 
 <br/>
@@ -62,17 +65,30 @@
 │  │              │    └─🗂️ exception
 │  │              │    └─🗂️ dto
 │  │              │  └─🗂️ objective
-│  │              │  └─🗂️ keyresult
+│  │              │  └─🗂️ keyResult
 │  │              │  └─🗂️ task
 │  │              │  └─🗂️ log
 │  │              │  └─🗂️ badge
-│  │              │  └─🗂️ friend
+│  │              │  └─🗂️ userBadge
+│  │              │  └─🗂️ heart
 │  │              ├─🗂️ global
 │  │              │  └─🗂️ auth
-│  │              │    └─🗂️ filter
+│  │              │    └─🗂️ fegin
+│  │              │      └─🗂️ kakao
+│  │              │      └─🗂️ google
+│  │              │    └─🗂️ jwt
+│  │              │    └─🗂️ redis
+│  │              │    └─🗂️ security
 │  │              │  └─🗂️ common
 │  │              │    └─🗂️ exception
+│  │              │    └─🗂️ filter
 │  │              │    └─🗂️ model
+│  │              │    └─🗂️ response
+│  │              │    └─🗂️ util
+│  │              │  └─🗂️ external
+│  │              │    └─🗂️ s3
+│  │              │    └─🗂️ discord
+│  │              │  └─🗂️ constants
 │  │              └────🗂️ config
 │  └─🗂️ resources
 │      ├─static
@@ -83,7 +99,7 @@
 <br/>
 
 ## 🔗 ERD
-<img width="1408" alt="MOONSHOT_ERD" src="https://github.com/MOONSHOT-Team/MOONSHOT-SERVER/assets/48898994/3d546f9b-9c98-49a2-ad5a-dba6ea4b7617">
+<img width="1408" alt="MOONSHOT_ERD" src="https://github.com/MOONSHOT-Team/MOONSHOT-SERVER/assets/75068759/d7b9ae43-62c7-42d0-a363-9ca9e780d58b">
 
 <br/>
 
@@ -96,7 +112,7 @@
 | --- | --- |
 | Spring 버전 | 3.1.7 |
 | 데이터베이스 | AWS RDS(MySQL) |
-| Deply | AWS EC2(Ubuntu) |
+| Deploy | AWS EC2(Ubuntu) |
 | Build Tool | Gradle |
 | ERD | DBDiagram, DataGrip |
 | Java version | Java 17 |
@@ -104,5 +120,4 @@
 <br/>
 
 ## 🔨 Architecture
-<img width="1408" alt="Architecture" src="https://github.com/MOONSHOT-Team/MOONSHOT-SERVER/assets/48898994/4a51b7d3-3a6e-47fa-b097-41205892bf4f">
-
+<img width="1408" alt="Architecture" src="https://github.com/MOONSHOT-Team/MOONSHOT-SERVER/assets/75068759/25ec0d5b-9b0c-429a-b0b8-b542f865c110">
