@@ -18,10 +18,12 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+
     private static final String[] WHITELIST = {
             "/login/**",
             "/",
-            "/actuator/health"
+            "/actuator/health",
+            "/v1/image"
     };
 
     private final MoonshotExceptionHandler moonshotExceptionHandler;
@@ -68,4 +70,5 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", config);
         return source;
     }
+
 }
