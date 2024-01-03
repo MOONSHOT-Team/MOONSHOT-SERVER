@@ -2,6 +2,11 @@ package org.moonshot.server.domain.user.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.moonshot.server.domain.objective.model.Objective;
+import org.moonshot.server.domain.userBadge.model.UserBadge;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -15,7 +20,7 @@ public class User {
     @Column(name = "user_id")
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String socialId;
 
     @Enumerated(EnumType.STRING)
@@ -33,8 +38,15 @@ public class User {
 
     private String moonshotAccessToken;
 
+    @Column(unique = true)
     private String nickname;
 
     private String description;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserBadge> badgeList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Objective> objectiveList = new ArrayList<>();
 
 }

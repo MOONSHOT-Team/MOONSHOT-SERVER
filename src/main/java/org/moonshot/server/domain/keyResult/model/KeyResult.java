@@ -2,8 +2,15 @@ package org.moonshot.server.domain.keyResult.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.moonshot.server.domain.Log.model.Log;
+import org.moonshot.server.domain.Task.model.Task;
+import org.moonshot.server.domain.objective.model.Objective;
+import org.moonshot.server.domain.userBadge.model.UserBadge;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -35,5 +42,15 @@ public class KeyResult {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private KRState state;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "objective_id")
+    private Objective objective;
+
+    @OneToMany(mappedBy = "keyResult", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Task> taskList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "keyResult", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Log> logList = new ArrayList<>();
 
 }
