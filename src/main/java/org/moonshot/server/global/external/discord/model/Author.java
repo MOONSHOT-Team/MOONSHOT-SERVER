@@ -1,4 +1,4 @@
-package org.moonshot.server.global.common.discord.model;
+package org.moonshot.server.global.external.discord.model;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

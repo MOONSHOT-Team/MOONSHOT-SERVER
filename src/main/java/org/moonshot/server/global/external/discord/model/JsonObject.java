@@ -1,4 +1,4 @@
-package org.moonshot.server.global.common.discord.model;
+package org.moonshot.server.global.external.discord.model;
 
 import java.lang.reflect.Array;
 import java.util.HashMap;

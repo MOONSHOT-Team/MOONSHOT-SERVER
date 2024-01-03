@@ -7,7 +7,7 @@ import javax.net.ssl.HttpsURLConnection;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.moonshot.server.global.common.discord.model.JsonObject;
+import org.moonshot.server.global.external.discord.model.JsonObject;
 
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)

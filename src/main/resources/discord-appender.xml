@@ -1,6 +1,6 @@
 <included>
     <appender name="DISCORD"
-               class="org.moonshot.server.global.common.discord.DiscordAppender">
+               class="org.moonshot.server.global.external.discord.DiscordAppender">
         <discordWebhookUrl>${DISCORD_WEBHOOK_URI}</discordWebhookUrl>
         <username>Error Log</username>
         <avatarUrl>https://www.greenart.co.kr/upimage/new_editor/20212/20210201112021.jpg</avatarUrl>

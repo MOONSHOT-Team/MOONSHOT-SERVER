@@ -1,4 +1,4 @@
-package org.moonshot.server.global.common.discord.exception;
+package org.moonshot.server.global.external.discord.exception;
 
 import org.moonshot.server.global.common.exception.MoonshotException;
 import org.moonshot.server.global.common.response.ErrorType;

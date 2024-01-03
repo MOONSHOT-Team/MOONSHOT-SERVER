@@ -1,17 +1,17 @@
-package org.moonshot.server.global.common.discord;
+package org.moonshot.server.global.external.discord;
 
 import java.awt.Color;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.moonshot.server.global.common.discord.exception.ErrorLogAppenderException;
-import org.moonshot.server.global.common.discord.model.Author;
-import org.moonshot.server.global.common.discord.model.EmbedObject;
-import org.moonshot.server.global.common.discord.model.Field;
-import org.moonshot.server.global.common.discord.model.Footer;
-import org.moonshot.server.global.common.discord.model.Image;
-import org.moonshot.server.global.common.discord.model.JsonObject;
-import org.moonshot.server.global.common.discord.model.Thumbnail;
+import org.moonshot.server.global.external.discord.exception.ErrorLogAppenderException;
+import org.moonshot.server.global.external.discord.model.Author;
+import org.moonshot.server.global.external.discord.model.EmbedObject;
+import org.moonshot.server.global.external.discord.model.Field;
+import org.moonshot.server.global.external.discord.model.Footer;
+import org.moonshot.server.global.external.discord.model.Image;
+import org.moonshot.server.global.external.discord.model.JsonObject;
+import org.moonshot.server.global.external.discord.model.Thumbnail;
 import org.moonshot.server.global.common.util.ApiCallUtil;
 
 public class DiscordWebHook {

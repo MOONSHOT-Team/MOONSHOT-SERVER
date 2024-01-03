@@ -1,4 +1,4 @@
-package org.moonshot.server.global.common.discord.model;
+package org.moonshot.server.global.external.discord.model;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -99,7 +99,7 @@ public class EmbedObject {
         return this;
     }
 
-    public org.moonshot.server.global.common.discord.model.Image getImage() {
+    public Image getImage() {
         return image;
     }
 

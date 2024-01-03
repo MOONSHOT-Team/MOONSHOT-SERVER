@@ -1,4 +1,4 @@
-package org.moonshot.server.global.common.discord;
+package org.moonshot.server.global.external.discord;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.IThrowableProxy;
@@ -12,8 +12,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.moonshot.server.global.common.discord.exception.ErrorLogAppenderException;
-import org.moonshot.server.global.common.discord.model.EmbedObject;
+import org.moonshot.server.global.external.discord.exception.ErrorLogAppenderException;
+import org.moonshot.server.global.external.discord.model.EmbedObject;
 import org.moonshot.server.global.common.util.MDCUtil;
 import org.moonshot.server.global.common.util.StringUtil;
 
