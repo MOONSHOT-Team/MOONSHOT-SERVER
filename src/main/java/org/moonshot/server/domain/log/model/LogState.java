@@ -1,4 +1,4 @@
-package org.moonshot.server.domain.Log.model;
+package org.moonshot.server.domain.log.model;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

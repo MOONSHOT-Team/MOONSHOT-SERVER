@@ -2,8 +2,8 @@ package org.moonshot.server.domain.keyResult.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.moonshot.server.domain.Log.model.Log;
-import org.moonshot.server.domain.Task.model.Task;
+import org.moonshot.server.domain.log.model.Log;
+import org.moonshot.server.domain.task.model.Task;
 import org.moonshot.server.domain.objective.model.Objective;
 import org.moonshot.server.global.common.model.Period;
 

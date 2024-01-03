@@ -1,4 +1,4 @@
-package org.moonshot.server.domain.Task.model;
+package org.moonshot.server.domain.task.model;
 
 import jakarta.persistence.*;
 import lombok.*;
