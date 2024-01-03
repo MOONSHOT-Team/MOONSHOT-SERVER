@@ -74,11 +74,6 @@ public class DiscordAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
                         "[" + MDCUtil.USER_IP_MDC + "]",
                         StringEscapeUtils.escapeJson(mdcPropertyMap.get(MDCUtil.USER_IP_MDC)),
                         false)
-//                .addField(
-//                        "[" + MDCUtil.USER_LOCATION_MDC + "]",
-//                        StringEscapeUtils.escapeJson(
-//                                mdcPropertyMap.get(MDCUtil.USER_LOCATION_MDC).replaceAll("[\\{\\{\\}]", "")),
-//                        false)
                 .addField(
                         "[" + MDCUtil.HEADER_MAP_MDC + "]",
                         StringEscapeUtils.escapeJson(mdcPropertyMap.get(MDCUtil.HEADER_MAP_MDC).replaceAll("[\\{\\{\\}]", "")),
