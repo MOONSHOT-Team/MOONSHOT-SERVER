@@ -14,8 +14,8 @@ spring:
 
   config:
     import: optional:application-secret.properties
-  profiles:
-    active: local
+    activate:
+      on-profile: local
 
 kakao:
   client-id: ${CLIENT_ID}
@@ -30,3 +30,6 @@ aws:
   secret-key: ${AWS_SECRET_KEY}
   region: ${AWS_REGION}
   s3-bucket-name: ${AWS_S3_BUCKET_NAME}
+
+logging:
+  config: classpath:logback-local.xml

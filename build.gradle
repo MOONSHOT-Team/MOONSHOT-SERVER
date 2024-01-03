@@ -19,6 +19,7 @@ configurations {
 
 repositories {
 	mavenCentral()
+	maven { url 'https://jitpack.io' }
 }
 
 ext {
@@ -43,6 +44,9 @@ dependencies {
 	// AWS sdk - S3
 	implementation("software.amazon.awssdk:bom:2.21.0")
 	implementation("software.amazon.awssdk:s3:2.21.0")
+
+	// discord-appender
+	implementation('com.github.napstr:logback-discord-appender:1.0.0')
 }
 
 dependencyManagement {
