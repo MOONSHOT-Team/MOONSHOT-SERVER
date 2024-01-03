@@ -41,35 +41,41 @@ public class MoonshotControllerAdvice {
             String validKeyName = String.format("valid_%s", error.getField());
             validateDetails.put(validKeyName, error.getDefaultMessage());
         }
+        log.error(e.getMessage(), e);
         return ApiResponse.error(ErrorType.REQUEST_VALIDATION_EXCEPTION, validateDetails);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(UnexpectedTypeException.class)
     protected ApiResponse<?> handleUnexpectedTypeException(final UnexpectedTypeException e) {
+        log.error(e.getMessage(), e);
         return ApiResponse.error(ErrorType.INVALID_TYPE);
     }
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ApiResponse<?> handlerMethodArgumentTypeMismatchException(final MethodArgumentTypeMismatchException e) {
+        log.error(e.getMessage(), e);
         return ApiResponse.error(ErrorType.INVALID_TYPE);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MissingRequestHeaderException.class)
     protected ApiResponse<?> handlerMissingRequestHeaderException(final MissingRequestHeaderException e) {
+        log.error(e.getMessage(), e);
         return ApiResponse.error(ErrorType.INVALID_MISSING_HEADER);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(HttpMessageNotReadableException.class)
     protected ApiResponse<?> handlerHttpMessageNotReadableException(final HttpMessageNotReadableException e) {
+        log.error(e.getMessage(), e);
         return ApiResponse.error(ErrorType.INVALID_HTTP_REQUEST);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     protected ApiResponse<?> handlerHttpRequestMethodNotSupportedException(final HttpRequestMethodNotSupportedException e) {
+        log.error(e.getMessage(), e);
         return ApiResponse.error(ErrorType.INVALID_HTTP_METHOD);
     }
 
@@ -78,35 +84,38 @@ public class MoonshotControllerAdvice {
      */
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
-    protected ApiResponse<Exception> handleException(final Exception e, final HttpServletRequest request) throws IOException {
-        return ApiResponse.error(ErrorType.INTERNAL_SERVER_ERROR, e);
+    protected ApiResponse<?> handleException(final Exception e, final HttpServletRequest request) throws IOException {
+        log.error(e.getMessage(), e);
+        return ApiResponse.error(ErrorType.INTERNAL_SERVER_ERROR);
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(IllegalArgumentException.class)
-    public ApiResponse<Exception> handlerIllegalArgumentException(final IllegalArgumentException e, final HttpServletRequest request) {
-        return ApiResponse.error(ErrorType.INTERNAL_SERVER_ERROR, e);
+    public ApiResponse<?> handlerIllegalArgumentException(final IllegalArgumentException e, final HttpServletRequest request) {
+        log.error(e.getMessage(), e);
+        return ApiResponse.error(ErrorType.INTERNAL_SERVER_ERROR);
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(IOException.class)
-    public ApiResponse<Exception> handlerIOException(final IOException e, final HttpServletRequest request) {
-        return ApiResponse.error(ErrorType.INTERNAL_SERVER_ERROR, e);
+    public ApiResponse<?> handlerIOException(final IOException e, final HttpServletRequest request) {
+        log.error(e.getMessage(), e);
+        return ApiResponse.error(ErrorType.INTERNAL_SERVER_ERROR);
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(RuntimeException.class)
-    public ApiResponse<Exception> handlerRuntimeException(final RuntimeException e, final HttpServletRequest request) {
-        return ApiResponse.error(ErrorType.INTERNAL_SERVER_ERROR, e);
+    public ApiResponse<?> handlerRuntimeException(final RuntimeException e, final HttpServletRequest request) {
+        log.error(e.getMessage(), e);
+        return ApiResponse.error(ErrorType.INTERNAL_SERVER_ERROR);
     }
-
 
     /**
      * CUSTOM_ERROR
      */
     @ExceptionHandler(MoonshotException.class)
-    protected ResponseEntity<ApiResponse> handleCustomException(MoonshotException e) {
-        return ResponseEntity.status(e.getHttpStatus())
-                .body(ApiResponse.error(e.getErrorType(), e.getMessage()));
+    protected ApiResponse<?> handleCustomException(MoonshotException e) {
+        log.error(e.getMessage(), e);
+        return ApiResponse.error(e.getErrorType());
     }
 }
