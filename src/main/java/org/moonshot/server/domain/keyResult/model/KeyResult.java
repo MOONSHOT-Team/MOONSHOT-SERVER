@@ -5,13 +5,10 @@ import lombok.*;
 import org.moonshot.server.domain.Log.model.Log;
 import org.moonshot.server.domain.Task.model.Task;
 import org.moonshot.server.domain.objective.model.Objective;
-import org.moonshot.server.domain.userBadge.model.UserBadge;
 import org.moonshot.server.global.common.model.Period;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @Getter

@@ -7,10 +7,8 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.moonshot.server.domain.keyResult.model.KeyResult;
 import org.moonshot.server.domain.user.model.User;
-import org.moonshot.server.domain.userBadge.model.UserBadge;
 import org.moonshot.server.global.common.model.Period;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 

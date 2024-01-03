@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.moonshot.server.domain.keyResult.model.KeyResult;
-import org.moonshot.server.domain.user.model.User;
-import org.springframework.cloud.client.loadbalancer.LoadBalancerProperties;
 
 import java.time.LocalDateTime;
 

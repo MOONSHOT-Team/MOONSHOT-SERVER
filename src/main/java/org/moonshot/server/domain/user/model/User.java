@@ -2,11 +2,6 @@ package org.moonshot.server.domain.user.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.moonshot.server.domain.objective.model.Objective;
-import org.moonshot.server.domain.userBadge.model.UserBadge;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
