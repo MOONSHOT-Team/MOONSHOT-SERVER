@@ -25,7 +25,4 @@ public class Badge {
     @Column(nullable = false)
     private String imageUrl;
 
-    @OneToMany(mappedBy = "badge")
-    private List<UserBadge> userList = new ArrayList<>();
-
 }

@@ -20,7 +20,7 @@ public class Task {
     private String title;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "keyResult_id")
+    @JoinColumn(name = "key_result_id")
     private KeyResult keyResult;
 
 }

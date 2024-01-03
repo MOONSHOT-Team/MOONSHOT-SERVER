@@ -2,6 +2,7 @@ package org.moonshot.server.domain.Log.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.moonshot.server.domain.keyResult.model.KeyResult;
 import org.moonshot.server.domain.user.model.User;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerProperties;
@@ -27,6 +28,7 @@ public class Log {
     @Column(nullable = false)
     private LogState state;
 
+    @ColumnDefault("-1")
     private int prevNum;
 
     @Column(nullable = false)
@@ -36,7 +38,7 @@ public class Log {
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "keyResult_id")
+    @JoinColumn(name = "key_result_id")
     private KeyResult keyResult;
 
 }

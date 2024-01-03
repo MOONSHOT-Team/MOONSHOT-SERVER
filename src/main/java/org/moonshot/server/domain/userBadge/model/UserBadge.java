@@ -2,6 +2,8 @@ package org.moonshot.server.domain.userBadge.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.moonshot.server.domain.badge.model.Badge;
 import org.moonshot.server.domain.user.model.User;
 
@@ -24,10 +26,12 @@ public class UserBadge {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "badge_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Badge badge;
 
 }

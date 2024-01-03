@@ -36,17 +36,12 @@ public class User {
     @Column(nullable = false)
     private String email;
 
-    private String moonshotAccessToken;
+    @Column(nullable = false)
+    private String accessToken;
 
     @Column(unique = true)
     private String nickname;
 
     private String description;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<UserBadge> badgeList = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Objective> objectiveList = new ArrayList<>();
 
 }
