@@ -6,6 +6,7 @@ import org.moonshot.server.domain.Log.model.Log;
 import org.moonshot.server.domain.Task.model.Task;
 import org.moonshot.server.domain.objective.model.Objective;
 import org.moonshot.server.domain.userBadge.model.UserBadge;
+import org.moonshot.server.global.common.model.Period;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -27,11 +28,8 @@ public class KeyResult {
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
-    private LocalDateTime startAt;
-
-    @Column(nullable = false)
-    private LocalDateTime expireAt;
+    @Embedded
+    private Period period;
 
     @Column(nullable = false)
     private int count;

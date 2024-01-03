@@ -5,6 +5,7 @@ import lombok.*;
 import org.moonshot.server.domain.keyResult.model.KeyResult;
 import org.moonshot.server.domain.user.model.User;
 import org.moonshot.server.domain.userBadge.model.UserBadge;
+import org.moonshot.server.global.common.model.Period;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -40,11 +41,8 @@ public class Objective {
     @Column(nullable = false)
     private Long heartCount;
 
-    @Column(nullable = false)
-    private LocalDateTime startAt;
-
-    @Column(nullable = false)
-    private LocalDateTime closeAt;
+    @Embedded
+    private Period period;
 
     private int order;
 
