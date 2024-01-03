@@ -12,11 +12,13 @@ public enum SuccessType {
     /**
      * 200 OK
      */
-    OK(HttpStatus.OK, "성공");
+    OK(HttpStatus.OK, "성공"),
+    GET_PRESIGNED_URL_SUCCESS(HttpStatus.OK, "Presigned Url 조회에 성공하였습니다."),
 
     /**
      * 201 CREATED
      */
+    POST_NOTIFY_IMAGE_SAVE_SUCCESS(HttpStatus.CREATED, "Presigned Url을 통해 이미지 생성을 성공하였습니다.");
 
     /**
      * 204 NO CONTENT
@@ -28,6 +30,7 @@ public enum SuccessType {
     public int getHttpStatusCode() {
         return httpStatus.value();
     }
+
 }
 
 
