@@ -1,4 +1,4 @@
-package org.moonshot.server.domain.keyResult.model;
+package org.moonshot.server.domain.keyresult.model;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -29,10 +29,16 @@ public class KeyResult {
     private Period period;
 
     @Column(nullable = false)
-    private int count;
+    private int target;
 
     @Column(nullable = false)
     private String metric;
+
+    @Column(nullable = false)
+    private String descriptionBefore;
+
+    @Column(nullable = false)
+    private String descriptionAfter;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -41,11 +47,5 @@ public class KeyResult {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "objective_id")
     private Objective objective;
-
-    @OneToMany(mappedBy = "keyResult", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Task> taskList = new ArrayList<>();
-
-    @OneToMany(mappedBy = "keyResult", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Log> logList = new ArrayList<>();
 
 }
