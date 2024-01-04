@@ -2,6 +2,7 @@ package org.moonshot.server.domain.keyresult.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.DynamicInsert;
 import org.moonshot.server.domain.log.model.Log;
 import org.moonshot.server.domain.task.model.Task;
 import org.moonshot.server.domain.objective.model.Objective;
@@ -13,6 +14,7 @@ import java.util.List;
 @Entity
 @Getter
 @Builder
+@DynamicInsert
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class KeyResult {
@@ -41,7 +43,7 @@ public class KeyResult {
     private String descriptionAfter;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "enum('DONE','HOLD','PROGRESS','WAITING') default 'PROGRESS'")
     private KRState state;
 
     @ManyToOne(fetch = FetchType.LAZY)

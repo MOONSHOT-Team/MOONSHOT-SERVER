@@ -23,7 +23,8 @@ public class SecurityConfig {
             "/login/**",
             "/",
             "/actuator/health",
-            "/v1/image"
+            "/v1/image",
+            "/v1/okr"
     };
 
     private final MoonshotExceptionHandler moonshotExceptionHandler;

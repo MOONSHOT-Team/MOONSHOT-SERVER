@@ -21,4 +21,7 @@ public class Period {
     @Column(nullable = false)
     private LocalDateTime expireAt;
 
+    public static Period of(LocalDateTime startAt, LocalDateTime expireAt) {
+        return new Period(startAt, expireAt);
+    }
 }
