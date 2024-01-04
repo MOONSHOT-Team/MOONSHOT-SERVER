@@ -35,3 +35,5 @@ logging:
   discord:
     webhook-uri: ${DISCORD_WEBHOOK_URI}
   config: classpath:logback-dev.xml
+  level:
+    org.springframework.security: DEBUG
