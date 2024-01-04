@@ -2,7 +2,7 @@ package org.moonshot.server.domain.task.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.moonshot.server.domain.keyResult.model.KeyResult;
+import org.moonshot.server.domain.keyresult.model.KeyResult;
 
 @Entity
 @Getter
