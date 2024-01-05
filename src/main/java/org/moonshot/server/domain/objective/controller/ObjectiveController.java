@@ -15,14 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/v1/okr")
+@RequestMapping("/v1/objective")
 public class ObjectiveController {
 
     private final ObjectiveService objectiveService;
 
     @PostMapping
-    public ApiResponse<?> create(@RequestBody @Valid OKRCreateRequestDto request,
-                                 String nickname) {
+    public ApiResponse<?> create(@RequestBody @Valid OKRCreateRequestDto request, String nickname) {
         final String TEST_USER_NICKNAME = "tester";
         objectiveService.create(request, TEST_USER_NICKNAME);
         return ApiResponse.success(SuccessType.POST_OKR_SUCCESS);
