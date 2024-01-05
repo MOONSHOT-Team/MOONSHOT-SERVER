@@ -19,8 +19,14 @@ public class Task {
     @Column(nullable = false)
     private String title;
 
+    @Column(nullable = false)
+    private short order;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "key_result_id")
     private KeyResult keyResult;
 
+    public void incrementOrder() {
+        ++this.order;
+    }
 }

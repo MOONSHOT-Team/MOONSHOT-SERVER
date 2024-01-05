@@ -1,5 +1,6 @@
 package org.moonshot.server.domain.keyresult.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
@@ -34,6 +35,9 @@ public class KeyResult {
     private int target;
 
     @Column(nullable = false)
+    private short order;
+
+    @Column(nullable = false)
     private String metric;
 
     @Column(nullable = false)
@@ -50,4 +54,7 @@ public class KeyResult {
     @JoinColumn(name = "objective_id")
     private Objective objective;
 
+    public void incrementOrder() {
+        ++this.order;
+    }
 }
