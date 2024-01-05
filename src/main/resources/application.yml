@@ -39,3 +39,18 @@ logging:
   config: classpath:logback-local.xml
   level:
     org.springframework.security: DEBUG
+
+springdoc:
+  packages-to-scan: org.moonshot.server
+  default-consumes-media-type: application/json;charset=UTF-8
+  default-produces-media-type: application/json;charset=UTF-8
+  swagger-ui:
+    tags-sorter: alpha
+    operations-sorter: alpha
+  api-docs:
+    path: /api-docs/json
+    groups:
+      enabled: true
+    cache:
+      disabled: true
+  show-login-endpoint: true

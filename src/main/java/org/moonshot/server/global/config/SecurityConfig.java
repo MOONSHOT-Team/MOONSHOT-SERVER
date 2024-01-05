@@ -26,6 +26,10 @@ public class SecurityConfig {
             "/v1/image",
             "/v1/objective",
             "/v1/key-result"
+            "/error",
+            "/swagger-ui/**",
+            "/swagger-resources/**",
+            "/api-docs/**"
     };
 
     private final MoonshotExceptionHandler moonshotExceptionHandler;
