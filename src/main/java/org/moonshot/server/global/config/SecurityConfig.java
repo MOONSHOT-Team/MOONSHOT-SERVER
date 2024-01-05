@@ -23,7 +23,11 @@ public class SecurityConfig {
             "/login/**",
             "/",
             "/actuator/health",
-            "/v1/image"
+            "/v1/image",
+            "/error",
+            "/swagger-ui/**",
+            "/swagger-resources/**",
+            "/api-docs/**"
     };
 
     private final MoonshotExceptionHandler moonshotExceptionHandler;
