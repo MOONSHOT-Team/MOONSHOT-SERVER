@@ -66,6 +66,8 @@ public class SecurityConfig {
         config.addAllowedOrigin("http://localhost:3000");
         config.addAllowedOrigin("https://kauth.kakao.com");
         config.addAllowedOrigin("https://kapi.kakao.com");
+        config.addAllowedOrigin("http://www.googleapis.com");
+        config.addAllowedOrigin("https://www.googleapis.com");
         config.addAllowedOrigin(serverIp);
         config.addAllowedOrigin(serverDomain);
         config.addAllowedHeader("*");
