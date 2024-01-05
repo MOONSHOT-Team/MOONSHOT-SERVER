@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface KeyResultRepository extends JpaRepository<KeyResult, Long> {
 
+    Long countAllByObjective(Objective objective);
+    List<KeyResult> findByIdIn(List<Long> ids);
     List<KeyResult> findAllByObjective(Objective objective);
 
 }

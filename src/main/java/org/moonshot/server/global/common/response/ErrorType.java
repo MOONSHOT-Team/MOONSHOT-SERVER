@@ -27,6 +27,7 @@ public enum ErrorType {
      * 404 NOT FOUND
      */
     NOT_FOUND_USER_ERROR(HttpStatus.NOT_FOUND, "존재하지 않는 유저입니다."),
+    NOT_FOUND_OBJECTIVE_ERROR(HttpStatus.NOT_FOUND, "존재하지 않는 Objective입니다."),
 
     /**
      * 500 INTERNAL SERVER ERROR
