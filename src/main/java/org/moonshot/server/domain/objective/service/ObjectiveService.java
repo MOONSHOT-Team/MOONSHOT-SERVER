@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ObjectiveService {
 
-    private static final int ACTIVE_OBJECTIVE_NUMBER = 2;
+    private static final int ACTIVE_OBJECTIVE_NUMBER = 10;
 
     private final KeyResultService keyResultService;
     private final UserRepository userRepository;
@@ -29,7 +29,7 @@ public class ObjectiveService {
         User findUser = userRepository.findUserByNickname(nickname)
                 .orElseThrow(UserNotFoundException::new);
 
-        if (objectiveRepository.countAllByUserAndIsClosed(findUser, false) > ACTIVE_OBJECTIVE_NUMBER) {
+        if (objectiveRepository.countAllByUserAndIsClosed(findUser, false) >= ACTIVE_OBJECTIVE_NUMBER) {
             throw new ObjectiveNumberExceededException();
         }
 

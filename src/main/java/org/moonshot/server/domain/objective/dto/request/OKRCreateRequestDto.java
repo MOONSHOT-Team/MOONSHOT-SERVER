@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.moonshot.server.domain.keyresult.dto.request.KeyResultCreateRequestInfoDto;
 import org.moonshot.server.domain.objective.model.Category;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -22,6 +23,6 @@ public record OKRCreateRequestDto(
         @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
         LocalDateTime objExpireAt,
         @NotNull @Valid @Size(min = 1, max = 3, message = "KR 개수는 1~3개로 제한되어 있습니다.")
-        List<KRCreateRequestDto> krList
+        List<KeyResultCreateRequestInfoDto> krList
 ) {
 }

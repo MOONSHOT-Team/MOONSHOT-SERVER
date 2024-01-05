@@ -23,20 +23,22 @@ public class KeyResultService {
     private final TaskRepository taskRepository;
 
     @Transactional
-    public void createInitWithObjective(Objective objective, List<KRCreateRequestDto> requests) {
-        for (KRCreateRequestDto it : requests) {
+    public void createInitWithObjective(Objective objective, List<KeyResultCreateRequestInfoDto> requests) {
+        for (KeyResultCreateRequestInfoDto dto : requests) {
             KeyResult keyResult = keyResultRepository.save(KeyResult.builder()
-                    .title(it.title())
-                    .period(Period.of(it.startAt(), it.expireAt()))
-                    .target(it.target())
-                    .metric(it.metric())
-                    .descriptionBefore(it.descriptionBefore())
-                    .descriptionAfter(it.descriptionAfter())
+                    .title(dto.title())
+                    .period(Period.of(dto.startAt(), dto.expireAt()))
+                    .order(dto.order())
+                    .target(dto.target())
+                    .metric(dto.metric())
+                    .descriptionBefore(dto.descriptionBefore())
+                    .descriptionAfter(dto.descriptionAfter())
                     .objective(objective)
                     .build());
-            if (it.taskList() != null) {
-                taskRepository.saveAll(it.taskList().stream().map((task) -> Task.builder()
+            if (dto.taskList() != null) {
+                taskRepository.saveAll(dto.taskList().stream().map((task) -> Task.builder()
                         .title(task.title())
+                        .order(task.order())
                         .keyResult(keyResult)
                         .build()).toList());
             }
