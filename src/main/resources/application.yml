@@ -21,9 +21,18 @@ spring:
     activate:
       on-profile: local
 
+google:
+  client-id: ${GOOGLE_CLIENT_ID}
+  redirect-url: ${GOOGLE_URL}
+  client-secret: ${GOOGLE_CLIENT_SECRET}
+  scope: email, profile
+
 kakao:
-  client-id: ${CLIENT_ID}
+  client-id: ${KAKAO_CLIENT_ID}
   url: ${KAKAO_URL}
+
+jwt:
+  secret: ${JWT_SECRET}
 
 server:
   ip: ${SERVER_IP}
