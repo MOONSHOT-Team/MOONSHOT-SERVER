@@ -24,7 +24,8 @@ public class SecurityConfig {
             "/",
             "/actuator/health",
             "/v1/image",
-            "/v1/objective"
+            "/v1/objective",
+            "/v1/key-result"
     };
 
     private final MoonshotExceptionHandler moonshotExceptionHandler;
