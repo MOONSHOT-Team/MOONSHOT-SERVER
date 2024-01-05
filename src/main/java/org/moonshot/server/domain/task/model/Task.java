@@ -20,13 +20,13 @@ public class Task {
     private String title;
 
     @Column(nullable = false)
-    private short order;
+    private short idx;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "key_result_id")
     private KeyResult keyResult;
 
-    public void incrementOrder() {
-        ++this.order;
+    public void incrementIdx() {
+        ++this.idx;
     }
 }

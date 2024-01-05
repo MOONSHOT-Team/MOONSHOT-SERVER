@@ -34,7 +34,7 @@ public class KeyResultService {
             KeyResult keyResult = keyResultRepository.save(KeyResult.builder()
                     .title(dto.title())
                     .period(Period.of(dto.startAt(), dto.expireAt()))
-                    .order(dto.order())
+                    .idx(dto.idx())
                     .target(dto.target())
                     .metric(dto.metric())
                     .descriptionBefore(dto.descriptionBefore())
@@ -44,7 +44,7 @@ public class KeyResultService {
             if (dto.taskList() != null) {
                 taskRepository.saveAll(dto.taskList().stream().map((task) -> Task.builder()
                         .title(task.title())
-                        .order(task.order())
+                        .idx(task.idx())
                         .keyResult(keyResult)
                         .build()).toList());
             }
@@ -60,18 +60,18 @@ public class KeyResultService {
         if (krList.size() >= ACTIVE_KEY_RESULT_NUMBER) {
             throw new KeyResultNumberExceededException();
         }
-        if (request.order() > krList.size()) {
+        if (request.idx() > krList.size()) {
             throw new KeyResultInvalidPositionException();
         }
 
-        for (short i = request.order(); i < krList.size(); i++) {
-            krList.get(i).incrementOrder();
+        for (short i = request.idx(); i < krList.size(); i++) {
+            krList.get(i).incrementIdx();
         }
         keyResultRepository.save(KeyResult.builder()
                 .objective(objective)
                 .title(request.title())
                 .period(Period.of(request.startAt(), request.expireAt()))
-                .order(request.order())
+                .idx(request.idx())
                 .target(request.target())
                 .metric(request.metric())
                 .descriptionBefore(request.descriptionBefore())

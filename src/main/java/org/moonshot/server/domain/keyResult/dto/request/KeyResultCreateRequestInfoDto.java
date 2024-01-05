@@ -18,7 +18,7 @@ public record KeyResultCreateRequestInfoDto(
         @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
         LocalDateTime expireAt,
         @NotNull(message = "KR의 순서를 입력해주세요.")
-        short order,
+        short idx,
         @NotNull(message = "KR 목표 수치를 입력해주세요.")
         int target,
         @NotNull(message = "KR 목표 수치의 단위를 입력해주세요.")

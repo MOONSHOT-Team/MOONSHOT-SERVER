@@ -35,7 +35,7 @@ public class KeyResult {
     private int target;
 
     @Column(nullable = false)
-    private short order;
+    private short idx;
 
     @Column(nullable = false)
     private String metric;
@@ -54,7 +54,7 @@ public class KeyResult {
     @JoinColumn(name = "objective_id")
     private Objective objective;
 
-    public void incrementOrder() {
-        ++this.order;
+    public void incrementIdx() {
+        ++this.idx;
     }
 }
