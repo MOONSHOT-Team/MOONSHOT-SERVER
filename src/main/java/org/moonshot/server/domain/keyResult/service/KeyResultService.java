@@ -28,7 +28,7 @@ public class KeyResultService {
     private final TaskRepository taskRepository;
 
     @Transactional
-    public void createInitWithObjective(Objective objective, List<KeyResultCreateRequestInfoDto> requests) {
+    public void createInitKRWithObjective(Objective objective, List<KeyResultCreateRequestInfoDto> requests) {
         for (KeyResultCreateRequestInfoDto dto : requests) {
             KeyResult keyResult = keyResultRepository.save(KeyResult.builder()
                     .title(dto.title())
@@ -51,7 +51,7 @@ public class KeyResultService {
     }
 
     @Transactional
-    public void create(KeyResultCreateRequestDto request) {
+    public void createKeyResult(KeyResultCreateRequestDto request) {
         Objective objective = objectiveRepository.findById(request.objectiveId())
                 .orElseThrow(ObjectiveNotFoundException::new);
         List<KeyResult> krList = keyResultRepository.findAllByObjective(objective);
@@ -84,12 +84,12 @@ public class KeyResultService {
     }
 
     @Transactional
-    public void delete(List<Long> keyResultIds) {
+    public void deleteKeyResult(List<Long> keyResultIds) {
         cascadeDelete(keyResultRepository.findByIdIn(keyResultIds));
     }
 
     @Transactional
-    public void delete(Objective objective) {
+    public void deleteKeyResult(Objective objective) {
         cascadeDelete(keyResultRepository.findAllByObjective(objective));
     }
 

@@ -25,7 +25,7 @@ public class ObjectiveService {
     private final ObjectiveRepository objectiveRepository;
 
     @Transactional
-    public void create(OKRCreateRequestDto request, String nickname) {
+    public void createObjective(OKRCreateRequestDto request, String nickname) {
         User findUser = userRepository.findUserByNickname(nickname)
                 .orElseThrow(UserNotFoundException::new);
 
@@ -40,7 +40,7 @@ public class ObjectiveService {
                 .period(Period.of(request.objStartAt(), request.objExpireAt()))
                 .user(findUser).build());
 
-        keyResultService.createInitWithObjective(newObjective, request.krList());
+        keyResultService.createInitKRWithObjective(newObjective, request.krList());
     }
 
 }

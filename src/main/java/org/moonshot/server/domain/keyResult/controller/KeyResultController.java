@@ -21,14 +21,14 @@ public class KeyResultController {
     private final KeyResultService keyResultService;
 
     @PostMapping
-    public ApiResponse<?> create(@RequestBody KeyResultCreateRequestDto request) {
-        keyResultService.create(request);
+    public ApiResponse<?> createKeyResult(@RequestBody KeyResultCreateRequestDto request) {
+        keyResultService.createKeyResult(request);
         return ApiResponse.success(POST_KEY_RESULT_SUCCESS);
     }
 
     @DeleteMapping
-    public ApiResponse<?> delete(@RequestBody KeyResultDeleteRequestDto request) {
-        keyResultService.delete(request.keyResultIds());
+    public ApiResponse<?> deleteKeyResult(@RequestBody KeyResultDeleteRequestDto request) {
+        keyResultService.deleteKeyResult(request.keyResultIds());
         return ApiResponse.success(DELETE_KEY_RESULT_SUCCESS);
     }
 
