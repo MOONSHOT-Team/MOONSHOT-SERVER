@@ -1,13 +1,15 @@
 package org.moonshot.server.domain.keyresult.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.moonshot.server.domain.keyresult.model.KRState;
+import org.moonshot.server.domain.keyresult.dto.request.KeyResultCreateRequestDto;
+import org.moonshot.server.domain.keyresult.dto.request.KeyResultCreateRequestInfoDto;
+import org.moonshot.server.domain.keyresult.exception.KeyResultNumberExceededException;
 import org.moonshot.server.domain.keyresult.model.KeyResult;
 import org.moonshot.server.domain.keyresult.repository.KeyResultRepository;
-import org.moonshot.server.domain.objective.dto.request.KRCreateRequestDto;
+import org.moonshot.server.domain.objective.exception.ObjectiveNotFoundException;
 import org.moonshot.server.domain.objective.model.Objective;
+import org.moonshot.server.domain.objective.repository.ObjectiveRepository;
 import org.moonshot.server.domain.task.model.Task;
 import org.moonshot.server.domain.task.repository.TaskRepository;
 import org.moonshot.server.global.common.model.Period;
@@ -19,6 +21,9 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class KeyResultService {
 
+    private static final int ACTIVE_KEY_RESULT_NUMBER = 3;
+
+    private final ObjectiveRepository objectiveRepository;
     private final KeyResultRepository keyResultRepository;
     private final TaskRepository taskRepository;
 
