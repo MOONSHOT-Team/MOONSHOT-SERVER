@@ -4,6 +4,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.moonshot.server.domain.keyresult.dto.request.KeyResultCreateRequestDto;
 import org.moonshot.server.domain.keyresult.dto.request.KeyResultCreateRequestInfoDto;
+import org.moonshot.server.domain.keyresult.exception.KeyResultInvalidPositionException;
 import org.moonshot.server.domain.keyresult.exception.KeyResultNumberExceededException;
 import org.moonshot.server.domain.keyresult.model.KeyResult;
 import org.moonshot.server.domain.keyresult.repository.KeyResultRepository;
@@ -56,31 +57,25 @@ public class KeyResultService {
                 .orElseThrow(ObjectiveNotFoundException::new);
         List<KeyResult> krList = keyResultRepository.findAllByObjective(objective);
 
-        if (krList.size() + request.krList().size() > ACTIVE_KEY_RESULT_NUMBER) {
+        if (krList.size() >= ACTIVE_KEY_RESULT_NUMBER) {
             throw new KeyResultNumberExceededException();
         }
-
-        for (KeyResultCreateRequestInfoDto dto : request.krList()) {
-            for (short i = dto.order(); i < krList.size(); i++) {
-                krList.get(i).incrementOrder();
-            }
-            KeyResult keyResult = keyResultRepository.save(KeyResult.builder()
-                    .title(dto.title())
-                    .period(Period.of(dto.startAt(), dto.expireAt()))
-                    .order(dto.order())
-                    .target(dto.target())
-                    .metric(dto.metric())
-                    .descriptionBefore(dto.descriptionBefore())
-                    .descriptionAfter(dto.descriptionAfter()).build());
-            if (dto.taskList() != null) {
-                taskRepository.saveAll(
-                        dto.taskList().stream().map((task) -> Task.builder()
-                        .title(task.title())
-                        .order(task.order())
-                        .keyResult(keyResult)
-                        .build()).toList());
-            }
+        if (request.order() > krList.size()) {
+            throw new KeyResultInvalidPositionException();
         }
+
+        for (short i = request.order(); i < krList.size(); i++) {
+            krList.get(i).incrementOrder();
+        }
+        keyResultRepository.save(KeyResult.builder()
+                .objective(objective)
+                .title(request.title())
+                .period(Period.of(request.startAt(), request.expireAt()))
+                .order(request.order())
+                .target(request.target())
+                .metric(request.metric())
+                .descriptionBefore(request.descriptionBefore())
+                .descriptionAfter(request.descriptionAfter()).build());
     }
 
     @Transactional
