@@ -3,7 +3,7 @@ package org.moonshot.server.domain.log.model;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
-import org.moonshot.server.domain.keyResult.model.KeyResult;
+import org.moonshot.server.domain.keyresult.model.KeyResult;
 
 import java.time.LocalDateTime;
 

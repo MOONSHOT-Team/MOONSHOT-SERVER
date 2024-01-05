@@ -2,7 +2,7 @@ package org.moonshot.server.domain.task.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.moonshot.server.domain.keyResult.model.KeyResult;
+import org.moonshot.server.domain.keyresult.model.KeyResult;
 
 @Entity
 @Getter
@@ -19,8 +19,14 @@ public class Task {
     @Column(nullable = false)
     private String title;
 
+    @Column(nullable = false)
+    private short idx;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "key_result_id")
     private KeyResult keyResult;
 
+    public void incrementIdx() {
+        ++this.idx;
+    }
 }

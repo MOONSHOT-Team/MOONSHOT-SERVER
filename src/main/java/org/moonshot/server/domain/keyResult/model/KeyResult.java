@@ -1,7 +1,9 @@
-package org.moonshot.server.domain.keyResult.model;
+package org.moonshot.server.domain.keyresult.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.DynamicInsert;
 import org.moonshot.server.domain.log.model.Log;
 import org.moonshot.server.domain.task.model.Task;
 import org.moonshot.server.domain.objective.model.Objective;
@@ -13,6 +15,7 @@ import java.util.List;
 @Entity
 @Getter
 @Builder
+@DynamicInsert
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class KeyResult {
@@ -29,23 +32,29 @@ public class KeyResult {
     private Period period;
 
     @Column(nullable = false)
-    private int count;
+    private int target;
+
+    @Column(nullable = false)
+    private short idx;
 
     @Column(nullable = false)
     private String metric;
 
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    private String descriptionBefore;
+
+    @Column(nullable = false)
+    private String descriptionAfter;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, columnDefinition = "enum('DONE','HOLD','PROGRESS','WAITING') default 'PROGRESS'")
     private KRState state;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "objective_id")
     private Objective objective;
 
-    @OneToMany(mappedBy = "keyResult", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Task> taskList = new ArrayList<>();
-
-    @OneToMany(mappedBy = "keyResult", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Log> logList = new ArrayList<>();
-
+    public void incrementIdx() {
+        ++this.idx;
+    }
 }

@@ -18,11 +18,15 @@ public enum SuccessType {
     /**
      * 201 CREATED
      */
-    POST_NOTIFY_IMAGE_SAVE_SUCCESS(HttpStatus.CREATED, "Presigned Url을 통해 이미지 생성을 성공하였습니다.");
+    POST_NOTIFY_IMAGE_SAVE_SUCCESS(HttpStatus.CREATED, "Presigned Url을 통해 이미지 생성을 성공하였습니다."),
+    POST_OKR_SUCCESS(HttpStatus.CREATED, "O-KR을 생성을 성공하였습니다."),
+    POST_KEY_RESULT_SUCCESS(HttpStatus.CREATED, "KeyResult 생성을 성공하였습니다."),
 
     /**
      * 204 NO CONTENT
      */
+    DELETE_KEY_RESULT_SUCCESS(HttpStatus.NO_CONTENT, "KeyResult 삭제를 성공하였습니다."),
+    DELETE_OBJECTIVE_SUCCESS(HttpStatus.NO_CONTENT, "Objective 삭제를 성공하였습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;
