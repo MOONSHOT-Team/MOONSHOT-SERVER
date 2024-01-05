@@ -24,7 +24,7 @@ public record KRCreateRequestDto(
         String descriptionBefore,
         @NotNull(message = "KR 목표의 이후 수식을 입력해주세요.")
         String descriptionAfter,
-        @NotNull @Valid @Size(max = 3, message = "Task 개수는 최대 3개로 제한되어 있습니다.")
+        @Valid @Size(max = 3, message = "Task 개수는 최대 3개로 제한되어 있습니다.")
         List<TaskCreateRequestDto> taskList
 ) {
 }

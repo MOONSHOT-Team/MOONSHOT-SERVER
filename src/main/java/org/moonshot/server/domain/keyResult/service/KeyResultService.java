@@ -34,10 +34,12 @@ public class KeyResultService {
                     .descriptionAfter(it.descriptionAfter())
                     .objective(objective)
                     .build());
-            taskRepository.saveAll(it.taskList().stream().map((task) -> Task.builder()
-                    .title(task.title())
-                    .keyResult(keyResult)
-                    .build()).toList());
+            if (it.taskList() != null) {
+                taskRepository.saveAll(it.taskList().stream().map((task) -> Task.builder()
+                        .title(task.title())
+                        .keyResult(keyResult)
+                        .build()).toList());
+            }
         }
     }
 
