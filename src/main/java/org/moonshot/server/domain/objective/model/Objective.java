@@ -52,12 +52,9 @@ public class Objective {
     @ColumnDefault("-1")
     private short order;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
-
-    @OneToMany(mappedBy = "objective", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<KeyResult> keyResultList = new ArrayList<>();
 
 }
