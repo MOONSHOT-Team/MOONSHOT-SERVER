@@ -9,6 +9,7 @@ import org.moonshot.server.domain.user.dto.response.google.GoogleInfoResponse;
 import org.moonshot.server.domain.user.dto.response.google.GoogleTokenResponse;
 import org.moonshot.server.domain.user.dto.response.kakao.KakaoTokenResponse;
 import org.moonshot.server.domain.user.dto.response.kakao.KakaoUserResponse;
+import org.moonshot.server.domain.user.exception.InvalidAuthorizationException;
 import org.moonshot.server.domain.user.model.SocialPlatform;
 import org.moonshot.server.domain.user.model.User;
 import org.moonshot.server.domain.user.repository.UserRepository;
@@ -17,6 +18,7 @@ import org.moonshot.server.global.auth.feign.google.GoogleAuthApiClient;
 import org.moonshot.server.global.auth.feign.kakao.KakaoApiClient;
 import org.moonshot.server.global.auth.feign.kakao.KakaoAuthApiClient;
 import org.moonshot.server.global.auth.jwt.JwtTokenProvider;
+import org.moonshot.server.global.auth.jwt.Token;
 import org.moonshot.server.global.auth.security.UserAuthentication;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -51,9 +53,7 @@ public class UserService {
     private final KakaoApiClient kakaoApiClient;
     private final JwtTokenProvider jwtTokenProvider;
 
-
     public SocialLoginResponse login(SocialLoginRequest request) throws IOException {
-        System.out.println(request.socialPlatform().getValue());
         switch (request.socialPlatform().getValue()){
             case "google":
                 return gooleLogin(request);
@@ -75,7 +75,7 @@ public class UserService {
         GoogleInfoResponse userResponse = googleApiClient.googleInfo("Bearer " + tokenResponse.accessToken());
 
         UserAuthentication userAuthentication = new UserAuthentication(userResponse.sub(), null, null);
-        String  moonshotAccessToken = jwtTokenProvider.generateAccessToken(userAuthentication);
+        Token token = new Token(jwtTokenProvider.generateAccessToken(userAuthentication), jwtTokenProvider.generateRefreshToken(userAuthentication));
 
         Optional<User> findUser = userRepository.findUserBySocialId(userResponse.sub());
 
@@ -94,7 +94,7 @@ public class UserService {
             user = findUser.get();
         }
 
-        return SocialLoginResponse.of(user.getId(), user.getName());
+        return SocialLoginResponse.of(user.getId(), user.getName(), token);
     }
 
     public SocialLoginResponse kakaoLogin(SocialLoginRequest request) throws IOException {
@@ -108,7 +108,7 @@ public class UserService {
         KakaoUserResponse userResponse = kakaoApiClient.getUserInformation(
                 "Bearer " + tokenResponse.accessToken());
         UserAuthentication userAuthentication = new UserAuthentication(userResponse.id(), null, null);
-        String  moonshotAccessToken = jwtTokenProvider.generateAccessToken(userAuthentication);
+        Token token = new Token(jwtTokenProvider.generateAccessToken(userAuthentication), jwtTokenProvider.generateRefreshToken(userAuthentication));
 
         Optional<User> findUser = userRepository.findUserBySocialId(userResponse.id());
         User user;
@@ -126,7 +126,7 @@ public class UserService {
             user = findUser.get();
         }
 
-        return SocialLoginResponse.of(user.getId(), user.getName());
+        return SocialLoginResponse.of(user.getId(), user.getName(), token);
     }
 
 }

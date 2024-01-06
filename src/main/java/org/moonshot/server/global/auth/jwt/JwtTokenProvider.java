@@ -6,6 +6,7 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +14,7 @@ import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Component
@@ -21,6 +23,8 @@ public class JwtTokenProvider {
 
     private static final String USER_ID = "userId";
     private static final Long ACCESS_TOKEN_EXPIRATION_TIME = 60 * 1000L;  // 액세스 토큰 만료 시간: 1분으로 지정
+    private static final Long REFRESH_TOKEN_EXPIRATION_TIME = 60 * 1000L * 2;  // 리프레시 토큰 만료 시간: 2분으로 지정
+    private final RedisTemplate<String, String> redisTemplate;
 
     @Value("${jwt.secret}")
     private String JWT_SECRET;
@@ -28,6 +32,13 @@ public class JwtTokenProvider {
     @PostConstruct
     protected void init() {
         JWT_SECRET = Base64.getEncoder().encodeToString(JWT_SECRET.getBytes(StandardCharsets.UTF_8));
+    }
+
+    // Access 토큰, Refresh 토큰 발급
+    public Token issueToken(Authentication authentication) {
+        return Token.of(
+                generateAccessToken(authentication),
+                generateRefreshToken(authentication));
     }
 
     // 엑세스 토큰 발급
@@ -40,10 +51,34 @@ public class JwtTokenProvider {
         claims.put(USER_ID, authentication.getPrincipal());
 
         return Jwts.builder()
-                .setHeaderParam(Header.TYPE, Header.JWT_TYPE) // Header
-                .setClaims(claims) // Claim
-                .signWith(getSigningKey()) // Signature
+                .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
+                .setClaims(claims)
+                .signWith(getSigningKey())
                 .compact();
+    }
+
+    //리프레쉬 토큰 발급
+    public String generateRefreshToken(Authentication authentication) {
+        final Date now = new Date();
+        final Claims claims = Jwts.claims()
+                .setIssuedAt(now)
+                .setExpiration(new Date(now.getTime() + REFRESH_TOKEN_EXPIRATION_TIME));
+
+        claims.put(USER_ID, authentication.getPrincipal());
+
+        String refreshToken = Jwts.builder()
+                .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
+                .setClaims(claims)
+                .signWith(getSigningKey())
+                .compact();
+
+        redisTemplate.opsForValue().set(
+                "Bearer " + refreshToken,
+                authentication.getName(),
+                REFRESH_TOKEN_EXPIRATION_TIME,
+                TimeUnit.MILLISECONDS
+        );
+        return refreshToken;
     }
 
     private SecretKey getSigningKey() {
