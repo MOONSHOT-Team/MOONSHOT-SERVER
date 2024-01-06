@@ -67,4 +67,9 @@ public class KeyResult {
     public void modifyTarget(Integer target) {
         this.target = target;
     }
+
+    public void modifyState(KRState state) {
+        this.state = state;
+    }
+
 }

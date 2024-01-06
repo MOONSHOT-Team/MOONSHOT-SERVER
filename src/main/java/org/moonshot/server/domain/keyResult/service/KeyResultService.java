@@ -120,6 +120,9 @@ public class KeyResultService {
         if (request.target() != null) {
             keyResult.modifyTarget(request.target());
         }
+        if (request.state() != null) {
+            keyResult.modifyState(request.state());
+        }
     }
 
 }
