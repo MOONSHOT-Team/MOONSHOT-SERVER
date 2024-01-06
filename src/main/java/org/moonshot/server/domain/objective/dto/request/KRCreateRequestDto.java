@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.moonshot.server.global.common.model.validator.ValidTargetNumber;
 import org.springframework.format.annotation.DateTimeFormat;
 
 public record KRCreateRequestDto(
@@ -17,6 +18,7 @@ public record KRCreateRequestDto(
         @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
         LocalDateTime expireAt,
         @NotNull(message = "KR 목표 수치를 입력해주세요.")
+        @ValidTargetNumber
         Integer target,
         @NotNull(message = "KR 목표 수치의 단위를 입력해주세요.")
         String metric,
