@@ -5,7 +5,6 @@ import static org.moonshot.server.global.common.response.SuccessType.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.moonshot.server.domain.keyresult.dto.request.KeyResultCreateRequestDto;
-import org.moonshot.server.domain.keyresult.dto.request.KeyResultDeleteRequestDto;
 import org.moonshot.server.domain.keyresult.dto.request.KeyResultModifyRequestDto;
 import org.moonshot.server.domain.keyresult.service.KeyResultService;
 import org.moonshot.server.global.common.response.ApiResponse;
