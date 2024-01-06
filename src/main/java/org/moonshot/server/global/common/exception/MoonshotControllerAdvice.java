@@ -1,14 +1,13 @@
 package org.moonshot.server.global.common.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintDefinitionException;
 import jakarta.validation.UnexpectedTypeException;
 import lombok.extern.slf4j.Slf4j;
 import org.moonshot.server.global.common.response.ApiResponse;
 import org.moonshot.server.global.common.response.ErrorType;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -77,6 +76,12 @@ public class MoonshotControllerAdvice {
     protected ApiResponse<?> handlerHttpRequestMethodNotSupportedException(final HttpRequestMethodNotSupportedException e) {
         log.error(e.getMessage(), e);
         return ApiResponse.error(ErrorType.INVALID_HTTP_METHOD);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ConstraintDefinitionException.class)
+    protected ApiResponse<?> handlerConstraintDefinitionException(final ConstraintDefinitionException e) {
+        return ApiResponse.error(ErrorType.INVALID_HTTP_REQUEST, e.toString());
     }
 
     /**
