@@ -1,10 +1,14 @@
 package org.moonshot.server.domain.keyresult.service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.moonshot.server.domain.keyresult.dto.request.KeyResultCreateRequestDto;
 import org.moonshot.server.domain.keyresult.dto.request.KeyResultCreateRequestInfoDto;
+import org.moonshot.server.domain.keyresult.dto.request.KeyResultModifyRequestDto;
 import org.moonshot.server.domain.keyresult.exception.KeyResultInvalidPositionException;
+import org.moonshot.server.domain.keyresult.exception.KeyResultNotFoundException;
 import org.moonshot.server.domain.keyresult.exception.KeyResultNumberExceededException;
 import org.moonshot.server.domain.keyresult.model.KeyResult;
 import org.moonshot.server.domain.keyresult.repository.KeyResultRepository;
@@ -27,6 +31,10 @@ public class KeyResultService {
     private final ObjectiveRepository objectiveRepository;
     private final KeyResultRepository keyResultRepository;
     private final TaskRepository taskRepository;
+
+    //TODO
+    // 여기 모든 로직에 User 관련 기능이 추가된 이후
+    // KeyResult의 소유자인지 확인하는 절차를 추가해야 함.
 
     @Transactional
     public void createInitKRWithObjective(Objective objective, List<KeyResultCreateRequestInfoDto> requests) {
@@ -89,10 +97,29 @@ public class KeyResultService {
     }
 
     private void cascadeDelete(List<KeyResult> krList) {
-        krList.forEach((kr) -> {
-            taskRepository.deleteAllInBatch(taskRepository.findAllByKeyResult(kr));
-        });
+        krList.forEach((kr) -> taskRepository.deleteAllInBatch(taskRepository.findAllByKeyResult(kr)));
         keyResultRepository.deleteAllInBatch(krList);
+    }
+
+    @Transactional
+    public void modifyKeyResult(KeyResultModifyRequestDto request) {
+        KeyResult keyResult = keyResultRepository.findById(request.keyResultId())
+                .orElseThrow(KeyResultNotFoundException::new);
+
+        if (request.title() != null) {
+            keyResult.modifyTitle(request.title());
+        }
+        if (request.startAt() != null || request.expireAt() != null) {
+            LocalDateTime newStartAt = (request.startAt() != null) ? request.startAt() : keyResult.getPeriod().getStartAt();
+            LocalDateTime newExpireAt = (request.expireAt() != null) ? request.expireAt() : keyResult.getPeriod().getExpireAt();
+            keyResult.modifyPeriod(Period.of(newStartAt, newExpireAt));
+        }
+        if (request.target() != null) {
+            keyResult.modifyTarget(request.target());
+        }
+        if (request.state() != null) {
+            keyResult.modifyState(request.state());
+        }
     }
 
 }

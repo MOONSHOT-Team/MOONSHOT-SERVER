@@ -3,7 +3,6 @@ package org.moonshot.server.global.common.response;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.boot.actuate.autoconfigure.observation.ObservationProperties.Http;
 import org.springframework.http.HttpStatus;
 
 @Getter
@@ -29,6 +28,7 @@ public enum ErrorType {
      */
     NOT_FOUND_USER_ERROR(HttpStatus.NOT_FOUND, "존재하지 않는 유저입니다."),
     NOT_FOUND_OBJECTIVE_ERROR(HttpStatus.NOT_FOUND, "존재하지 않는 Objective입니다."),
+    NOT_FOUND_KEY_RESULT_ERROR(HttpStatus.NOT_FOUND, "존재하지 않는 KeyResult입니다."),
 
     /**
      * 500 INTERNAL SERVER ERROR
