@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
-import org.moonshot.server.domain.objective.dto.request.TaskCreateRequestDto;
+import org.moonshot.server.domain.task.dto.request.TaskCreateRequestDto;
 import org.springframework.format.annotation.DateTimeFormat;
 
 public record KeyResultCreateRequestInfoDto(

@@ -21,8 +21,10 @@ public enum ErrorType {
     INVALID_HTTP_METHOD(HttpStatus.BAD_REQUEST, "지원되지 않는 HTTP method 요청입니다."),
     INVALID_IMAGE_EXTENSION(HttpStatus.BAD_REQUEST, "지원하지 않는 이미지 확장자입니다."),
     ACTIVE_OBJECTIVE_NUMBER_EXCEEDED(HttpStatus.BAD_REQUEST, "허용된 Objective 개수를 초과하였습니다"),
-    KEY_RESULT_NUMBER_EXCEEDED(HttpStatus.BAD_REQUEST, "허용된 Objective 개수를 초과하였습니다"),
+    ACTIVE_KEY_RESULT_NUMBER_EXCEEDED(HttpStatus.BAD_REQUEST, "허용된 Key Result 개수를 초과하였습니다"),
+    ACTIVE_TASK_NUMBER_EXCEEDED(HttpStatus.BAD_REQUEST, "허용된 Task 개수를 초과하였습니다."),
     INVALID_KEY_RESULT_ORDER(HttpStatus.BAD_REQUEST, "정상적이지 않은 KeyResult 위치입니다."),
+    INVALID_TASK_ORDER(HttpStatus.BAD_REQUEST, "정상적이지 않은 Task 위치입니다."),
 
     /**
      * 404 NOT FOUND
