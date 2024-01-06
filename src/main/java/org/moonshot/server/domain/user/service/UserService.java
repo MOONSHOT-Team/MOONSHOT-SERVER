@@ -21,13 +21,14 @@ import org.moonshot.server.global.auth.jwt.TokenResponse;
 import org.moonshot.server.global.auth.security.UserAuthentication;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.Optional;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class UserService {
 
     @Value("${google.client-id}")
@@ -52,6 +53,7 @@ public class UserService {
     private final KakaoApiClient kakaoApiClient;
     private final JwtTokenProvider jwtTokenProvider;
 
+    @Transactional
     public SocialLoginResponse login(SocialLoginRequest request) throws IOException {
         switch (request.socialPlatform().getValue()){
             case "google":
@@ -62,6 +64,7 @@ public class UserService {
         return null;
     }
 
+    @Transactional
     public SocialLoginResponse gooleLogin(SocialLoginRequest request) throws IOException {
         GoogleTokenResponse tokenResponse = googleAuthApiClient.googleAuth(
                 request.code(),
@@ -70,10 +73,7 @@ public class UserService {
                 googleRedirectUrl,
                 "authorization_code"
         );
-        //TODO - 인증코드 유효하지 않을떄 에러처리
         GoogleInfoResponse userResponse = googleApiClient.googleInfo("Bearer " + tokenResponse.accessToken());
-        UserAuthentication userAuthentication = new UserAuthentication(userResponse.sub(), null, null);
-        TokenResponse token = new TokenResponse(jwtTokenProvider.generateAccessToken(userAuthentication), jwtTokenProvider.generateRefreshToken(userAuthentication));
         Optional<User> findUser = userRepository.findUserBySocialId(userResponse.sub());
         User user;
         if (findUser.isEmpty()) {
@@ -89,9 +89,12 @@ public class UserService {
         } else {
             user = findUser.get();
         }
+        UserAuthentication userAuthentication = new UserAuthentication(user.getId(), null, null);
+        TokenResponse token = new TokenResponse(jwtTokenProvider.generateAccessToken(userAuthentication), jwtTokenProvider.generateRefreshToken(userAuthentication));
         return SocialLoginResponse.of(user.getId(), user.getName(), token);
     }
 
+    @Transactional
     public SocialLoginResponse kakaoLogin(SocialLoginRequest request) throws IOException {
         KakaoTokenResponse tokenResponse = kakaoAuthApiClient.getOAuth2AccessToken(
                 "authorization_code",
@@ -99,11 +102,8 @@ public class UserService {
                 kakaoRedirectUrl,
                 request.code()
         );
-        //TODO - 인증코드 유효하지 않을떄 에러처리
         KakaoUserResponse userResponse = kakaoApiClient.getUserInformation(
                 "Bearer " + tokenResponse.accessToken());
-        UserAuthentication userAuthentication = new UserAuthentication(userResponse.id(), null, null);
-        TokenResponse token = new TokenResponse(jwtTokenProvider.generateAccessToken(userAuthentication), jwtTokenProvider.generateRefreshToken(userAuthentication));
         Optional<User> findUser = userRepository.findUserBySocialId(userResponse.id());
         User user;
         if (findUser.isEmpty()) {
@@ -119,14 +119,23 @@ public class UserService {
         } else {
             user = findUser.get();
         }
+        UserAuthentication userAuthentication = new UserAuthentication(user.getId(), null, null);
+        TokenResponse token = new TokenResponse(jwtTokenProvider.generateAccessToken(userAuthentication), jwtTokenProvider.generateRefreshToken(userAuthentication));
         return SocialLoginResponse.of(user.getId(), user.getName(), token);
     }
 
+    @Transactional
     public TokenResponse reissue(String refreshToken) {
-        String userId = jwtTokenProvider.validateRefreshToken(refreshToken);
-        jwtTokenProvider.deleteRefreshToken(refreshToken);
+        String token = refreshToken.substring("Bearer ".length());
+        Long userId = jwtTokenProvider.validateRefreshToken(token);
+        jwtTokenProvider.deleteRefreshToken(userId);
         UserAuthentication userAuthentication = new UserAuthentication(userId, null, null);
         return jwtTokenProvider.reissuedToken(userAuthentication);
+    }
+
+    @Transactional
+    public void logout(Long userId) {
+        jwtTokenProvider.deleteRefreshToken(userId);
     }
 
 }

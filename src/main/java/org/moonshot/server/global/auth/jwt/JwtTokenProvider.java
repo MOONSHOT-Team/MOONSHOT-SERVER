@@ -10,6 +10,7 @@ import org.moonshot.server.global.auth.exception.InvalidRefreshTokenException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
@@ -76,8 +77,8 @@ public class JwtTokenProvider {
                 .compact();
 
         redisTemplate.opsForValue().set(
-                "Bearer " + refreshToken,
                 authentication.getName(),
+                refreshToken,
                 REFRESH_TOKEN_EXPIRATION_TIME,
                 TimeUnit.MILLISECONDS
         );
@@ -104,19 +105,23 @@ public class JwtTokenProvider {
         }
     }
 
-    public String validateRefreshToken(String refreshToken) {
-        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
-        String userId = valueOperations.get(refreshToken);
-        if (userId == null) {
-            throw new InvalidRefreshTokenException();
-        }
-        else {
+    public Long validateRefreshToken(String refreshToken) {
+        Long userId = getUserFromJwt(refreshToken);
+        if (redisTemplate.hasKey(String.valueOf(userId))) {
             return userId;
+        } else {
+            throw new InvalidRefreshTokenException();
         }
     }
 
-    public void deleteRefreshToken(String refreshToken) {
-        redisTemplate.delete(refreshToken);
+    public void deleteRefreshToken(Long userId) {
+        if (redisTemplate.hasKey(String.valueOf(userId))) {
+            ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+            String refreshToken = valueOperations.get(String.valueOf(userId));
+            redisTemplate.delete(refreshToken);
+        } else {
+            throw new InvalidRefreshTokenException();
+        }
     }
 
     private Claims parseClaims(String accessToken) {
@@ -135,9 +140,9 @@ public class JwtTokenProvider {
                 .getBody();
     }
 
-    public String  getUserFromJwt(String token) {
+    public Long getUserFromJwt(String token) {
         Claims claims = getBody(token);
-        return claims.get(USER_ID).toString();
+        return Long.parseLong(claims.get(USER_ID).toString());
     }
 
 }
