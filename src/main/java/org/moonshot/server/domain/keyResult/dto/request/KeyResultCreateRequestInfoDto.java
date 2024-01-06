@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.moonshot.server.domain.task.dto.request.TaskCreateRequestDto;
+import org.hibernate.validator.constraints.Range;
+import org.moonshot.server.global.common.model.validator.ValidTargetNumber;
 import org.springframework.format.annotation.DateTimeFormat;
 
 public record KeyResultCreateRequestInfoDto(
@@ -18,9 +20,11 @@ public record KeyResultCreateRequestInfoDto(
         @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
         LocalDateTime expireAt,
         @NotNull(message = "KR의 순서를 입력해주세요.")
-        short idx,
+        @Range(min = 0, max = 2, message = "KeyResult의 순서는 0부터 2까지로 설정할 수 있습니다.")
+        Short idx,
         @NotNull(message = "KR 목표 수치를 입력해주세요.")
-        int target,
+        @ValidTargetNumber
+        Integer target,
         @NotNull(message = "KR 목표 수치의 단위를 입력해주세요.")
         String metric,
         @NotNull(message = "KR 목표의 이전 수식을 입력해주세요.")

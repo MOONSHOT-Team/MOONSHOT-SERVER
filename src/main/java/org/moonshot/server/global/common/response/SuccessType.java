@@ -26,6 +26,7 @@ public enum SuccessType {
     /**
      * 204 NO CONTENT
      */
+    PATCH_KEY_RESULT_SUCCESS(HttpStatus.NO_CONTENT, "KeyResult 수정을 성공하였습니다."),
     DELETE_KEY_RESULT_SUCCESS(HttpStatus.NO_CONTENT, "KeyResult 삭제를 성공하였습니다."),
     DELETE_OBJECTIVE_SUCCESS(HttpStatus.NO_CONTENT, "Objective 삭제를 성공하였습니다.");
 
