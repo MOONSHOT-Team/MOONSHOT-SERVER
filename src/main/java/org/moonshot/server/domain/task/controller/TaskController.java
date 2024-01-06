@@ -4,7 +4,6 @@ import static org.moonshot.server.global.common.response.SuccessType.*;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.moonshot.server.domain.task.dto.request.TaskCreateRequestDto;
 import org.moonshot.server.domain.task.dto.request.TaskSingleCreateRequestDto;
 import org.moonshot.server.domain.task.service.TaskService;
 import org.moonshot.server.global.common.response.ApiResponse;

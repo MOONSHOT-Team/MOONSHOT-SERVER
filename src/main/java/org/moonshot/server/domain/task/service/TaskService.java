@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.moonshot.server.domain.keyresult.exception.KeyResultInvalidPositionException;
 import org.moonshot.server.domain.keyresult.model.KeyResult;
 import org.moonshot.server.domain.keyresult.repository.KeyResultRepository;
-import org.moonshot.server.domain.task.dto.request.TaskCreateRequestDto;
 import org.moonshot.server.domain.task.dto.request.TaskSingleCreateRequestDto;
 import org.moonshot.server.domain.task.exception.TaskNumberExceededException;
 import org.moonshot.server.domain.task.model.Task;
