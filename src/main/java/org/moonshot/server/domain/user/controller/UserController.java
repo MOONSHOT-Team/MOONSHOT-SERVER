@@ -3,6 +3,7 @@ package org.moonshot.server.domain.user.controller;
 import lombok.RequiredArgsConstructor;
 import org.moonshot.server.domain.user.dto.request.SocialLoginRequest;
 import org.moonshot.server.domain.user.dto.response.SocialLoginResponse;
+import org.moonshot.server.domain.user.model.CurrentUser;
 import org.moonshot.server.domain.user.service.UserService;
 import org.moonshot.server.global.auth.jwt.TokenResponse;
 import org.moonshot.server.global.common.response.ApiResponse;
@@ -27,8 +28,15 @@ public class UserController {
     @PostMapping("/reissue")
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse<TokenResponse> reissue(
-            @RequestHeader("Authorization") String refreshToken) throws IOException { // 이것도 수정해야함
+            @RequestHeader("Authorization") String refreshToken) throws IOException {
         return ApiResponse.success(SuccessType.POST_REISSUE_SUCCESS, userService.reissue(refreshToken));
+    }
+
+    @PostMapping("/log-out")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse<?> logout(@CurrentUser Long userId) {
+        userService.logout(userId);
+        return ApiResponse.success(SuccessType.POST_LOGOUT_SUCCESS);
     }
 
     @GetMapping("/login/oauth2/code/kakao")
