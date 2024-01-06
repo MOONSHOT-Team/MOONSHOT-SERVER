@@ -27,9 +27,9 @@ public enum ErrorType {
     /**
      * 401 UNAUTHROZIED
      */
-    INVALID_AUTHORIZATION_ERROR(HttpStatus.UNAUTHORIZED, "유효하지 않은 인증코드입니다."),
+    INVALID_AUTHORIZATION_ERROR(HttpStatus.UNAUTHORIZED, "유효하지 않은 인증 코드입니다."),
     INVALID_REFRESHTOKEN_ERROR(HttpStatus.UNAUTHORIZED, "유효하지 않은 RefreshToken입니다."),
-
+    INVALID_AUTH_ERROR(HttpStatus.UNAUTHORIZED, "인증되지 않은 사용자입니다."),
 
     /**
      * 404 NOT FOUND

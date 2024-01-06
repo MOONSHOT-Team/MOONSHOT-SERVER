@@ -6,6 +6,7 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.moonshot.server.domain.user.exception.UserNotFoundException;
+import org.moonshot.server.global.auth.exception.InvalidAuthException;
 import org.moonshot.server.global.auth.exception.InvalidRefreshTokenException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -16,9 +17,12 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
+import java.security.Principal;
 import java.util.Base64;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
+
+import static java.util.Objects.isNull;
 
 @Slf4j
 @Component
@@ -26,8 +30,8 @@ import java.util.concurrent.TimeUnit;
 public class JwtTokenProvider {
 
     private static final String USER_ID = "userId";
-    private static final Long ACCESS_TOKEN_EXPIRATION_TIME = 60 * 1000L;  // 액세스 토큰 만료 시간: 1분으로 지정
-    private static final Long REFRESH_TOKEN_EXPIRATION_TIME = 60 * 1000L * 2;  // 리프레시 토큰 만료 시간: 2분으로 지정
+    private static final Long ACCESS_TOKEN_EXPIRATION_TIME = 60 * 1000L * 20;  // 액세스 토큰 만료 시간: 1분으로 지정
+    private static final Long REFRESH_TOKEN_EXPIRATION_TIME = 60 * 1000L * 60;  // 리프레시 토큰 만료 시간: 2분으로 지정
     private final RedisTemplate<String, String> redisTemplate;
 
     @Value("${jwt.secret}")
@@ -143,6 +147,13 @@ public class JwtTokenProvider {
     public Long getUserFromJwt(String token) {
         Claims claims = getBody(token);
         return Long.parseLong(claims.get(USER_ID).toString());
+    }
+
+    public static Long getUserFromPrincipal(Principal principal) {
+        if (isNull(principal)) {
+            throw new InvalidAuthException();
+        }
+        return Long.valueOf(principal.getName());
     }
 
 }
