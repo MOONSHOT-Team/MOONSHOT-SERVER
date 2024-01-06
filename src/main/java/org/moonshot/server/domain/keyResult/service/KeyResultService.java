@@ -87,8 +87,11 @@ public class KeyResultService {
     }
 
     @Transactional
-    public void deleteKeyResult(List<Long> keyResultIds) {
-        cascadeDelete(keyResultRepository.findByIdIn(keyResultIds));
+    public void deleteKeyResult(Long keyResultId) {
+        KeyResult keyResult = keyResultRepository.findById(keyResultId)
+                .orElseThrow(KeyResultNotFoundException::new);
+        taskRepository.deleteAllInBatch(taskRepository.findAllByKeyResult(keyResult));
+        keyResultRepository.delete(keyResult);
     }
 
     @Transactional
