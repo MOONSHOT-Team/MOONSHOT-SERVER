@@ -14,6 +14,7 @@ public enum SuccessType {
      */
     OK(HttpStatus.OK, "성공"),
     GET_PRESIGNED_URL_SUCCESS(HttpStatus.OK, "Presigned Url 조회에 성공하였습니다."),
+    GET_LOGIN_SUCCESS(HttpStatus.OK, "로그인에 성공하였습니다."),
 
     /**
      * 201 CREATED
