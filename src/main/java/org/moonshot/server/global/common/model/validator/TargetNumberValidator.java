@@ -2,7 +2,6 @@ package org.moonshot.server.global.common.model.validator;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

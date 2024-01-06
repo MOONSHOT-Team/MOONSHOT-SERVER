@@ -1,16 +1,10 @@
 package org.moonshot.server.domain.keyresult.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
-import org.moonshot.server.domain.log.model.Log;
-import org.moonshot.server.domain.task.model.Task;
 import org.moonshot.server.domain.objective.model.Objective;
 import org.moonshot.server.global.common.model.Period;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
