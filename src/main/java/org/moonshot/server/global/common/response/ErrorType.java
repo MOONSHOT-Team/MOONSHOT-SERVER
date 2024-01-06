@@ -25,6 +25,13 @@ public enum ErrorType {
     INVALID_KEY_RESULT_ORDER(HttpStatus.BAD_REQUEST, "정상적이지 않은 KeyResult 위치입니다."),
 
     /**
+     * 401 UNAUTHROZIED
+     */
+    INVALID_AUTHORIZATION_ERROR(HttpStatus.UNAUTHORIZED, "유효하지 않은 인증코드입니다."),
+    INVALID_REFRESHTOKEN_ERROR(HttpStatus.UNAUTHORIZED, "유효하지 않은 RefreshToken입니다."),
+
+
+    /**
      * 404 NOT FOUND
      */
     NOT_FOUND_USER_ERROR(HttpStatus.NOT_FOUND, "존재하지 않는 유저입니다."),

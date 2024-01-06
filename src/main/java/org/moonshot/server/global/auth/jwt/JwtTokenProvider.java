@@ -5,8 +5,11 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.moonshot.server.domain.user.exception.UserNotFoundException;
+import org.moonshot.server.global.auth.exception.InvalidRefreshTokenException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
@@ -35,8 +38,8 @@ public class JwtTokenProvider {
     }
 
     // Access 토큰, Refresh 토큰 발급
-    public Token issueToken(Authentication authentication) {
-        return Token.of(
+    public TokenResponse reissuedToken(Authentication authentication) {
+        return TokenResponse.of(
                 generateAccessToken(authentication),
                 generateRefreshToken(authentication));
     }
@@ -99,6 +102,21 @@ public class JwtTokenProvider {
         } catch (IllegalArgumentException ex) {
             return JwtValidationType.EMPTY_JWT;
         }
+    }
+
+    public String validateRefreshToken(String refreshToken) {
+        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+        String userId = valueOperations.get(refreshToken);
+        if (userId == null) {
+            throw new InvalidRefreshTokenException();
+        }
+        else {
+            return userId;
+        }
+    }
+
+    public void deleteRefreshToken(String refreshToken) {
+        redisTemplate.delete(refreshToken);
     }
 
     private Claims parseClaims(String accessToken) {

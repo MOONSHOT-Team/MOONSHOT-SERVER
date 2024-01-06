@@ -2,15 +2,14 @@ package org.moonshot.server.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import lombok.extern.slf4j.XSlf4j;
+import org.moonshot.server.domain.objective.exception.ObjectiveNotFoundException;
 import org.moonshot.server.domain.user.dto.request.SocialLoginRequest;
 import org.moonshot.server.domain.user.dto.response.SocialLoginResponse;
 import org.moonshot.server.domain.user.dto.response.google.GoogleInfoResponse;
 import org.moonshot.server.domain.user.dto.response.google.GoogleTokenResponse;
 import org.moonshot.server.domain.user.dto.response.kakao.KakaoTokenResponse;
 import org.moonshot.server.domain.user.dto.response.kakao.KakaoUserResponse;
-import org.moonshot.server.domain.user.exception.InvalidAuthorizationException;
-import org.moonshot.server.domain.user.model.SocialPlatform;
+import org.moonshot.server.domain.user.exception.UserNotFoundException;
 import org.moonshot.server.domain.user.model.User;
 import org.moonshot.server.domain.user.repository.UserRepository;
 import org.moonshot.server.global.auth.feign.google.GoogleApiClient;
@@ -18,7 +17,7 @@ import org.moonshot.server.global.auth.feign.google.GoogleAuthApiClient;
 import org.moonshot.server.global.auth.feign.kakao.KakaoApiClient;
 import org.moonshot.server.global.auth.feign.kakao.KakaoAuthApiClient;
 import org.moonshot.server.global.auth.jwt.JwtTokenProvider;
-import org.moonshot.server.global.auth.jwt.Token;
+import org.moonshot.server.global.auth.jwt.TokenResponse;
 import org.moonshot.server.global.auth.security.UserAuthentication;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -71,14 +70,11 @@ public class UserService {
                 googleRedirectUrl,
                 "authorization_code"
         );
-
+        //TODO - 인증코드 유효하지 않을떄 에러처리
         GoogleInfoResponse userResponse = googleApiClient.googleInfo("Bearer " + tokenResponse.accessToken());
-
         UserAuthentication userAuthentication = new UserAuthentication(userResponse.sub(), null, null);
-        Token token = new Token(jwtTokenProvider.generateAccessToken(userAuthentication), jwtTokenProvider.generateRefreshToken(userAuthentication));
-
+        TokenResponse token = new TokenResponse(jwtTokenProvider.generateAccessToken(userAuthentication), jwtTokenProvider.generateRefreshToken(userAuthentication));
         Optional<User> findUser = userRepository.findUserBySocialId(userResponse.sub());
-
         User user;
         if (findUser.isEmpty()) {
             User newUser = userRepository.save(User.builderWithSignIn()
@@ -93,7 +89,6 @@ public class UserService {
         } else {
             user = findUser.get();
         }
-
         return SocialLoginResponse.of(user.getId(), user.getName(), token);
     }
 
@@ -104,12 +99,11 @@ public class UserService {
                 kakaoRedirectUrl,
                 request.code()
         );
-
+        //TODO - 인증코드 유효하지 않을떄 에러처리
         KakaoUserResponse userResponse = kakaoApiClient.getUserInformation(
                 "Bearer " + tokenResponse.accessToken());
         UserAuthentication userAuthentication = new UserAuthentication(userResponse.id(), null, null);
-        Token token = new Token(jwtTokenProvider.generateAccessToken(userAuthentication), jwtTokenProvider.generateRefreshToken(userAuthentication));
-
+        TokenResponse token = new TokenResponse(jwtTokenProvider.generateAccessToken(userAuthentication), jwtTokenProvider.generateRefreshToken(userAuthentication));
         Optional<User> findUser = userRepository.findUserBySocialId(userResponse.id());
         User user;
         if (findUser.isEmpty()) {
@@ -125,8 +119,14 @@ public class UserService {
         } else {
             user = findUser.get();
         }
-
         return SocialLoginResponse.of(user.getId(), user.getName(), token);
+    }
+
+    public TokenResponse reissue(String refreshToken) {
+        String userId = jwtTokenProvider.validateRefreshToken(refreshToken);
+        jwtTokenProvider.deleteRefreshToken(refreshToken);
+        UserAuthentication userAuthentication = new UserAuthentication(userId, null, null);
+        return jwtTokenProvider.reissuedToken(userAuthentication);
     }
 
 }
