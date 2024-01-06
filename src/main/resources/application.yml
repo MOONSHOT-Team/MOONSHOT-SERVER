@@ -1,5 +1,3 @@
-
-
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -29,10 +27,14 @@ google:
 
 kakao:
   client-id: ${KAKAO_CLIENT_ID}
-  url: ${KAKAO_URL}
+  redirect-url: ${KAKAO_URL}
 
 jwt:
   secret: ${JWT_SECRET}
+
+redis:
+  host: localhost
+  port: 6379
 
 server:
   ip: ${SERVER_IP}
