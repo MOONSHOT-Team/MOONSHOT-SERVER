@@ -95,9 +95,7 @@ public class KeyResultService {
     }
 
     private void cascadeDelete(List<KeyResult> krList) {
-        krList.forEach((kr) -> {
-            taskRepository.deleteAllInBatch(taskRepository.findAllByKeyResult(kr));
-        });
+        krList.forEach((kr) -> taskRepository.deleteAllInBatch(taskRepository.findAllByKeyResult(kr)));
         keyResultRepository.deleteAllInBatch(krList);
     }
 
