@@ -57,4 +57,20 @@ public class KeyResult {
     public void incrementIdx() {
         ++this.idx;
     }
+
+    public void modifyTitle(String title) {
+        this.title = title;
+    }
+
+    public void modifyPeriod(Period period) {
+        this.period = period;
+    }
+
+    public void modifyIdx(Short idx) {
+        this.idx = idx;
+    }
+
+    public void modifyTarget(Integer target) {
+        this.target = target;
+    }
 }
