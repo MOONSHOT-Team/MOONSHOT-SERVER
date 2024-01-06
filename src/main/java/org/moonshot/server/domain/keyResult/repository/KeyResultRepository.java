@@ -17,7 +17,4 @@ public interface KeyResultRepository extends JpaRepository<KeyResult, Long> {
     @Query("select kr from KeyResult kr join fetch kr.objective where kr.id = :keyResultId")
     Optional<KeyResult> findKeyResultAndObjective(@Param("keyResultId") Long keyResultId);
 
-    @Query("select kr from KeyResult kr join fetch kr.objective where kr.id = :keyResultId")
-    Optional<KeyResult> findKeyResultAndObjective(@Param("keyResultId") Long keyResultId);
-
 }
