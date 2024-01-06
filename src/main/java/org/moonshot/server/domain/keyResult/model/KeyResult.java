@@ -32,10 +32,10 @@ public class KeyResult {
     private Period period;
 
     @Column(nullable = false)
-    private int target;
+    private Integer target;
 
     @Column(nullable = false)
-    private short idx;
+    private Short idx;
 
     @Column(nullable = false)
     private String metric;

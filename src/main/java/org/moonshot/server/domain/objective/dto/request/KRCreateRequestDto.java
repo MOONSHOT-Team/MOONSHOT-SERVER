@@ -17,7 +17,7 @@ public record KRCreateRequestDto(
         @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
         LocalDateTime expireAt,
         @NotNull(message = "KR 목표 수치를 입력해주세요.")
-        int target,
+        Integer target,
         @NotNull(message = "KR 목표 수치의 단위를 입력해주세요.")
         String metric,
         @NotNull(message = "KR 목표의 이전 수식을 입력해주세요.")
