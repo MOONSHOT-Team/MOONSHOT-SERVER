@@ -3,13 +3,11 @@ package org.moonshot.server.domain.user.controller;
 import lombok.RequiredArgsConstructor;
 import org.moonshot.server.domain.user.dto.request.SocialLoginRequest;
 import org.moonshot.server.domain.user.dto.response.SocialLoginResponse;
-import org.moonshot.server.domain.user.model.CurrentUser;
 import org.moonshot.server.domain.user.service.UserService;
 import org.moonshot.server.global.auth.jwt.JwtTokenProvider;
 import org.moonshot.server.global.auth.jwt.TokenResponse;
 import org.moonshot.server.global.common.response.ApiResponse;
 import org.moonshot.server.global.common.response.SuccessType;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -28,17 +26,21 @@ public class UserController {
     }
 
     @PostMapping("/reissue")
-    @ResponseStatus(HttpStatus.OK)
     public ApiResponse<TokenResponse> reissue(
             @RequestHeader("Authorization") String refreshToken) {
         return ApiResponse.success(SuccessType.POST_REISSUE_SUCCESS, userService.reissue(refreshToken));
     }
 
     @PostMapping("/log-out")
-    @ResponseStatus(HttpStatus.OK)
     public ApiResponse<?> logout(Principal principal) {
         userService.logout(JwtTokenProvider.getUserFromPrincipal(principal));
         return ApiResponse.success(SuccessType.POST_LOGOUT_SUCCESS);
+    }
+
+    @DeleteMapping("/withdrawal")
+    public ApiResponse<?> withdrawal(Principal principal) {
+        userService.withdrawal(JwtTokenProvider.getUserFromPrincipal(principal));
+        return ApiResponse.success(SuccessType.DELETE_USER_SUCCESS);
     }
 
 //    @GetMapping("/login/oauth2/code/kakao")
@@ -48,4 +50,5 @@ public class UserController {
 //
 //    @GetMapping("/login/oauth2/code/google")
 //    public String googleSuccess(@RequestParam String code, @RequestParam String scope, @RequestParam String prompt) { return code; }
+
 }

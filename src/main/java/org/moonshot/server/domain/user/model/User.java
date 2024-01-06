@@ -47,4 +47,8 @@ public class User {
                 .build();
     }
 
+    public void modifySocialPlatform(SocialPlatform socialPlatform) {
+        this.socialPlatform = socialPlatform;
+    }
+
 }

@@ -29,7 +29,8 @@ public enum SuccessType {
      * 204 NO CONTENT
      */
     DELETE_KEY_RESULT_SUCCESS(HttpStatus.NO_CONTENT, "KeyResult 삭제를 성공하였습니다."),
-    DELETE_OBJECTIVE_SUCCESS(HttpStatus.NO_CONTENT, "Objective 삭제를 성공하였습니다.");
+    DELETE_OBJECTIVE_SUCCESS(HttpStatus.NO_CONTENT, "Objective 삭제를 성공하였습니다."),
+    DELETE_USER_SUCCESS(HttpStatus.NO_CONTENT, "회원 탈퇴에 성공하였습니다." );
 
     private final HttpStatus httpStatus;
     private final String message;

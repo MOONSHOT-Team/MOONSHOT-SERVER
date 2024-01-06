@@ -1,8 +1,6 @@
 package org.moonshot.server.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.moonshot.server.domain.objective.exception.ObjectiveNotFoundException;
 import org.moonshot.server.domain.user.dto.request.SocialLoginRequest;
 import org.moonshot.server.domain.user.dto.response.SocialLoginResponse;
 import org.moonshot.server.domain.user.dto.response.google.GoogleInfoResponse;
@@ -10,6 +8,7 @@ import org.moonshot.server.domain.user.dto.response.google.GoogleTokenResponse;
 import org.moonshot.server.domain.user.dto.response.kakao.KakaoTokenResponse;
 import org.moonshot.server.domain.user.dto.response.kakao.KakaoUserResponse;
 import org.moonshot.server.domain.user.exception.UserNotFoundException;
+import org.moonshot.server.domain.user.model.SocialPlatform;
 import org.moonshot.server.domain.user.model.User;
 import org.moonshot.server.domain.user.repository.UserRepository;
 import org.moonshot.server.global.auth.feign.google.GoogleApiClient;
@@ -88,6 +87,9 @@ public class UserService {
             user = newUser;
         } else {
             user = findUser.get();
+            if (user.getSocialPlatform().equals(SocialPlatform.WITHDRAWAL)) {
+                user.modifySocialPlatform(SocialPlatform.GOOGLE);
+            }
         }
         UserAuthentication userAuthentication = new UserAuthentication(user.getId(), null, null);
         TokenResponse token = new TokenResponse(jwtTokenProvider.generateAccessToken(userAuthentication), jwtTokenProvider.generateRefreshToken(userAuthentication));
@@ -118,6 +120,9 @@ public class UserService {
             user = newUser;
         } else {
             user = findUser.get();
+            if (user.getSocialPlatform().equals(SocialPlatform.WITHDRAWAL)) {
+                user.modifySocialPlatform(SocialPlatform.KAKAO);
+            }
         }
         UserAuthentication userAuthentication = new UserAuthentication(user.getId(), null, null);
         TokenResponse token = new TokenResponse(jwtTokenProvider.generateAccessToken(userAuthentication), jwtTokenProvider.generateRefreshToken(userAuthentication));
@@ -136,6 +141,13 @@ public class UserService {
     @Transactional
     public void logout(Long userId) {
         jwtTokenProvider.deleteRefreshToken(userId);
+    }
+
+    @Transactional
+    public void withdrawal(Long userId) {
+        User user =  userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+        user.modifySocialPlatform(SocialPlatform.WITHDRAWAL);
     }
 
 }

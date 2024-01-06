@@ -25,7 +25,7 @@ public class SecurityConfig {
             "/login/**",
             "/",
             "/actuator/health",
-            "v1/user",
+            "/v1/user/**",
             "/v1/image",
             "/v1/objective",
             "/v1/key-result",
@@ -69,7 +69,7 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
         config.addAllowedOrigin("http://localhost:8080");
-        config.addAllowedOrigin("http://localhost:3000");
+        config.addAllowedOrigin("http://localhost:5173");
         config.addAllowedOrigin("https://kauth.kakao.com");
         config.addAllowedOrigin("https://kapi.kakao.com");
         config.addAllowedOrigin("http://www.googleapis.com");
