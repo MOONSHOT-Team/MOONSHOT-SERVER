@@ -2,6 +2,7 @@ package org.moonshot.server.global.config;
 
 import lombok.RequiredArgsConstructor;
 import org.moonshot.server.global.auth.filter.MoonshotExceptionHandler;
+import org.moonshot.server.global.auth.security.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -23,6 +25,7 @@ public class SecurityConfig {
             "/login/**",
             "/",
             "/actuator/health",
+            "v1/user",
             "/v1/image",
             "/v1/objective",
             "/v1/key-result",
@@ -32,6 +35,7 @@ public class SecurityConfig {
             "/api-docs/**"
     };
 
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final MoonshotExceptionHandler moonshotExceptionHandler;
     @Value("${server.ip}")
     private String serverIp;
@@ -55,6 +59,8 @@ public class SecurityConfig {
                         authorizationManagerRequestMatcherRegistry.requestMatchers(WHITELIST).permitAll())
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
                         authorizationManagerRequestMatcherRegistry.anyRequest().authenticated())
+                .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
+                        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class))
                 .build();
     }
 
