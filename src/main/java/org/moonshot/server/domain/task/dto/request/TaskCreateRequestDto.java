@@ -1,4 +1,4 @@
-package org.moonshot.server.domain.objective.dto.request;
+package org.moonshot.server.domain.task.dto.request;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
