@@ -26,7 +26,7 @@ public class SecurityConfig {
             "/v1/image",
             "/v1/objective",
             "/v1/task",
-            "/v1/key-result",
+            "/v1/key-result/**",
             "/error",
             "/swagger-ui/**",
             "/swagger-resources/**",
