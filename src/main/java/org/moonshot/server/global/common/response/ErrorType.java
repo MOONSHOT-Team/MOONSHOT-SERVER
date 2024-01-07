@@ -30,6 +30,7 @@ public enum ErrorType {
     INVALID_AUTHORIZATION_ERROR(HttpStatus.UNAUTHORIZED, "유효하지 않은 인증 코드입니다."),
     INVALID_REFRESHTOKEN_ERROR(HttpStatus.UNAUTHORIZED, "유효하지 않은 RefreshToken입니다."),
     INVALID_AUTH_ERROR(HttpStatus.UNAUTHORIZED, "인증되지 않은 사용자입니다."),
+    EXPIRED_TOKEN_ERROR(HttpStatus.UNAUTHORIZED, "만료된 TOKEN입니다."),
 
     /**
      * 404 NOT FOUND
@@ -51,5 +52,5 @@ public enum ErrorType {
     public int getHttpStatusCode() {
         return httpStatus.value();
     }
-    
+
 }

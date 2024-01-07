@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.moonshot.server.global.auth.exception.ExpiredTokenException;
 import org.moonshot.server.global.auth.jwt.JwtTokenProvider;
 import org.moonshot.server.global.auth.jwt.JwtValidationType;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -35,6 +36,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 UserAuthentication authentication = new UserAuthentication(userId, null, null);
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+            } else if (jwtTokenProvider.validateAccessToken(token) == JwtValidationType.EXPIRED_JWT_TOKEN){
+                throw new ExpiredTokenException();
             }
         } catch (Exception exception) {
             log.info("Error Occured: ", exception);

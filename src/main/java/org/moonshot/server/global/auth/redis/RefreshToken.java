@@ -4,11 +4,10 @@ import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import org.moonshot.server.global.constants.JWTConstants;
 import org.springframework.data.redis.core.RedisHash;
 
-import static org.moonshot.server.global.constants.JWTConstants.REFRESH_TOKEN_EXPIRATION_TIME;
-
-@RedisHash(value = "refreshToken", timeToLive = REFRESH_TOKEN_EXPIRATION_TIME)
+@RedisHash(value = "refreshToken", timeToLive = 60 * 1000L * 60 * 24 * 7 * 2)
 @AllArgsConstructor
 @Getter
 @Builder
