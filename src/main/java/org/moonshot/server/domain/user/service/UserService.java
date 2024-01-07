@@ -85,7 +85,6 @@ public class UserService {
                             .profileImage(userResponse.picture())
                             .email(userResponse.email())
                             .build());
-
             user = newUser;
         } else {
             user = findUser.get();
@@ -116,9 +115,8 @@ public class UserService {
                             .socialPlatform(request.socialPlatform())
                             .name(userResponse.kakaoAccount().profile().nickname())
                             .profileImage(userResponse.kakaoAccount().profile().profileImageUrl())
-                            .email("")
+                            .email(null)
                             .build());
-
             user = newUser;
         } else {
             user = findUser.get();
