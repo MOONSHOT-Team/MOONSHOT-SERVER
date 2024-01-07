@@ -3,7 +3,6 @@ package org.moonshot.server.global.common.response;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.boot.actuate.autoconfigure.observation.ObservationProperties.Http;
 import org.springframework.http.HttpStatus;
 
 @Getter
@@ -21,8 +20,10 @@ public enum ErrorType {
     INVALID_HTTP_METHOD(HttpStatus.BAD_REQUEST, "지원되지 않는 HTTP method 요청입니다."),
     INVALID_IMAGE_EXTENSION(HttpStatus.BAD_REQUEST, "지원하지 않는 이미지 확장자입니다."),
     ACTIVE_OBJECTIVE_NUMBER_EXCEEDED(HttpStatus.BAD_REQUEST, "허용된 Objective 개수를 초과하였습니다"),
-    KEY_RESULT_NUMBER_EXCEEDED(HttpStatus.BAD_REQUEST, "허용된 Objective 개수를 초과하였습니다"),
+    ACTIVE_KEY_RESULT_NUMBER_EXCEEDED(HttpStatus.BAD_REQUEST, "허용된 Key Result 개수를 초과하였습니다"),
+    ACTIVE_TASK_NUMBER_EXCEEDED(HttpStatus.BAD_REQUEST, "허용된 Task 개수를 초과하였습니다."),
     INVALID_KEY_RESULT_ORDER(HttpStatus.BAD_REQUEST, "정상적이지 않은 KeyResult 위치입니다."),
+    INVALID_TASK_ORDER(HttpStatus.BAD_REQUEST, "정상적이지 않은 Task 위치입니다."),
 
     /**
      * 401 UNAUTHROZIED
@@ -36,6 +37,7 @@ public enum ErrorType {
      */
     NOT_FOUND_USER_ERROR(HttpStatus.NOT_FOUND, "존재하지 않는 유저입니다."),
     NOT_FOUND_OBJECTIVE_ERROR(HttpStatus.NOT_FOUND, "존재하지 않는 Objective입니다."),
+    NOT_FOUND_KEY_RESULT_ERROR(HttpStatus.NOT_FOUND, "존재하지 않는 KeyResult입니다."),
 
     /**
      * 500 INTERNAL SERVER ERROR

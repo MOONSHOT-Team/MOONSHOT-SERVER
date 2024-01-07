@@ -1,16 +1,10 @@
 package org.moonshot.server.domain.keyresult.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
-import org.moonshot.server.domain.log.model.Log;
-import org.moonshot.server.domain.task.model.Task;
 import org.moonshot.server.domain.objective.model.Objective;
 import org.moonshot.server.global.common.model.Period;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -32,10 +26,10 @@ public class KeyResult {
     private Period period;
 
     @Column(nullable = false)
-    private int target;
+    private Integer target;
 
     @Column(nullable = false)
-    private short idx;
+    private Short idx;
 
     @Column(nullable = false)
     private String metric;
@@ -57,4 +51,25 @@ public class KeyResult {
     public void incrementIdx() {
         ++this.idx;
     }
+
+    public void modifyTitle(String title) {
+        this.title = title;
+    }
+
+    public void modifyPeriod(Period period) {
+        this.period = period;
+    }
+
+    public void modifyIdx(Short idx) {
+        this.idx = idx;
+    }
+
+    public void modifyTarget(Integer target) {
+        this.target = target;
+    }
+
+    public void modifyState(KRState state) {
+        this.state = state;
+    }
+
 }
