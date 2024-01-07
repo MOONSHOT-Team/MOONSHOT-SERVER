@@ -28,10 +28,8 @@ public class User {
     @Column(nullable = false)
     private String profileImage;
 
-    @Column(nullable = false)
     private String email;
 
-    @Column(unique = true)
     private String nickname;
 
     private String description;
