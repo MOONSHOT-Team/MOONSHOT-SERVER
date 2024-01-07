@@ -1,5 +1,3 @@
-
-
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -21,9 +19,22 @@ spring:
     activate:
       on-profile: local
 
+google:
+  client-id: ${GOOGLE_CLIENT_ID}
+  redirect-url: ${GOOGLE_URL}
+  client-secret: ${GOOGLE_CLIENT_SECRET}
+  scope: email, profile
+
 kakao:
-  client-id: ${CLIENT_ID}
-  url: ${KAKAO_URL}
+  client-id: ${KAKAO_CLIENT_ID}
+  redirect-url: ${KAKAO_URL}
+
+jwt:
+  secret: ${JWT_SECRET}
+
+redis:
+  host: localhost
+  port: 6379
 
 server:
   ip: ${SERVER_IP}

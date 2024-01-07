@@ -14,6 +14,9 @@ public enum SuccessType {
      */
     OK(HttpStatus.OK, "성공"),
     GET_PRESIGNED_URL_SUCCESS(HttpStatus.OK, "Presigned Url 조회에 성공하였습니다."),
+    POST_LOGIN_SUCCESS(HttpStatus.OK, "로그인에 성공하였습니다."),
+    POST_REISSUE_SUCCESS(HttpStatus.OK, "엑세스 토큰 재발급에 성공하였습니다."),
+    POST_LOGOUT_SUCCESS(HttpStatus.OK, "로그아웃에 성공하였습니다."),
 
     /**
      * 201 CREATED
@@ -28,7 +31,8 @@ public enum SuccessType {
      */
     PATCH_KEY_RESULT_SUCCESS(HttpStatus.NO_CONTENT, "KeyResult 수정을 성공하였습니다."),
     DELETE_KEY_RESULT_SUCCESS(HttpStatus.NO_CONTENT, "KeyResult 삭제를 성공하였습니다."),
-    DELETE_OBJECTIVE_SUCCESS(HttpStatus.NO_CONTENT, "Objective 삭제를 성공하였습니다.");
+    DELETE_OBJECTIVE_SUCCESS(HttpStatus.NO_CONTENT, "Objective 삭제를 성공하였습니다."),
+    DELETE_USER_SUCCESS(HttpStatus.NO_CONTENT, "회원 탈퇴에 성공하였습니다." );
 
     private final HttpStatus httpStatus;
     private final String message;

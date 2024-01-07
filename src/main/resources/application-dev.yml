@@ -17,9 +17,22 @@ spring:
     activate:
       on-profile: dev
 
+google:
+  client-id: ${GOOGLE_CLIENT_ID}
+  redirect-url: ${GOOGLE_URL}
+  client-secret: ${GOOGLE_CLIENT_SECRET}
+  scope: email, profile
+
 kakao:
-  client-id: ${CLIENT_ID}
-  url: ${KAKAO_URL}
+  client-id: ${KAKAO_CLIENT_ID}
+  redirect-url: ${KAKAO_URL}
+
+jwt:
+  secret: ${JWT_SECRET}
+
+redis:
+  host: localhost
+  port: 6379
 
 server:
   ip: ${SERVER_IP}
@@ -37,3 +50,19 @@ logging:
   config: classpath:logback-dev.xml
   level:
     org.springframework.security: DEBUG
+
+springdoc:
+  packages-to-scan: org.moonshot.server
+  default-consumes-media-type: application/json;charset=UTF-8
+  default-produces-media-type: application/json;charset=UTF-8
+  swagger-ui:
+    tags-sorter: alpha
+    operations-sorter: alpha
+  api-docs:
+    path: /api-docs/json
+    groups:
+      enabled: true
+    cache:
+      disabled: true
+  show-login-endpoint: true
+

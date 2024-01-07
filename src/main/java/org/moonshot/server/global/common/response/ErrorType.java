@@ -12,7 +12,6 @@ public enum ErrorType {
      /*
     400 BAD REQUEST
      */
-
     REQUEST_VALIDATION_EXCEPTION(HttpStatus.BAD_REQUEST, "잘못된 요청입니다"),
     INVALID_TYPE(HttpStatus.BAD_REQUEST, "잘못된 타입이 입력되었습니다."),
     INVALID_MISSING_HEADER(HttpStatus.BAD_REQUEST, "요청에 필요한 헤더값이 존재하지 않습니다."),
@@ -24,6 +23,14 @@ public enum ErrorType {
     ACTIVE_TASK_NUMBER_EXCEEDED(HttpStatus.BAD_REQUEST, "허용된 Task 개수를 초과하였습니다."),
     INVALID_KEY_RESULT_ORDER(HttpStatus.BAD_REQUEST, "정상적이지 않은 KeyResult 위치입니다."),
     INVALID_TASK_ORDER(HttpStatus.BAD_REQUEST, "정상적이지 않은 Task 위치입니다."),
+
+    /**
+     * 401 UNAUTHROZIED
+     */
+    INVALID_AUTHORIZATION_ERROR(HttpStatus.UNAUTHORIZED, "유효하지 않은 인증 코드입니다."),
+    INVALID_REFRESHTOKEN_ERROR(HttpStatus.UNAUTHORIZED, "유효하지 않은 RefreshToken입니다."),
+    INVALID_AUTH_ERROR(HttpStatus.UNAUTHORIZED, "인증되지 않은 사용자입니다."),
+    EXPIRED_TOKEN_ERROR(HttpStatus.UNAUTHORIZED, "만료된 TOKEN입니다."),
 
     /**
      * 404 NOT FOUND
@@ -45,4 +52,5 @@ public enum ErrorType {
     public int getHttpStatusCode() {
         return httpStatus.value();
     }
+
 }

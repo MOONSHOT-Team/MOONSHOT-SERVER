@@ -36,4 +36,19 @@ public class User {
 
     private String description;
 
+    @Builder(builderMethodName = "builderWithSignIn")
+    public static User of(String socialId, SocialPlatform socialPlatform, String name, String profileImage, String email) {
+        return User.builder()
+                .socialId(socialId)
+                .socialPlatform(socialPlatform)
+                .name(name)
+                .profileImage(profileImage)
+                .email(email)
+                .build();
+    }
+
+    public void modifySocialPlatform(SocialPlatform socialPlatform) {
+        this.socialPlatform = socialPlatform;
+    }
+
 }
