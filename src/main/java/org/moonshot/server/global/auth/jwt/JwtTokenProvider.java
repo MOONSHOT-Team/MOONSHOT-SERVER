@@ -5,13 +5,11 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.moonshot.server.domain.user.exception.UserNotFoundException;
 import org.moonshot.server.global.auth.exception.InvalidAuthException;
 import org.moonshot.server.global.auth.exception.InvalidRefreshTokenException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
@@ -144,7 +142,7 @@ public class JwtTokenProvider {
         return Long.parseLong(claims.get(USER_ID).toString());
     }
 
-    public static Long getUserFromPrincipal(Principal principal) {
+    public static Long getUserIdFromPrincipal(Principal principal) {
         if (isNull(principal)) {
             throw new InvalidAuthException();
         }

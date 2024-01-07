@@ -8,7 +8,6 @@ public record SocialLoginResponse(
         TokenResponse token
 ) {
     public static SocialLoginResponse of(Long userId, String userName, TokenResponse token) {
-
         return new SocialLoginResponse(userId, userName, token);
     }
 }

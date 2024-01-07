@@ -21,25 +21,25 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/login")
-    public ApiResponse<SocialLoginResponse> login(@RequestHeader("Authorization") String authorization, @RequestBody SocialLoginRequest socialLoginRequest) throws IOException {
+    public ApiResponse<SocialLoginResponse> login(@RequestHeader("Authorization") String authorization,
+                                                  @RequestBody SocialLoginRequest socialLoginRequest) throws IOException {
         return ApiResponse.success(SuccessType.POST_LOGIN_SUCCESS, userService.login(SocialLoginRequest.of(socialLoginRequest.socialPlatform(), authorization)));
     }
 
     @PostMapping("/reissue")
-    public ApiResponse<TokenResponse> reissue(
-            @RequestHeader("Authorization") String refreshToken) {
+    public ApiResponse<TokenResponse> reissue(@RequestHeader("Authorization") String refreshToken) {
         return ApiResponse.success(SuccessType.POST_REISSUE_SUCCESS, userService.reissue(refreshToken));
     }
 
     @PostMapping("/log-out")
     public ApiResponse<?> logout(Principal principal) {
-        userService.logout(JwtTokenProvider.getUserFromPrincipal(principal));
+        userService.logout(JwtTokenProvider.getUserIdFromPrincipal(principal));
         return ApiResponse.success(SuccessType.POST_LOGOUT_SUCCESS);
     }
 
     @DeleteMapping("/withdrawal")
     public ApiResponse<?> withdrawal(Principal principal) {
-        userService.withdrawal(JwtTokenProvider.getUserFromPrincipal(principal));
+        userService.withdrawal(JwtTokenProvider.getUserIdFromPrincipal(principal));
         return ApiResponse.success(SuccessType.DELETE_USER_SUCCESS);
     }
 

@@ -16,4 +16,5 @@ public interface KakaoAuthApiClient {
             @RequestParam("redirect_uri") String redirectUri,
             @RequestParam("code") String code
     );
+
 }

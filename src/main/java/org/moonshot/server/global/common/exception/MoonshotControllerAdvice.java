@@ -134,4 +134,5 @@ public class MoonshotControllerAdvice {
         log.error(e.getMessage(), e);
         return ApiResponse.error(e.getErrorType());
     }
+
 }

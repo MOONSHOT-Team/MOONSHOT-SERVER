@@ -11,4 +11,5 @@ public interface KakaoApiClient {
 
     @GetMapping(value = "/v2/user/me")
     KakaoUserResponse getUserInformation(@RequestHeader(HttpHeaders.AUTHORIZATION) String accessToken);
+
 }
