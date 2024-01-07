@@ -51,4 +51,8 @@ public class User {
         this.socialPlatform = socialPlatform;
     }
 
+    public void modifyNickname(String nickname) { this.nickname = nickname; }
+
+    public void modifyDescription(String description) { this.description = description; }
+
 }
