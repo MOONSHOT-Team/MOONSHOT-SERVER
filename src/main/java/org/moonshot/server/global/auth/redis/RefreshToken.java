@@ -8,7 +8,7 @@ import org.springframework.data.redis.core.RedisHash;
 
 import static org.moonshot.server.global.constants.JWTConstants.REFRESH_TOKEN_EXPIRATION_TIME;
 
-@RedisHash(value = "refreshToken", timeToLive = REFRESH_TOKEN_EXPIRATION_TIME) // 리프레쉬토큰 만료 시간과 동일하게 설정
+@RedisHash(value = "refreshToken", timeToLive = REFRESH_TOKEN_EXPIRATION_TIME)
 @AllArgsConstructor
 @Getter
 @Builder

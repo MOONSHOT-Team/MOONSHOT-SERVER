@@ -40,19 +40,17 @@ public class JwtTokenProvider {
         JWT_SECRET = Base64.getEncoder().encodeToString(JWT_SECRET.getBytes(StandardCharsets.UTF_8));
     }
 
-    // Access 토큰, Refresh 토큰 발급
     public TokenResponse reissuedToken(Authentication authentication) {
         return TokenResponse.of(
                 generateAccessToken(authentication),
                 generateRefreshToken(authentication));
     }
 
-    // 엑세스 토큰 발급
     public String generateAccessToken(Authentication authentication) {
         final Date now = new Date();
         final Claims claims = Jwts.claims()
                 .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime() + ACCESS_TOKEN_EXPIRATION_TIME));      // 만료 시간
+                .setExpiration(new Date(now.getTime() + ACCESS_TOKEN_EXPIRATION_TIME));
 
         claims.put(USER_ID, authentication.getPrincipal());
 
@@ -63,7 +61,6 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    //리프레쉬 토큰 발급
     public String generateRefreshToken(Authentication authentication) {
         final Date now = new Date();
         final Claims claims = Jwts.claims()
@@ -88,8 +85,8 @@ public class JwtTokenProvider {
     }
 
     private SecretKey getSigningKey() {
-        String encodedKey = Base64.getEncoder().encodeToString(JWT_SECRET.getBytes()); //SecretKey 통해 서명 생성
-        return Keys.hmacShaKeyFor(encodedKey.getBytes());   //일반적으로 HMAC (Hash-based Message Authentication Code) 알고리즘 사용
+        String encodedKey = Base64.getEncoder().encodeToString(JWT_SECRET.getBytes());
+        return Keys.hmacShaKeyFor(encodedKey.getBytes());
     }
 
     public JwtValidationType validateAccessToken(String token) {
