@@ -1,6 +1,8 @@
 package org.moonshot.server.domain.user.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.moonshot.server.domain.user.dto.request.UserInfoRequest;
+import org.moonshot.server.domain.user.dto.response.UserInfoResponse;
 import org.moonshot.server.domain.user.dto.request.SocialLoginRequest;
 import org.moonshot.server.domain.user.dto.response.SocialLoginResponse;
 import org.moonshot.server.domain.user.service.UserService;
@@ -41,6 +43,11 @@ public class UserController {
     public ApiResponse<?> withdrawal(Principal principal) {
         userService.withdrawal(JwtTokenProvider.getUserIdFromPrincipal(principal));
         return ApiResponse.success(SuccessType.DELETE_USER_SUCCESS);
+    }
+
+    @PatchMapping("/profile")
+    public ApiResponse<UserInfoResponse> modifyProfile(Principal principal, @RequestBody UserInfoRequest userInfoRequest) {
+        return ApiResponse.success(SuccessType.PATCH_PROFILE_SUCCESS, userService.modifyProfile(JwtTokenProvider.getUserIdFromPrincipal(principal), userInfoRequest));
     }
 
 //    @GetMapping("/login/oauth2/code/kakao")

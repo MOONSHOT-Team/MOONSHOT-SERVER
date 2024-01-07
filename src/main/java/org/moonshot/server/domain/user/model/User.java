@@ -28,10 +28,8 @@ public class User {
     @Column(nullable = false)
     private String profileImage;
 
-    @Column(nullable = false)
     private String email;
 
-    @Column(unique = true)
     private String nickname;
 
     private String description;
@@ -50,5 +48,9 @@ public class User {
     public void modifySocialPlatform(SocialPlatform socialPlatform) {
         this.socialPlatform = socialPlatform;
     }
+
+    public void modifyNickname(String nickname) { this.nickname = nickname; }
+
+    public void modifyDescription(String description) { this.description = description; }
 
 }

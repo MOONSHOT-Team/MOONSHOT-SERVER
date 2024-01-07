@@ -2,7 +2,9 @@ package org.moonshot.server.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.moonshot.server.domain.user.dto.request.SocialLoginRequest;
+import org.moonshot.server.domain.user.dto.request.UserInfoRequest;
 import org.moonshot.server.domain.user.dto.response.SocialLoginResponse;
+import org.moonshot.server.domain.user.dto.response.UserInfoResponse;
 import org.moonshot.server.domain.user.dto.response.google.GoogleInfoResponse;
 import org.moonshot.server.domain.user.dto.response.google.GoogleTokenResponse;
 import org.moonshot.server.domain.user.dto.response.kakao.KakaoTokenResponse;
@@ -83,7 +85,6 @@ public class UserService {
                             .profileImage(userResponse.picture())
                             .email(userResponse.email())
                             .build());
-
             user = newUser;
         } else {
             user = findUser.get();
@@ -114,9 +115,8 @@ public class UserService {
                             .socialPlatform(request.socialPlatform())
                             .name(userResponse.kakaoAccount().profile().nickname())
                             .profileImage(userResponse.kakaoAccount().profile().profileImageUrl())
-                            .email("")
+                            .email(null)
                             .build());
-
             user = newUser;
         } else {
             user = findUser.get();
@@ -148,6 +148,19 @@ public class UserService {
         User user =  userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
         user.modifySocialPlatform(SocialPlatform.WITHDRAWAL);
+    }
+
+    @Transactional
+    public UserInfoResponse modifyProfile(Long userId, UserInfoRequest request) {
+        User user =  userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+        if (request.nickname() != null) {
+            user.modifyNickname(request.nickname());
+        }
+        if (request.description() != null) {
+            user.modifyDescription(request.description());
+        }
+        return UserInfoResponse.of(user);
     }
 
 }
