@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public class MoonshotExceptionHandler implements AccessDeniedHandler, AuthenticationEntryPoint {
+
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException authException) throws IOException, ServletException {
@@ -25,4 +26,5 @@ public class MoonshotExceptionHandler implements AccessDeniedHandler, Authentica
                        AccessDeniedException accessDeniedException) throws IOException, ServletException {
 
     }
+
 }
