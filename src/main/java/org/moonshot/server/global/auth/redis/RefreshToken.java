@@ -6,7 +6,9 @@ import lombok.Builder;
 import lombok.Getter;
 import org.springframework.data.redis.core.RedisHash;
 
-@RedisHash(value = "refreshToken", timeToLive = 60 * 1000L * 60 * 24 * 7 * 2) // 리프레쉬토큰 만료 시간과 동일하게 설정
+import static org.moonshot.server.global.constants.JWTConstants.REFRESH_TOKEN_EXPIRATION_TIME;
+
+@RedisHash(value = "refreshToken", timeToLive = REFRESH_TOKEN_EXPIRATION_TIME) // 리프레쉬토큰 만료 시간과 동일하게 설정
 @AllArgsConstructor
 @Getter
 @Builder

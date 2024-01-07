@@ -23,15 +23,13 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import static java.util.Objects.isNull;
+import static org.moonshot.server.global.constants.JWTConstants.*;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtTokenProvider {
 
-    private static final String USER_ID = "userId";
-    private static final Long ACCESS_TOKEN_EXPIRATION_TIME = 60 * 1000L * 20;  // 액세스 토큰 만료 시간: 2분으로 지정
-    private static final Long REFRESH_TOKEN_EXPIRATION_TIME = 60 * 1000L * 60 * 24 * 7 * 2;  // 리프레시 토큰 만료 시간: 2주로 지정
     private final RedisTemplate<String, String> redisTemplate;
 
     @Value("${jwt.secret}")
