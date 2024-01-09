@@ -1,16 +1,23 @@
 package org.moonshot.server.domain.keyresult.service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
 import org.moonshot.server.domain.keyresult.dto.request.KeyResultCreateRequestDto;
 import org.moonshot.server.domain.keyresult.dto.request.KeyResultCreateRequestInfoDto;
 import org.moonshot.server.domain.keyresult.dto.request.KeyResultModifyRequestDto;
+import org.moonshot.server.domain.keyresult.dto.response.KRDetailResponseDto;
 import org.moonshot.server.domain.keyresult.exception.KeyResultInvalidPositionException;
 import org.moonshot.server.domain.keyresult.exception.KeyResultNotFoundException;
 import org.moonshot.server.domain.keyresult.exception.KeyResultNumberExceededException;
 import org.moonshot.server.domain.keyresult.model.KeyResult;
 import org.moonshot.server.domain.keyresult.repository.KeyResultRepository;
+import org.moonshot.server.domain.log.dto.response.LogResponseDto;
+import org.moonshot.server.domain.log.model.Log;
+import org.moonshot.server.domain.log.model.LogState;
 import org.moonshot.server.domain.log.repository.LogRepository;
 import org.moonshot.server.domain.log.service.LogService;
 import org.moonshot.server.domain.objective.exception.ObjectiveNotFoundException;
@@ -147,4 +154,16 @@ public class KeyResultService {
 
     }
 
+    public KRDetailResponseDto getkRDetails(Long userId, Long keyResultId) {
+        KeyResult keyResult = keyResultRepository.findKeyResultAndObjective(keyResultId)
+                .orElseThrow(KeyResultNotFoundException::new);
+        userService.validateUserAuthorization(keyResult.getObjective().getUser(), userId);
+        return KRDetailResponseDto.of(keyResult.getTitle(),
+                0,
+                keyResult.getState().getValue(),
+                keyResult.getPeriod().getStartAt(),
+                keyResult.getPeriod().getExpireAt(),
+                logService.getLogList(keyResult));
+    }
+    
 }

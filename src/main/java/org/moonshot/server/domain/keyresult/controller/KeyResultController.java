@@ -8,15 +8,11 @@ import lombok.RequiredArgsConstructor;
 import org.moonshot.server.domain.keyresult.dto.request.KeyResultCreateRequestDto;
 import org.moonshot.server.domain.keyresult.dto.request.KeyResultModifyRequestDto;
 import org.moonshot.server.domain.keyresult.service.KeyResultService;
+import org.moonshot.server.domain.keyresult.dto.response.KRDetailResponseDto;
 import org.moonshot.server.global.auth.jwt.JwtTokenProvider;
 import org.moonshot.server.global.common.response.ApiResponse;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.moonshot.server.global.common.response.SuccessType;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -41,6 +37,11 @@ public class KeyResultController {
     public ApiResponse<?> modifyKeyResult(Principal principal, @RequestBody @Valid KeyResultModifyRequestDto request) {
         keyResultService.modifyKeyResult(request, JwtTokenProvider.getUserIdFromPrincipal(principal));
         return ApiResponse.success(PATCH_KEY_RESULT_SUCCESS);
+    }
+
+    @GetMapping("/{keyResultId}")
+    public ApiResponse<KRDetailResponseDto> getKRDetails(Principal principal, @PathVariable("keyResultId") Long keyResultId) {
+        return ApiResponse.success(SuccessType.GET_KR_DETAIL_SUCCESS, keyResultService.getkRDetails(JwtTokenProvider.getUserIdFromPrincipal(principal), keyResultId));
     }
 
 }
