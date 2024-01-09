@@ -159,11 +159,16 @@ public class KeyResultService {
                 .orElseThrow(KeyResultNotFoundException::new);
         userService.validateUserAuthorization(keyResult.getObjective().getUser(), userId);
         return KRDetailResponseDto.of(keyResult.getTitle(),
-                0,
+                calculateProgressBar(keyResult),
                 keyResult.getState().getValue(),
                 keyResult.getPeriod().getStartAt(),
                 keyResult.getPeriod().getExpireAt(),
                 logService.getLogList(keyResult));
     }
-    
+
+    public int calculateProgressBar(KeyResult keyResult) {
+        Optional<Log> log = logRepository.findLatestLogByKeyResultId(LogState.RECORD, keyResult.getId());
+        return log.map(value -> (int) Math.round((value.getCurrNum() / (double) keyResult.getTarget()) * 100)).orElse(0);
+    }
+
 }
