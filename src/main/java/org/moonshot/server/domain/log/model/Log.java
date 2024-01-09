@@ -3,6 +3,7 @@ package org.moonshot.server.domain.log.model;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 import org.moonshot.server.domain.keyresult.model.KeyResult;
 import org.moonshot.server.domain.user.model.SocialPlatform;
 import org.moonshot.server.domain.user.model.User;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Builder
+@DynamicInsert
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class Log {
@@ -28,8 +30,9 @@ public class Log {
     @Column(nullable = false)
     private LogState state;
 
+    @Builder.Default
     @Column(columnDefinition = "bigint default -1")
-    private long prevNum;
+    private long prevNum = -1;
 
     @Column(nullable = false)
     private long currNum;
