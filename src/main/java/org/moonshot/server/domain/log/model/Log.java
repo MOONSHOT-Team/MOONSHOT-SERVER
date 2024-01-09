@@ -28,11 +28,11 @@ public class Log {
     @Column(nullable = false)
     private LogState state;
 
-    @ColumnDefault("-1")
-    private int prevNum;
+    @Column(columnDefinition = "bigint default -1")
+    private long prevNum;
 
     @Column(nullable = false)
-    private int currNum;
+    private long currNum;
 
     @Column(nullable = false)
     private String content;
