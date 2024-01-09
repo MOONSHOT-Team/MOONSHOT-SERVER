@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 import org.moonshot.server.domain.keyresult.model.KRState;
+import org.moonshot.server.domain.log.model.LogState;
 import org.moonshot.server.global.common.model.validator.ValidTargetNumber;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -18,6 +19,8 @@ public record KeyResultModifyRequestDto(
         LocalDateTime expireAt,
         @ValidTargetNumber
         Integer target,
-        KRState state
+        KRState state,
+        @Size(min = 1, max = 100, message = "본문은 100자 이하여야 합니다.")
+        String logContent
 ) {
 }

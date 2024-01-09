@@ -11,6 +11,9 @@ import org.moonshot.server.domain.keyresult.exception.KeyResultNotFoundException
 import org.moonshot.server.domain.keyresult.exception.KeyResultNumberExceededException;
 import org.moonshot.server.domain.keyresult.model.KeyResult;
 import org.moonshot.server.domain.keyresult.repository.KeyResultRepository;
+import org.moonshot.server.domain.log.model.Log;
+import org.moonshot.server.domain.log.model.LogState;
+import org.moonshot.server.domain.log.repository.LogRepository;
 import org.moonshot.server.domain.objective.exception.ObjectiveNotFoundException;
 import org.moonshot.server.domain.objective.model.Objective;
 import org.moonshot.server.domain.objective.repository.ObjectiveRepository;
@@ -30,6 +33,7 @@ public class KeyResultService {
     private final ObjectiveRepository objectiveRepository;
     private final KeyResultRepository keyResultRepository;
     private final TaskRepository taskRepository;
+    private final LogRepository logRepository;
 
     //TODO
     // 여기 모든 로직에 User 관련 기능이 추가된 이후
@@ -117,6 +121,16 @@ public class KeyResultService {
             keyResult.modifyPeriod(Period.of(newStartAt, newExpireAt));
         }
         if (request.target() != null) {
+            if (request.logContent() !=  null) {
+                Log newLog =  logRepository.save(Log.builder()
+                        .date(LocalDateTime.now())
+                        .state(LogState.UPDATE)
+                        .currNum(request.target()) // 바꾸는 값
+                        .prevNum(keyResult.getTarget()) // 이전 값
+                        .content(request.logContent())
+                        .keyResult(keyResult)
+                        .build());
+            }
             keyResult.modifyTarget(request.target());
         }
         if (request.state() != null) {
