@@ -49,8 +49,9 @@ public class Objective {
     @Embedded
     private Period period;
 
-    @ColumnDefault("-1")
-    private short order;
+    @Builder.Default
+    @Column(columnDefinition = "smallint default -1")
+    private short order = -1;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
