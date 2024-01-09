@@ -11,8 +11,6 @@ import org.moonshot.server.domain.keyresult.exception.KeyResultNotFoundException
 import org.moonshot.server.domain.keyresult.exception.KeyResultNumberExceededException;
 import org.moonshot.server.domain.keyresult.model.KeyResult;
 import org.moonshot.server.domain.keyresult.repository.KeyResultRepository;
-import org.moonshot.server.domain.log.model.Log;
-import org.moonshot.server.domain.log.model.LogState;
 import org.moonshot.server.domain.log.repository.LogRepository;
 import org.moonshot.server.domain.log.service.LogService;
 import org.moonshot.server.domain.objective.exception.ObjectiveNotFoundException;
