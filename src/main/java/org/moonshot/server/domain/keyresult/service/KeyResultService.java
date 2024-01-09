@@ -158,7 +158,6 @@ public class KeyResultService implements IndexService {
         if (prevIdx.equals(request.idx())) {
             return;
         }
-        List<KeyResult> krList = keyResultRepository.findAllByObjectiveOrderByIdx(keyResult.getObjective());
 
         keyResult.modifyIdx(request.idx());
         if (prevIdx < request.idx()) {
