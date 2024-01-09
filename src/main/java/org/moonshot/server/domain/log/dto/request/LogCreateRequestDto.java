@@ -13,7 +13,7 @@ public record LogCreateRequestDto(
 
         @NotNull(message = "Log의 수치를 입력해주세요.")
         @Size(min = 1, max = 30, message = "진척정도의 수치 값은 30자 이하여야 합니다.")
-        int logNum,
+        long logNum,
 
         @NotNull(message = "Log의 체크인 본문을 입력해주세요.")
         @Size(min = 1, max = 100, message = "본문은 100자 이하여야 합니다.")
