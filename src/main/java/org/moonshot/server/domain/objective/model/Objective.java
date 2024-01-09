@@ -1,18 +1,12 @@
 package org.moonshot.server.domain.objective.model;
 
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.moonshot.server.domain.keyresult.model.KeyResult;
 import org.moonshot.server.domain.user.model.User;
 import org.moonshot.server.global.common.model.Period;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
