@@ -50,6 +50,7 @@ logging:
   config: classpath:logback-local.xml
   level:
     org.springframework.security: DEBUG
+    org.hibernate.type: TRACE
 
 springdoc:
   packages-to-scan: org.moonshot.server

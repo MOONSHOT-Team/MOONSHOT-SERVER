@@ -14,7 +14,7 @@ public interface KeyResultRepository extends JpaRepository<KeyResult, Long> {
     List<KeyResult> findByIdIn(List<Long> ids);
     List<KeyResult> findAllByObjective(Objective objective);
     List<KeyResult> findAllByObjectiveId(Long objectiveId);
-    @Query("select kr from KeyResult kr join fetch kr.objective where kr.id = :keyResultId")
+    @Query("select kr from KeyResult kr join fetch kr.objective join fetch kr.objective.user where kr.id = :keyResultId")
     Optional<KeyResult> findKeyResultAndObjective(@Param("keyResultId") Long keyResultId);
 
 }
