@@ -13,6 +13,7 @@ import org.moonshot.server.domain.user.exception.UserNotFoundException;
 import org.moonshot.server.domain.user.model.SocialPlatform;
 import org.moonshot.server.domain.user.model.User;
 import org.moonshot.server.domain.user.repository.UserRepository;
+import org.moonshot.server.global.auth.exception.AccessDeniedException;
 import org.moonshot.server.global.auth.feign.google.GoogleApiClient;
 import org.moonshot.server.global.auth.feign.google.GoogleAuthApiClient;
 import org.moonshot.server.global.auth.feign.kakao.KakaoApiClient;
@@ -161,6 +162,12 @@ public class UserService {
             user.modifyDescription(request.description());
         }
         return UserInfoResponse.of(user);
+    }
+
+    public void validateUserAuthorization(User user, Long userId) {
+        if (!user.getId().equals(userId)) {
+            throw new AccessDeniedException();
+        }
     }
 
 }

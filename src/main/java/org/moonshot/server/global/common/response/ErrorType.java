@@ -33,6 +33,11 @@ public enum ErrorType {
     EXPIRED_TOKEN_ERROR(HttpStatus.UNAUTHORIZED, "만료된 TOKEN입니다."),
 
     /**
+     * 403 FORBIDDEN
+     */
+    FORBIDDEN_ERROR(HttpStatus.FORBIDDEN, "해당 자원에 접근 권한이 없습니다."),
+
+    /**
      * 404 NOT FOUND
      */
     NOT_FOUND_USER_ERROR(HttpStatus.NOT_FOUND, "존재하지 않는 유저입니다."),
