@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.moonshot.server.domain.keyresult.model.KeyResult;
+import org.moonshot.server.domain.user.model.SocialPlatform;
+import org.moonshot.server.domain.user.model.User;
 
 import java.time.LocalDateTime;
 
@@ -38,5 +40,15 @@ public class Log {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "key_result_id")
     private KeyResult keyResult;
+
+    public static Log of(LocalDateTime date, LogState state, int prevNum, int currNum, String content, KeyResult keyResult) {
+        return Log.builder()
+                .date(date)
+                .state(state)
+                .prevNum(prevNum)
+                .currNum(currNum)
+                .keyResult(keyResult)
+                .build();
+    }
 
 }
