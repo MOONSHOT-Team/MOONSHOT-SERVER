@@ -22,7 +22,7 @@ public class LogController {
 
     @PostMapping
     public ApiResponse<?> create(Principal principal, @RequestBody LogCreateRequestDto logCreateRequestDto) {
-        logService.createLog(JwtTokenProvider.getUserIdFromPrincipal(principal), logCreateRequestDto);
+        logService.createRecordLog(JwtTokenProvider.getUserIdFromPrincipal(principal), logCreateRequestDto);
         return ApiResponse.success(SuccessType.POST_LOG_SUCCESS);
     }
 

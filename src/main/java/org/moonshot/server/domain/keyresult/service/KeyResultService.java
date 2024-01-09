@@ -14,6 +14,7 @@ import org.moonshot.server.domain.keyresult.repository.KeyResultRepository;
 import org.moonshot.server.domain.log.model.Log;
 import org.moonshot.server.domain.log.model.LogState;
 import org.moonshot.server.domain.log.repository.LogRepository;
+import org.moonshot.server.domain.log.service.LogService;
 import org.moonshot.server.domain.objective.exception.ObjectiveNotFoundException;
 import org.moonshot.server.domain.objective.model.Objective;
 import org.moonshot.server.domain.objective.repository.ObjectiveRepository;
@@ -33,7 +34,7 @@ public class KeyResultService {
     private final ObjectiveRepository objectiveRepository;
     private final KeyResultRepository keyResultRepository;
     private final TaskRepository taskRepository;
-    private final LogRepository logRepository;
+    private final LogService logService;
 
     //TODO
     // 여기 모든 로직에 User 관련 기능이 추가된 이후
@@ -52,6 +53,7 @@ public class KeyResultService {
                     .descriptionAfter(dto.descriptionAfter())
                     .objective(objective)
                     .build());
+            logService.createKRLog(dto, keyResult.getId());
             if (dto.taskList() != null) {
                 taskRepository.saveAll(dto.taskList().stream().map((task) -> Task.builder()
                         .title(task.title())
@@ -78,7 +80,7 @@ public class KeyResultService {
         for (short i = request.idx(); i < krList.size(); i++) {
             krList.get(i).incrementIdx();
         }
-        keyResultRepository.save(KeyResult.builder()
+        KeyResult keyResult = keyResultRepository.save(KeyResult.builder()
                 .objective(objective)
                 .title(request.title())
                 .period(Period.of(request.startAt(), request.expireAt()))
@@ -87,6 +89,7 @@ public class KeyResultService {
                 .metric(request.metric())
                 .descriptionBefore(request.descriptionBefore())
                 .descriptionAfter(request.descriptionAfter()).build());
+      logService.createKRLog(request, keyResult.getId());
     }
 
     @Transactional
@@ -122,20 +125,14 @@ public class KeyResultService {
         }
         if (request.target() != null) {
             if (request.logContent() !=  null) {
-                Log newLog =  logRepository.save(Log.builder()
-                        .date(LocalDateTime.now())
-                        .state(LogState.UPDATE)
-                        .currNum(request.target()) // 바꾸는 값
-                        .prevNum(keyResult.getTarget()) // 이전 값
-                        .content(request.logContent())
-                        .keyResult(keyResult)
-                        .build());
+                logService.createUpdateLog(request, keyResult.getId());
             }
             keyResult.modifyTarget(request.target());
         }
         if (request.state() != null) {
             keyResult.modifyState(request.state());
         }
+
     }
 
 }
