@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -34,12 +36,16 @@ public class LogService {
                 .orElseThrow(UserNotFoundException::new);
         KeyResult keyResult = keyResultRepository.findById(request.keyResultId())
                 .orElseThrow(KeyResultNotFoundException::new);
-
+        List<Log> prevLog = logRepository.findLatestLogByKeyResultId(request.keyResultId());
+        long prevNum = -1;
+        if (!prevLog.isEmpty()) {
+            prevNum = prevLog.get(0).getCurrNum();
+        }
         logRepository.save(Log.builder()
                 .date(LocalDateTime.now())
                 .state(LogState.RECORD)
                 .currNum(request.logNum())
-                .prevNum(request.logNum()) //TODO 이전 Log의 값을 가져오도록 수정 필요
+                .prevNum(prevNum)
                 .content(request.logContent())
                 .keyResult(keyResult)
                 .build());
