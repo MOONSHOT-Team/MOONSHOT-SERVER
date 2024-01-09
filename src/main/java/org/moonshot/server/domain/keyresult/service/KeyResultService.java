@@ -17,8 +17,7 @@ import org.moonshot.server.domain.objective.repository.ObjectiveRepository;
 import org.moonshot.server.domain.task.dto.request.TaskCreateRequestDto;
 import org.moonshot.server.domain.task.repository.TaskRepository;
 import org.moonshot.server.domain.task.service.TaskService;
-import org.moonshot.server.domain.user.model.User;
-import org.moonshot.server.global.auth.exception.AccessDeniedException;
+import org.moonshot.server.domain.user.service.UserService;
 import org.moonshot.server.global.common.model.Period;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +33,7 @@ public class KeyResultService {
     private final KeyResultRepository keyResultRepository;
     private final TaskRepository taskRepository;
     private final TaskService taskService;
+    private final UserService userService;
 
     //TODO
     // 여기 모든 로직에 User 관련 기능이 추가된 이후
@@ -62,7 +62,7 @@ public class KeyResultService {
     public void createKeyResult(KeyResultCreateRequestDto request, Long userId) {
         Objective objective = objectiveRepository.findObjectiveAndUserById(request.objectiveId())
                 .orElseThrow(ObjectiveNotFoundException::new);
-        validateUserAuthorization(objective.getUser(), userId);
+        userService.validateUserAuthorization(objective.getUser(), userId);
 
         List<KeyResult> krList = keyResultRepository.findAllByObjective(objective);
         if (krList.size() >= ACTIVE_KEY_RESULT_NUMBER) {
@@ -90,7 +90,7 @@ public class KeyResultService {
     public void deleteKeyResult(Long keyResultId, Long userId) {
         KeyResult keyResult = keyResultRepository.findKeyResultAndObjective(keyResultId)
                 .orElseThrow(KeyResultNotFoundException::new);
-        validateUserAuthorization(keyResult.getObjective().getUser(), userId);
+        userService.validateUserAuthorization(keyResult.getObjective().getUser(), userId);
 
         taskRepository.deleteAllInBatch(taskRepository.findAllByKeyResult(keyResult));
         keyResultRepository.delete(keyResult);
@@ -110,7 +110,7 @@ public class KeyResultService {
     public void modifyKeyResult(KeyResultModifyRequestDto request, Long userId) {
         KeyResult keyResult = keyResultRepository.findKeyResultAndObjective(request.keyResultId())
                 .orElseThrow(KeyResultNotFoundException::new);
-        validateUserAuthorization(keyResult.getObjective().getUser(), userId);
+        userService.validateUserAuthorization(keyResult.getObjective().getUser(), userId);
 
         if (request.title() != null) {
             keyResult.modifyTitle(request.title());
@@ -125,12 +125,6 @@ public class KeyResultService {
         }
         if (request.state() != null) {
             keyResult.modifyState(request.state());
-        }
-    }
-
-    private void validateUserAuthorization(User user, Long userId) {
-        if (!user.getId().equals(userId)) {
-            throw new AccessDeniedException();
         }
     }
 
