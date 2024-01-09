@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 import org.moonshot.server.domain.keyresult.model.KRState;
+import org.moonshot.server.global.common.model.validator.ValidLimitValue;
 import org.moonshot.server.global.common.model.validator.ValidTargetNumber;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -17,7 +18,10 @@ public record KeyResultModifyRequestDto(
         @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
         LocalDateTime expireAt,
         @ValidTargetNumber
-        Integer target,
-        KRState state
+        @ValidLimitValue
+        Long target,
+        KRState state,
+        @Size(min = 1, max = 100, message = "본문은 100자 이하여야 합니다.")
+        String logContent
 ) {
 }

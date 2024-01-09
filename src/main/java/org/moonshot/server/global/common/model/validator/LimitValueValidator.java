@@ -2,16 +2,17 @@ package org.moonshot.server.global.common.model.validator;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import lombok.extern.slf4j.Slf4j;
 
-public class TargetNumberValidator implements ConstraintValidator<ValidTargetNumber, Long> {
+public class LimitValueValidator implements ConstraintValidator<ValidTargetNumber, Long> {
+
+    private final long MAX_LIMIT = 99999999999L;
 
     @Override
     public boolean isValid(Long value, ConstraintValidatorContext context) {
         if (value == null) {
             return true;
         } else {
-            return value > 0 && value % 1000 == 0;
+            return value <= MAX_LIMIT;
         }
     }
 

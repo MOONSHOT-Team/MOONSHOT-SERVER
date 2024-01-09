@@ -3,13 +3,17 @@ package org.moonshot.server.domain.log.model;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 import org.moonshot.server.domain.keyresult.model.KeyResult;
+import org.moonshot.server.domain.user.model.SocialPlatform;
+import org.moonshot.server.domain.user.model.User;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Builder
+@DynamicInsert
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class Log {
@@ -26,11 +30,12 @@ public class Log {
     @Column(nullable = false)
     private LogState state;
 
-    @ColumnDefault("-1")
-    private int prevNum;
+    @Builder.Default
+    @Column(columnDefinition = "bigint default -1")
+    private long prevNum = -1;
 
     @Column(nullable = false)
-    private int currNum;
+    private long currNum;
 
     @Column(nullable = false)
     private String content;
@@ -38,5 +43,15 @@ public class Log {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "key_result_id")
     private KeyResult keyResult;
+
+    public static Log of(LocalDateTime date, LogState state, int prevNum, int currNum, String content, KeyResult keyResult) {
+        return Log.builder()
+                .date(date)
+                .state(state)
+                .prevNum(prevNum)
+                .currNum(currNum)
+                .keyResult(keyResult)
+                .build();
+    }
 
 }

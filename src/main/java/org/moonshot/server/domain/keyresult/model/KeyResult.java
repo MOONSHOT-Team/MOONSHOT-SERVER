@@ -26,7 +26,7 @@ public class KeyResult {
     private Period period;
 
     @Column(nullable = false)
-    private Integer target;
+    private Long target;
 
     @Column(nullable = false)
     private Integer idx;
@@ -68,7 +68,7 @@ public class KeyResult {
         this.idx = idx;
     }
 
-    public void modifyTarget(Integer target) {
+    public void modifyTarget(Long target) {
         this.target = target;
     }
 
