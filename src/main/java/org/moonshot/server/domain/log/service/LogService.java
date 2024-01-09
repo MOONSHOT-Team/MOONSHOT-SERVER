@@ -32,7 +32,7 @@ public class LogService {
 
     @Transactional
     public void createRecordLog(Long userId, LogCreateRequestDto request) {
-        User user =  userRepository.findById(userId)
+        User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
         KeyResult keyResult = keyResultRepository.findById(request.keyResultId())
                 .orElseThrow(KeyResultNotFoundException::new);
