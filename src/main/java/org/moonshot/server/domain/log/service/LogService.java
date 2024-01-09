@@ -14,6 +14,7 @@ import org.moonshot.server.domain.log.repository.LogRepository;
 import org.moonshot.server.domain.user.exception.UserNotFoundException;
 import org.moonshot.server.domain.user.model.User;
 import org.moonshot.server.domain.user.repository.UserRepository;
+import org.moonshot.server.global.auth.exception.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +37,9 @@ public class LogService {
                 .orElseThrow(UserNotFoundException::new);
         KeyResult keyResult = keyResultRepository.findById(request.keyResultId())
                 .orElseThrow(KeyResultNotFoundException::new);
+        if (!keyResult.getObjective().getUser().getId().equals(userId)) {
+            throw new AccessDeniedException();
+        }
         List<Log> prevLog = logRepository.findLatestLogByKeyResultId(request.keyResultId());
         long prevNum = -1;
         if (!prevLog.isEmpty()) {
