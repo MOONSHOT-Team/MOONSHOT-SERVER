@@ -29,7 +29,7 @@ public class KeyResult {
     private Long target;
 
     @Column(nullable = false)
-    private Short idx;
+    private Integer idx;
 
     @Column(nullable = false)
     private String metric;
@@ -52,6 +52,10 @@ public class KeyResult {
         ++this.idx;
     }
 
+    public void decreaseIdx() {
+        --this.idx;
+    }
+
     public void modifyTitle(String title) {
         this.title = title;
     }
@@ -60,7 +64,7 @@ public class KeyResult {
         this.period = period;
     }
 
-    public void modifyIdx(Short idx) {
+    public void modifyIdx(Integer idx) {
         this.idx = idx;
     }
 
