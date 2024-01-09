@@ -25,11 +25,11 @@ public class ObjectiveService {
     private final ObjectiveRepository objectiveRepository;
 
     @Transactional
-    public void createObjective(OKRCreateRequestDto request, String nickname) {
-        User findUser = userRepository.findUserByNickname(nickname)
+    public void createObjective(Long userId, OKRCreateRequestDto request) {
+        User user =  userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
-        if (objectiveRepository.countAllByUserAndIsClosed(findUser, false) >= ACTIVE_OBJECTIVE_NUMBER) {
+        if (objectiveRepository.countAllByUserAndIsClosed(user, false) >= ACTIVE_OBJECTIVE_NUMBER) {
             throw new ObjectiveNumberExceededException();
         }
 
@@ -38,7 +38,7 @@ public class ObjectiveService {
                 .category(request.objCategory())
                 .content(request.objContent())
                 .period(Period.of(request.objStartAt(), request.objExpireAt()))
-                .user(findUser).build());
+                .user(user).build());
 
         keyResultService.createInitKRWithObjective(newObjective, request.krList());
     }
