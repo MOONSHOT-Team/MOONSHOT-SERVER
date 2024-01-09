@@ -8,6 +8,7 @@ import org.moonshot.server.domain.keyresult.exception.KeyResultNotFoundException
 import org.moonshot.server.domain.keyresult.model.KeyResult;
 import org.moonshot.server.domain.keyresult.repository.KeyResultRepository;
 import org.moonshot.server.domain.log.dto.request.LogCreateRequestDto;
+import org.moonshot.server.domain.log.dto.response.LogResponseDto;
 import org.moonshot.server.domain.log.model.Log;
 import org.moonshot.server.domain.log.model.LogState;
 import org.moonshot.server.domain.log.repository.LogRepository;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -39,10 +41,10 @@ public class LogService {
         if (!keyResult.getObjective().getUser().getId().equals(userId)) {
             throw new AccessDeniedException();
         }
-        List<Log> prevLog = logRepository.findLatestLogByKeyResultId(request.keyResultId());
+        Optional<Log> prevLog = logRepository.findLatestLogByKeyResultId(LogState.RECORD, request.keyResultId());
         long prevNum = -1;
         if (!prevLog.isEmpty()) {
-            prevNum = prevLog.get(0).getCurrNum();
+            prevNum = prevLog.get().getCurrNum();
         }
         logRepository.save(Log.builder()
                 .date(LocalDateTime.now())
@@ -93,6 +95,29 @@ public class LogService {
                     .content("")
                     .keyResult(keyResult)
                     .build());
+        }
+    }
+
+    public List<LogResponseDto> getLogList(KeyResult keyResult) {
+        return logRepository.findAllByKeyResultOrderByIdDesc(keyResult)
+                .stream()
+                .map(log -> LogResponseDto.of(log.getState().getValue(),
+                        log.getDate(),
+                        setTitle(log),
+                        log.getContent()))
+                .toList();
+    }
+
+    public String setTitle(Log log) {
+        if (log.getState() == LogState.CREATE) {
+            Optional<Log> createLog = logRepository.findOldestLogByKeyResultId(log.getKeyResult().getId());
+            return log.getKeyResult().getDescriptionBefore() + " " + createLog.get().getKeyResult().getTarget() + log.getKeyResult().getMetric() + " " + log.getKeyResult().getDescriptionAfter();
+        } else if(log.getState() == LogState.UPDATE) {
+            Optional<Log> updateLog = logRepository.findLatestLogByKeyResultId(LogState.UPDATE, log.getKeyResult().getId());
+            return updateLog.get().getPrevNum() + log.getKeyResult().getMetric() + " → " + log.getCurrNum() + log.getKeyResult().getMetric();
+        } else {
+            Optional<Log> recordLog = logRepository.findLatestLogByKeyResultId(LogState.RECORD, log.getKeyResult().getId());
+            return (recordLog.get().getPrevNum() == -1 ? "0" : recordLog.get().getPrevNum()) + log.getKeyResult().getMetric() + " → " + log.getCurrNum() + log.getKeyResult().getMetric();
         }
     }
 
