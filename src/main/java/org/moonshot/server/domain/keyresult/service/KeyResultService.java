@@ -40,6 +40,7 @@ public class KeyResultService {
     private final TaskService taskService;
     private final UserService userService;
     private final LogService logService;
+    private final LogRepository logRepository;
 
     //TODO
     // 여기 모든 로직에 User 관련 기능이 추가된 이후
@@ -107,6 +108,7 @@ public class KeyResultService {
                 .orElseThrow(KeyResultNotFoundException::new);
         userService.validateUserAuthorization(keyResult.getObjective().getUser(), userId);
 
+        logRepository.deleteAllInBatch(logRepository.findAllByKeyResult(keyResult));
         taskRepository.deleteAllInBatch(taskRepository.findAllByKeyResult(keyResult));
         keyResultRepository.delete(keyResult);
     }
