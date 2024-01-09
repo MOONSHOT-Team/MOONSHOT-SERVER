@@ -8,6 +8,8 @@ import org.moonshot.server.domain.objective.service.ObjectiveService;
 import org.moonshot.server.global.auth.jwt.JwtTokenProvider;
 import org.moonshot.server.global.common.response.ApiResponse;
 import org.moonshot.server.global.common.response.SuccessType;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,7 +31,10 @@ public class ObjectiveController {
         return ApiResponse.success(SuccessType.POST_OKR_SUCCESS);
     }
 
-    //TODO
-    // PATCH API (목표 히스토리로 넘기기 - 상태수정)
+    @DeleteMapping("/{objectiveId}")
+    public ApiResponse<?> deleteObjective(Principal principal, @PathVariable("objectiveId") Long objectiveId) {
+        objectiveService.deleteObjective(JwtTokenProvider.getUserIdFromPrincipal(principal), objectiveId);
+        return ApiResponse.success(SuccessType.DELETE_OBJECTIVE_SUCCESS);
+    }
 
 }
