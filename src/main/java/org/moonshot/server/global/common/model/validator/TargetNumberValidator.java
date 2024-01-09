@@ -4,10 +4,10 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import lombok.extern.slf4j.Slf4j;
 
-public class TargetNumberValidator implements ConstraintValidator<ValidTargetNumber, Integer> {
+public class TargetNumberValidator implements ConstraintValidator<ValidTargetNumber, Long> {
 
     @Override
-    public boolean isValid(Integer value, ConstraintValidatorContext context) {
+    public boolean isValid(Long value, ConstraintValidatorContext context) {
         if (value == null) {
             return true;
         } else {
