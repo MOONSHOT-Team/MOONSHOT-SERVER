@@ -62,8 +62,8 @@ public class LogService {
         logRepository.save(Log.builder()
                 .date(LocalDateTime.now())
                 .state(LogState.UPDATE)
-                .currNum(request.target()) // 바꾸는 값
-                .prevNum(keyResult.getTarget()) // 이전 값
+                .currNum(request.target())
+                .prevNum(keyResult.getTarget())
                 .content(request.logContent())
                 .keyResult(keyResult)
                 .build());
