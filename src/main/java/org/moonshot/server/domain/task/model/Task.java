@@ -20,7 +20,7 @@ public class Task {
     private String title;
 
     @Column(nullable = false)
-    private short idx;
+    private Integer idx;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "key_result_id")
@@ -29,4 +29,9 @@ public class Task {
     public void incrementIdx() {
         ++this.idx;
     }
+
+    public void modifyIdx(Integer idx) {
+        this.idx = idx;
+    }
+
 }
