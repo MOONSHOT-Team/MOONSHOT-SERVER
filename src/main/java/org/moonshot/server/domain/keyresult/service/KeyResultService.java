@@ -14,8 +14,11 @@ import org.moonshot.server.domain.keyresult.repository.KeyResultRepository;
 import org.moonshot.server.domain.objective.exception.ObjectiveNotFoundException;
 import org.moonshot.server.domain.objective.model.Objective;
 import org.moonshot.server.domain.objective.repository.ObjectiveRepository;
-import org.moonshot.server.domain.task.model.Task;
+import org.moonshot.server.domain.task.dto.request.TaskCreateRequestDto;
 import org.moonshot.server.domain.task.repository.TaskRepository;
+import org.moonshot.server.domain.task.service.TaskService;
+import org.moonshot.server.domain.user.model.User;
+import org.moonshot.server.global.auth.exception.AccessDeniedException;
 import org.moonshot.server.global.common.model.Period;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +33,7 @@ public class KeyResultService {
     private final ObjectiveRepository objectiveRepository;
     private final KeyResultRepository keyResultRepository;
     private final TaskRepository taskRepository;
+    private final TaskService taskService;
 
     //TODO
     // 여기 모든 로직에 User 관련 기능이 추가된 이후
@@ -48,22 +52,19 @@ public class KeyResultService {
                     .descriptionAfter(dto.descriptionAfter())
                     .objective(objective)
                     .build());
-            if (dto.taskList() != null) {
-                taskRepository.saveAll(dto.taskList().stream().map((task) -> Task.builder()
-                        .title(task.title())
-                        .idx(task.idx())
-                        .keyResult(keyResult)
-                        .build()).toList());
+            for (TaskCreateRequestDto taskDto: dto.taskList()) {
+                taskService.saveTask(keyResult, taskDto);
             }
         }
     }
 
     @Transactional
-    public void createKeyResult(KeyResultCreateRequestDto request) {
-        Objective objective = objectiveRepository.findById(request.objectiveId())
+    public void createKeyResult(KeyResultCreateRequestDto request, Long userId) {
+        Objective objective = objectiveRepository.findObjectiveAndUserById(request.objectiveId())
                 .orElseThrow(ObjectiveNotFoundException::new);
-        List<KeyResult> krList = keyResultRepository.findAllByObjective(objective);
+        validateUserAuthorization(objective.getUser(), userId);
 
+        List<KeyResult> krList = keyResultRepository.findAllByObjective(objective);
         if (krList.size() >= ACTIVE_KEY_RESULT_NUMBER) {
             throw new KeyResultNumberExceededException();
         }
@@ -86,9 +87,11 @@ public class KeyResultService {
     }
 
     @Transactional
-    public void deleteKeyResult(Long keyResultId) {
-        KeyResult keyResult = keyResultRepository.findById(keyResultId)
+    public void deleteKeyResult(Long keyResultId, Long userId) {
+        KeyResult keyResult = keyResultRepository.findKeyResultAndObjective(keyResultId)
                 .orElseThrow(KeyResultNotFoundException::new);
+        validateUserAuthorization(keyResult.getObjective().getUser(), userId);
+
         taskRepository.deleteAllInBatch(taskRepository.findAllByKeyResult(keyResult));
         keyResultRepository.delete(keyResult);
     }
@@ -104,9 +107,10 @@ public class KeyResultService {
     }
 
     @Transactional
-    public void modifyKeyResult(KeyResultModifyRequestDto request) {
-        KeyResult keyResult = keyResultRepository.findById(request.keyResultId())
+    public void modifyKeyResult(KeyResultModifyRequestDto request, Long userId) {
+        KeyResult keyResult = keyResultRepository.findKeyResultAndObjective(request.keyResultId())
                 .orElseThrow(KeyResultNotFoundException::new);
+        validateUserAuthorization(keyResult.getObjective().getUser(), userId);
 
         if (request.title() != null) {
             keyResult.modifyTitle(request.title());
@@ -121,6 +125,12 @@ public class KeyResultService {
         }
         if (request.state() != null) {
             keyResult.modifyState(request.state());
+        }
+    }
+
+    private void validateUserAuthorization(User user, Long userId) {
+        if (!user.getId().equals(userId)) {
+            throw new AccessDeniedException();
         }
     }
 
