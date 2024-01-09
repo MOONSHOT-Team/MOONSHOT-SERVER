@@ -67,8 +67,9 @@ public class KeyResultService {
                 for (TaskCreateRequestDto taskDto : dto.taskList()) {
                     taskService.saveTask(keyResult, taskDto);
                 }
-            for (TaskCreateRequestDto taskDto: dto.taskList()) {
-                taskService.saveTask(keyResult, taskDto);
+                for (TaskCreateRequestDto taskDto : dto.taskList()) {
+                    taskService.saveTask(keyResult, taskDto);
+                }
             }
         }
     }
