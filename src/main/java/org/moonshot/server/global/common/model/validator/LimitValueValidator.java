@@ -3,7 +3,7 @@ package org.moonshot.server.global.common.model.validator;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-public class LimitValueValidator implements ConstraintValidator<ValidTargetNumber, Long> {
+public class LimitValueValidator implements ConstraintValidator<ValidLimitValue, Long> {
 
     private final long MAX_LIMIT = 99999999999L;
 
@@ -12,7 +12,7 @@ public class LimitValueValidator implements ConstraintValidator<ValidTargetNumbe
         if (value == null) {
             return true;
         } else {
-            return value <= MAX_LIMIT;
+            return value > 0 && value <= MAX_LIMIT;
         }
     }
 
