@@ -27,4 +27,5 @@ public class IndexTargetProvider {
     public IndexService getIndexService(IndexTarget indexTarget) {
         return indexServiceMap.get(indexTarget);
     }
+
 }

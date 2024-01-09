@@ -87,4 +87,5 @@ public class TaskService implements IndexService {
             taskRepository.bulkUpdateTaskIdxIncrease(request.idx(), prevIdx, task.getKeyResult().getId(), task.getId());
         }
     }
+
 }
