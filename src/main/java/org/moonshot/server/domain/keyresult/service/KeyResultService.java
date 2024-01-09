@@ -11,10 +11,13 @@ import org.moonshot.server.domain.keyresult.exception.KeyResultNotFoundException
 import org.moonshot.server.domain.keyresult.exception.KeyResultNumberExceededException;
 import org.moonshot.server.domain.keyresult.model.KeyResult;
 import org.moonshot.server.domain.keyresult.repository.KeyResultRepository;
+import org.moonshot.server.domain.log.repository.LogRepository;
+import org.moonshot.server.domain.log.service.LogService;
 import org.moonshot.server.domain.objective.exception.ObjectiveNotFoundException;
 import org.moonshot.server.domain.objective.model.Objective;
 import org.moonshot.server.domain.objective.repository.ObjectiveRepository;
 import org.moonshot.server.domain.task.dto.request.TaskCreateRequestDto;
+import org.moonshot.server.domain.task.model.Task;
 import org.moonshot.server.domain.task.repository.TaskRepository;
 import org.moonshot.server.domain.task.service.TaskService;
 import org.moonshot.server.domain.user.service.UserService;
@@ -34,6 +37,8 @@ public class KeyResultService {
     private final TaskRepository taskRepository;
     private final TaskService taskService;
     private final UserService userService;
+    private final LogService logService;
+    private final LogRepository logRepository;
 
     //TODO
     // 여기 모든 로직에 User 관련 기능이 추가된 이후
@@ -52,8 +57,16 @@ public class KeyResultService {
                     .descriptionAfter(dto.descriptionAfter())
                     .objective(objective)
                     .build());
-            for (TaskCreateRequestDto taskDto: dto.taskList()) {
-                taskService.saveTask(keyResult, taskDto);
+            logService.createKRLog(dto, keyResult.getId());
+            if (dto.taskList() != null) {
+                taskRepository.saveAll(dto.taskList().stream().map((task) -> Task.builder()
+                        .title(task.title())
+                        .idx(task.idx())
+                        .keyResult(keyResult)
+                        .build()).toList());
+                for (TaskCreateRequestDto taskDto : dto.taskList()) {
+                    taskService.saveTask(keyResult, taskDto);
+                }
             }
         }
     }
@@ -75,7 +88,7 @@ public class KeyResultService {
         for (short i = request.idx(); i < krList.size(); i++) {
             krList.get(i).incrementIdx();
         }
-        keyResultRepository.save(KeyResult.builder()
+        KeyResult keyResult = keyResultRepository.save(KeyResult.builder()
                 .objective(objective)
                 .title(request.title())
                 .period(Period.of(request.startAt(), request.expireAt()))
@@ -84,6 +97,7 @@ public class KeyResultService {
                 .metric(request.metric())
                 .descriptionBefore(request.descriptionBefore())
                 .descriptionAfter(request.descriptionAfter()).build());
+      logService.createKRLog(request, keyResult.getId());
     }
 
     @Transactional
@@ -92,6 +106,7 @@ public class KeyResultService {
                 .orElseThrow(KeyResultNotFoundException::new);
         userService.validateUserAuthorization(keyResult.getObjective().getUser(), userId);
 
+        logRepository.deleteAllInBatch(logRepository.findAllByKeyResult(keyResult));
         taskRepository.deleteAllInBatch(taskRepository.findAllByKeyResult(keyResult));
         keyResultRepository.delete(keyResult);
     }
@@ -121,11 +136,15 @@ public class KeyResultService {
             keyResult.modifyPeriod(Period.of(newStartAt, newExpireAt));
         }
         if (request.target() != null) {
+            if (request.logContent() !=  null) {
+                logService.createUpdateLog(request, keyResult.getId());
+            }
             keyResult.modifyTarget(request.target());
         }
         if (request.state() != null) {
             keyResult.modifyState(request.state());
         }
+
     }
 
 }

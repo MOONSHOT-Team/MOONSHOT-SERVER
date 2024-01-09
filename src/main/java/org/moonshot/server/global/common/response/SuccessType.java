@@ -26,6 +26,7 @@ public enum SuccessType {
     POST_OKR_SUCCESS(HttpStatus.CREATED, "O-KR을 생성을 성공하였습니다."),
     POST_KEY_RESULT_SUCCESS(HttpStatus.CREATED, "KeyResult 생성을 성공하였습니다."),
     POST_TASK_SUCCESS(HttpStatus.CREATED, "Task 생성을 성공하였습니다."),
+    POST_LOG_SUCCESS(HttpStatus.CREATED, "체크인 Log 생성을 성공하였습니다."),
 
     /**
      * 204 NO CONTENT

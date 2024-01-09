@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 import org.hibernate.validator.constraints.Range;
+import org.moonshot.server.global.common.model.validator.ValidLimitValue;
 import org.moonshot.server.global.common.model.validator.ValidTargetNumber;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -23,7 +24,8 @@ public record KeyResultCreateRequestDto(
         Short idx,
         @NotNull(message = "KR 목표 수치를 입력해주세요.")
         @ValidTargetNumber
-        Integer target,
+        @ValidLimitValue
+        Long target,
         @NotNull(message = "KR 목표 수치의 단위를 입력해주세요.")
         String metric,
         @NotNull(message = "KR 목표의 이전 수식을 입력해주세요.")
