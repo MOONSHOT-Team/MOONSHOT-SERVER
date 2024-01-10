@@ -52,4 +52,7 @@ public class Objective {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
+    public void  modifyClosed(boolean isClosed) { this.isClosed = isClosed; }
+    public void modifyPeriod(Period period) { this.period = period; }
+
 }

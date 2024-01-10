@@ -24,4 +24,5 @@ public class Period {
     public static Period of(LocalDateTime startAt, LocalDateTime expireAt) {
         return new Period(startAt, expireAt);
     }
+
 }
