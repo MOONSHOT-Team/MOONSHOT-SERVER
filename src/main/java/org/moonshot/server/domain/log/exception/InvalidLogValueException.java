@@ -5,5 +5,7 @@ import org.moonshot.server.global.common.response.ErrorType;
 
 public class InvalidLogValueException extends MoonshotException {
 
-    public InvalidLogValueException() { super(ErrorType.INVALID_LOG_VALUE); }
+    public InvalidLogValueException() {
+        super(ErrorType.INVALID_LOG_VALUE);
+    }
 }

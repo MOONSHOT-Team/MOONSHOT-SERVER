@@ -2,6 +2,7 @@ package org.moonshot.server.domain.keyresult.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import lombok.RequiredArgsConstructor;
 import org.moonshot.server.domain.keyresult.dto.request.KeyResultCreateRequestDto;
@@ -13,6 +14,8 @@ import org.moonshot.server.domain.keyresult.exception.KeyResultNotFoundException
 import org.moonshot.server.domain.keyresult.exception.KeyResultNumberExceededException;
 import org.moonshot.server.domain.keyresult.model.KeyResult;
 import org.moonshot.server.domain.keyresult.repository.KeyResultRepository;
+import org.moonshot.server.domain.log.exception.InvalidLogValueException;
+import org.moonshot.server.domain.log.exception.LogNotFoundException;
 import org.moonshot.server.domain.log.model.Log;
 import org.moonshot.server.domain.log.model.LogState;
 import org.moonshot.server.domain.objective.dto.request.ModifyIndexRequestDto;
@@ -135,11 +138,15 @@ public class KeyResultService implements IndexService {
             LocalDateTime newExpireAt = (request.expireAt() != null) ? request.expireAt() : keyResult.getPeriod().getExpireAt();
             keyResult.modifyPeriod(Period.of(newStartAt, newExpireAt));
         }
-        if (request.target() != null) {
-            if (request.logContent() !=  null) {
-                logService.createUpdateLog(request, keyResult.getId());
+        if (request.target() != null && request.logContent() !=  null) {
+            Log updateLog = logService.createUpdateLog(request, keyResult.getId());
+            if (request.target().equals(updateLog.getKeyResult().getTarget())) {
+                throw new InvalidLogValueException();
             }
+            Log prevLog = logRepository.findLatestLogByKeyResultId(LogState.RECORD, request.keyResultId())
+                    .orElseThrow(LogNotFoundException::new);
             keyResult.modifyTarget(request.target());
+            keyResult.modifyProgress(logService.calculateProgressBar(prevLog, keyResult));
         }
         if (request.state() != null) {
             keyResult.modifyState(request.state());
@@ -178,15 +185,11 @@ public class KeyResultService implements IndexService {
             }
         }
         return KRDetailResponseDto.of(keyResult.getTitle(),
-                calculateProgressBar(target, keyResult),
+                logService.calculateProgressBar(target, keyResult),
                 keyResult.getState().getValue(),
                 keyResult.getPeriod().getStartAt(),
                 keyResult.getPeriod().getExpireAt(),
                 logService.getLogResponseDto(logList, keyResult));
-    }
-
-    public int calculateProgressBar(Log log, KeyResult keyResult) {
-        return (log != null) ? (int) (Math.round(log.getCurrNum() / (double) keyResult.getTarget() * 100)) : 0;
     }
 
 }

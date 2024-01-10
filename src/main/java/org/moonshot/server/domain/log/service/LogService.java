@@ -7,6 +7,7 @@ import org.moonshot.server.domain.keyresult.dto.request.KeyResultModifyRequestDt
 import org.moonshot.server.domain.keyresult.exception.KeyResultNotFoundException;
 import org.moonshot.server.domain.keyresult.model.KeyResult;
 import org.moonshot.server.domain.keyresult.repository.KeyResultRepository;
+import org.moonshot.server.domain.keyresult.service.KeyResultService;
 import org.moonshot.server.domain.log.dto.request.LogCreateRequestDto;
 import org.moonshot.server.domain.log.dto.response.LogResponseDto;
 import org.moonshot.server.domain.log.exception.InvalidLogValueException;
@@ -16,6 +17,8 @@ import org.moonshot.server.domain.log.model.LogState;
 import org.moonshot.server.domain.log.repository.LogRepository;
 import org.moonshot.server.domain.user.repository.UserRepository;
 import org.moonshot.server.global.auth.exception.AccessDeniedException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +31,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class LogService {
 
-    private final UserRepository userRepository;
     private final KeyResultRepository keyResultRepository;
     private final LogRepository logRepository;
 
@@ -46,11 +48,11 @@ public class LogService {
         long prevNum = -1;
         if (!prevLog.isEmpty()) {
             prevNum = prevLog.get().getCurrNum();
-            if(request.logNum() < prevNum) {
+            if(request.logNum() == prevNum) {
                 throw new InvalidLogValueException();
             }
         }
-        logRepository.save(Log.builder()
+        Log log = logRepository.save(Log.builder()
                 .date(LocalDateTime.now())
                 .state(LogState.RECORD)
                 .currNum(request.logNum())
@@ -58,14 +60,14 @@ public class LogService {
                 .content(request.logContent())
                 .keyResult(keyResult)
                 .build());
+        keyResult.modifyProgress(calculateProgressBar(log, keyResult));
     }
 
     @Transactional
-    public void createUpdateLog(KeyResultModifyRequestDto request, Long keyResultId) {
+    public Log createUpdateLog(KeyResultModifyRequestDto request, Long keyResultId) {
         KeyResult keyResult = keyResultRepository.findById(keyResultId)
                 .orElseThrow(KeyResultNotFoundException::new);
-
-        logRepository.save(Log.builder()
+        return logRepository.save(Log.builder()
                 .date(LocalDateTime.now())
                 .state(LogState.UPDATE)
                 .currNum(request.target())
@@ -122,6 +124,10 @@ public class LogService {
             return (prevNum == -1 ? "0" : prevNum) + keyResult.getMetric()
                     + " → " + currNum + keyResult.getMetric();
         }
+    }
+
+    public short calculateProgressBar(Log log, KeyResult keyResult) {
+        return (log != null) ? (short) (Math.round(log.getCurrNum() / (double) keyResult.getTarget() * 100)) : 0;
     }
 
 }
