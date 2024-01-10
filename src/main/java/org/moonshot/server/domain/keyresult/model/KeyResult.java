@@ -39,11 +39,12 @@ public class KeyResult {
     @Column(nullable = false)
     private String metric;
 
-    @Column(nullable = false)
     private String descriptionBefore;
 
-    @Column(nullable = false)
     private String descriptionAfter;
+
+    @Builder.Default
+    private short progress = 0;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, columnDefinition = "enum('DONE','HOLD','PROGRESS','WAITING') default 'PROGRESS'")
@@ -84,6 +85,10 @@ public class KeyResult {
 
     public void modifyState(KRState state) {
         this.state = state;
+    }
+
+    public void modifyProgress(short progress) {
+        this.progress = progress;
     }
 
 }
