@@ -5,6 +5,7 @@ import org.moonshot.server.domain.keyresult.service.KeyResultService;
 import org.moonshot.server.domain.objective.dto.request.ModifyObjectiveRequestDto;
 import org.moonshot.server.domain.objective.dto.request.OKRCreateRequestDto;
 import org.moonshot.server.domain.objective.dto.response.ModifyObjectiveResponseDto;
+import org.moonshot.server.domain.objective.exception.InvalidExpiredAtException;
 import org.moonshot.server.domain.objective.exception.ObjectiveNotFoundException;
 import org.moonshot.server.domain.objective.exception.ObjectiveNumberExceededException;
 import org.moonshot.server.domain.objective.model.Objective;
@@ -16,6 +17,8 @@ import org.moonshot.server.global.auth.exception.AccessDeniedException;
 import org.moonshot.server.global.common.model.Period;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 @Service
 @Transactional(readOnly = true)
@@ -63,9 +66,12 @@ public class ObjectiveService {
                 .orElseThrow(ObjectiveNotFoundException::new);
         objective.modifyClosed(request.isClosed());
         if(!request.isClosed()) {
+            if(request.expireAt().isBefore(LocalDateTime.now())){ //오늘로 할지 이전 만료 기간으로 할지 고민
+                throw new InvalidExpiredAtException();
+            }
             objective.modifyPeriod(Period.of(objective.getPeriod().getStartAt(), request.expireAt()));
         }
         return ModifyObjectiveResponseDto.of(objective.getId(), objective.isClosed(), objective.getPeriod().getExpireAt());
     }
-    
+
 }
