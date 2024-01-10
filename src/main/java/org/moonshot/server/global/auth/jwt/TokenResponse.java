@@ -5,6 +5,6 @@ public record TokenResponse(
         String refreshToken
 ) {
     public static TokenResponse of(String accessToken, String refreshToken) {
-        return new TokenResponse(accessToken, refreshToken);
+        return new TokenResponse("Bearer " + accessToken, "Bearer " + refreshToken);
     }
 }
