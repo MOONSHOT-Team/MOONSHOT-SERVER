@@ -185,8 +185,8 @@ public class KeyResultService implements IndexService {
                 logService.getLogResponseDto(logList, keyResult));
     }
 
-    public int calculateProgressBar(Log log, KeyResult keyResult) {
-        return (log != null) ? (int) (Math.round(log.getCurrNum() / (double) keyResult.getTarget() * 100)) : 0;
+    public short calculateProgressBar(Log log, KeyResult keyResult) {
+        return (log != null) ? (short) (Math.round(log.getCurrNum() / (double) keyResult.getTarget() * 100)) : 0;
     }
 
 }
