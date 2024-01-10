@@ -1,6 +1,5 @@
 package org.moonshot.server.domain.keyresult.dto.response;
 
-import org.moonshot.server.domain.keyresult.model.KRState;
 import org.moonshot.server.domain.log.dto.response.LogResponseDto;
 
 import java.time.LocalDateTime;
