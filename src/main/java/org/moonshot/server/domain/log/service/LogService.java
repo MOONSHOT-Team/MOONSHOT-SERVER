@@ -9,6 +9,7 @@ import org.moonshot.server.domain.keyresult.model.KeyResult;
 import org.moonshot.server.domain.keyresult.repository.KeyResultRepository;
 import org.moonshot.server.domain.keyresult.service.KeyResultService;
 import org.moonshot.server.domain.log.dto.request.LogCreateRequestDto;
+import org.moonshot.server.domain.log.dto.response.AchieveResponseDto;
 import org.moonshot.server.domain.log.dto.response.LogResponseDto;
 import org.moonshot.server.domain.log.exception.InvalidLogValueException;
 import org.moonshot.server.domain.log.exception.InvalidRecordException;
@@ -35,7 +36,7 @@ public class LogService {
     private final LogRepository logRepository;
 
     @Transactional
-    public void createRecordLog(Long userId, LogCreateRequestDto request) {
+    public Optional<AchieveResponseDto> createRecordLog(Long userId, LogCreateRequestDto request) {
         KeyResult keyResult = keyResultRepository.findKeyResultAndObjective(request.keyResultId())
                 .orElseThrow(KeyResultNotFoundException::new);
         if (!keyResult.getObjective().getUser().getId().equals(userId)) {
@@ -61,6 +62,10 @@ public class LogService {
                 .keyResult(keyResult)
                 .build());
         keyResult.modifyProgress(calculateProgressBar(log, keyResult));
+        if (keyResult.getProgress() >= 70) {
+            return Optional.of(AchieveResponseDto.of(keyResult.getObjective().getUser().getNickname(), calculateProgressBar(log, keyResult)));
+        }
+        return null;
     }
 
     @Transactional
