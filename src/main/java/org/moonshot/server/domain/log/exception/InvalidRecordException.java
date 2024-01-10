@@ -5,6 +5,8 @@ import org.moonshot.server.global.common.response.ErrorType;
 
 public class InvalidRecordException extends MoonshotException {
 
-    public InvalidRecordException() { super(ErrorType.INVALID_RECORD_VALUE); }
+    public InvalidRecordException() {
+        super(ErrorType.INVALID_RECORD_VALUE);
+    }
 
 }
