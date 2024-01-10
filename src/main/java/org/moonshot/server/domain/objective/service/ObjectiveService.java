@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.moonshot.server.domain.keyresult.service.KeyResultService;
 import org.moonshot.server.domain.objective.dto.request.ModifyObjectiveRequestDto;
 import org.moonshot.server.domain.objective.dto.request.OKRCreateRequestDto;
-import org.moonshot.server.domain.objective.dto.response.ModifyObjectiveResponseDto;
 import org.moonshot.server.domain.objective.exception.InvalidExpiredAtException;
 import org.moonshot.server.domain.objective.exception.ObjectiveNotFoundException;
 import org.moonshot.server.domain.objective.exception.ObjectiveNumberExceededException;
@@ -64,18 +63,17 @@ public class ObjectiveService {
     }
 
     @Transactional
-    public ModifyObjectiveResponseDto modifyObjective(Long userId, ModifyObjectiveRequestDto request) {
+    public void modifyObjective(Long userId, ModifyObjectiveRequestDto request) {
         Objective objective = objectiveRepository.findObjectiveAndUserById(request.objectiveId())
                 .orElseThrow(ObjectiveNotFoundException::new);
         userService.validateUserAuthorization(objective.getUser(), userId);
         objective.modifyClosed(request.isClosed());
-        if(!request.isClosed()) {
-            if(request.expireAt().isBefore(LocalDateTime.now())){
+        if (!request.isClosed()) {
+            if (request.expireAt().isBefore(LocalDateTime.now())) {
                 throw new InvalidExpiredAtException();
             }
             objective.modifyPeriod(Period.of(objective.getPeriod().getStartAt(), request.expireAt()));
         }
-        return ModifyObjectiveResponseDto.of(objective.getId(), objective.isClosed(), objective.getPeriod().getExpireAt());
     }
 
 }

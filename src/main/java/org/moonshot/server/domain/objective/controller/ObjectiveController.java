@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.moonshot.server.domain.objective.dto.request.ModifyObjectiveRequestDto;
 import org.moonshot.server.domain.objective.dto.request.OKRCreateRequestDto;
-import org.moonshot.server.domain.objective.dto.response.ModifyObjectiveResponseDto;
 import org.moonshot.server.domain.objective.service.ObjectiveService;
 import org.moonshot.server.global.auth.jwt.JwtTokenProvider;
 import org.moonshot.server.global.common.response.ApiResponse;
@@ -35,10 +34,9 @@ public class ObjectiveController {
     }
 
     @PatchMapping
-    public ApiResponse<ModifyObjectiveResponseDto> modifyObjective(Principal principal,
-                                                                   @RequestBody ModifyObjectiveRequestDto request) {
-        return ApiResponse.success(SuccessType.PATCH_OBJECTIVE_SUCCESS,
-                objectiveService.modifyObjective(JwtTokenProvider.getUserIdFromPrincipal(principal), request));
+    public ApiResponse<?> modifyObjective(Principal principal, @RequestBody ModifyObjectiveRequestDto request) {
+        objectiveService.modifyObjective(JwtTokenProvider.getUserIdFromPrincipal(principal), request);
+        return ApiResponse.success(SuccessType.PATCH_OBJECTIVE_SUCCESS);
     }
 
 }
