@@ -14,11 +14,8 @@ import org.moonshot.server.domain.log.exception.InvalidRecordException;
 import org.moonshot.server.domain.log.model.Log;
 import org.moonshot.server.domain.log.model.LogState;
 import org.moonshot.server.domain.log.repository.LogRepository;
-import org.moonshot.server.domain.user.exception.UserNotFoundException;
-import org.moonshot.server.domain.user.model.User;
 import org.moonshot.server.domain.user.repository.UserRepository;
 import org.moonshot.server.global.auth.exception.AccessDeniedException;
-import org.moonshot.server.global.auth.exception.InvalidAuthException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
