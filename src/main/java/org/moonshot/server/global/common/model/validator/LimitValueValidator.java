@@ -12,7 +12,7 @@ public class LimitValueValidator implements ConstraintValidator<ValidLimitValue,
         if (value == null) {
             return true;
         } else {
-            return value <= MAX_LIMIT;
+            return value > 0 && value <= MAX_LIMIT;
         }
     }
 

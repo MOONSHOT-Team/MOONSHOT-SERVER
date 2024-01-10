@@ -2,15 +2,19 @@ package org.moonshot.server.domain.keyresult.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import org.moonshot.server.domain.keyresult.dto.request.KeyResultCreateRequestDto;
 import org.moonshot.server.domain.keyresult.dto.request.KeyResultCreateRequestInfoDto;
 import org.moonshot.server.domain.keyresult.dto.request.KeyResultModifyRequestDto;
+import org.moonshot.server.domain.keyresult.dto.response.KRDetailResponseDto;
 import org.moonshot.server.domain.keyresult.exception.KeyResultInvalidPositionException;
 import org.moonshot.server.domain.keyresult.exception.KeyResultNotFoundException;
 import org.moonshot.server.domain.keyresult.exception.KeyResultNumberExceededException;
 import org.moonshot.server.domain.keyresult.model.KeyResult;
 import org.moonshot.server.domain.keyresult.repository.KeyResultRepository;
+import org.moonshot.server.domain.log.model.Log;
+import org.moonshot.server.domain.log.model.LogState;
 import org.moonshot.server.domain.objective.dto.request.ModifyIndexRequestDto;
 import org.moonshot.server.domain.log.repository.LogRepository;
 import org.moonshot.server.domain.log.service.LogService;
@@ -160,6 +164,30 @@ public class KeyResultService implements IndexService {
         } else {
             keyResultRepository.bulkUpdateIdxIncrease(request.idx(), prevIdx, keyResult.getObjective().getId(), keyResult.getId());
         }
+    }
+
+    public KRDetailResponseDto getKRDetails(Long userId, Long keyResultId) {
+        KeyResult keyResult = keyResultRepository.findKeyResultAndObjective(keyResultId)
+                .orElseThrow(KeyResultNotFoundException::new);
+        userService.validateUserAuthorization(keyResult.getObjective().getUser(), userId);
+        List<Log> logList = logService.getLogList(keyResult);
+        Log target = null;
+        for (Log log : logList) {
+            if (log.getState().equals(LogState.RECORD)) {
+                target = log;
+                break;
+            }
+        }
+        return KRDetailResponseDto.of(keyResult.getTitle(),
+                calculateProgressBar(target, keyResult),
+                keyResult.getState().getValue(),
+                keyResult.getPeriod().getStartAt(),
+                keyResult.getPeriod().getExpireAt(),
+                logService.getLogResponseDto(logList, keyResult));
+    }
+
+    public int calculateProgressBar(Log log, KeyResult keyResult) {
+        return (log != null) ? (int) (Math.round(log.getCurrNum() / (double) keyResult.getTarget() * 100)) : 0;
     }
 
 }

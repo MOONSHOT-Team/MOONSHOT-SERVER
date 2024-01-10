@@ -66,4 +66,7 @@ public class Objective {
         return this.period.getStartAt().format(formatter) + " - " + this.period.getExpireAt().format(formatter);
     }
 
+    public void  modifyClosed(boolean isClosed) { this.isClosed = isClosed; }
+    public void modifyPeriod(Period period) { this.period = period; }
+
 }

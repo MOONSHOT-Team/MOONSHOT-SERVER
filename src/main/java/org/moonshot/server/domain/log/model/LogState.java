@@ -8,8 +8,8 @@ import lombok.Getter;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public enum LogState {
 
-    CREATE("KR생성"),
-    UPDATE("KR수정"),
+    CREATE("KR 생성"),
+    UPDATE("KR 수정"),
     RECORD("진척상황 기록");
 
     private final String value;
