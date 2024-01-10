@@ -178,15 +178,11 @@ public class KeyResultService implements IndexService {
             }
         }
         return KRDetailResponseDto.of(keyResult.getTitle(),
-                calculateProgressBar(target, keyResult),
+                logService.calculateProgressBar(target, keyResult),
                 keyResult.getState().getValue(),
                 keyResult.getPeriod().getStartAt(),
                 keyResult.getPeriod().getExpireAt(),
                 logService.getLogResponseDto(logList, keyResult));
-    }
-
-    public short calculateProgressBar(Log log, KeyResult keyResult) {
-        return (log != null) ? (short) (Math.round(log.getCurrNum() / (double) keyResult.getTarget() * 100)) : 0;
     }
 
 }
