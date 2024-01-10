@@ -13,6 +13,7 @@ import org.moonshot.server.domain.objective.repository.ObjectiveRepository;
 import org.moonshot.server.domain.user.exception.UserNotFoundException;
 import org.moonshot.server.domain.user.model.User;
 import org.moonshot.server.domain.user.repository.UserRepository;
+import org.moonshot.server.domain.user.service.UserService;
 import org.moonshot.server.global.auth.exception.AccessDeniedException;
 import org.moonshot.server.global.common.model.Period;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,7 @@ public class ObjectiveService {
 
     private static final int ACTIVE_OBJECTIVE_NUMBER = 10;
 
+    private final UserService userService;
     private final KeyResultService keyResultService;
     private final UserRepository userRepository;
     private final ObjectiveRepository objectiveRepository;
@@ -61,12 +63,14 @@ public class ObjectiveService {
         objectiveRepository.delete(objective);
     }
 
+    @Transactional
     public ModifyObjectiveResponseDto modifyObjective(Long userId, ModifyObjectiveRequestDto request) {
         Objective objective = objectiveRepository.findObjectiveAndUserById(request.objectiveId())
                 .orElseThrow(ObjectiveNotFoundException::new);
+        userService.validateUserAuthorization(objective.getUser(), userId);
         objective.modifyClosed(request.isClosed());
         if(!request.isClosed()) {
-            if(request.expireAt().isBefore(LocalDateTime.now())){ //오늘로 할지 이전 만료 기간으로 할지 고민
+            if(request.expireAt().isBefore(LocalDateTime.now())){
                 throw new InvalidExpiredAtException();
             }
             objective.modifyPeriod(Period.of(objective.getPeriod().getStartAt(), request.expireAt()));

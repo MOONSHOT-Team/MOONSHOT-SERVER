@@ -1,13 +1,14 @@
 package org.moonshot.server.domain.objective.dto.response;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public record ModifyObjectiveResponseDto(
-        Long objeciveId,
+        Long objectiveId,
         boolean isClosed,
-        LocalDateTime expireAt
+        String expireAt
 ) {
-    public static ModifyObjectiveResponseDto of(Long objeciveId, boolean isClosed, LocalDateTime expireAt) {
-        return new ModifyObjectiveResponseDto(objeciveId, isClosed, expireAt);
+    public static ModifyObjectiveResponseDto of(Long objectiveId, boolean isClosed, LocalDateTime expireAt) {
+        return new ModifyObjectiveResponseDto(objectiveId, isClosed, expireAt.format(DateTimeFormatter.ISO_DATE));
     }
 }
