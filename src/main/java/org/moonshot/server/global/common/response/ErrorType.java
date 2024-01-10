@@ -23,7 +23,7 @@ public enum ErrorType {
     ACTIVE_TASK_NUMBER_EXCEEDED(HttpStatus.BAD_REQUEST, "허용된 Task 개수를 초과하였습니다."),
     INVALID_KEY_RESULT_ORDER(HttpStatus.BAD_REQUEST, "정상적이지 않은 KeyResult 위치입니다."),
     INVALID_TASK_ORDER(HttpStatus.BAD_REQUEST, "정상적이지 않은 Task 위치입니다."),
-    INVALID_LOG_VALUE(HttpStatus.BAD_REQUEST, "진척 정도는 이전 값보다 큰 값이 입력되어야합니다."),
+    INVALID_LOG_VALUE(HttpStatus.BAD_REQUEST, "Log 입력값은 이전 값과 동일할 수 없습니다."),
     INVALID_EXPIRE_AT(HttpStatus.BAD_REQUEST, "Objective 종료 기간은 오늘보다 이전 날짜일 수 없습니다."),
     INVALID_RECORD_VALUE(HttpStatus.BAD_REQUEST, "진척 정도는 목표값보다 작은 값이 입력되어야 합니다."),
 
@@ -47,6 +47,7 @@ public enum ErrorType {
     NOT_FOUND_OBJECTIVE_ERROR(HttpStatus.NOT_FOUND, "존재하지 않는 Objective입니다."),
     NOT_FOUND_KEY_RESULT_ERROR(HttpStatus.NOT_FOUND, "존재하지 않는 KeyResult입니다."),
     NOT_FOUND_TASK_ERROR(HttpStatus.NOT_FOUND, "존재하지 않는 Task입니다."),
+    NOT_FOUND_LOG_ERROR(HttpStatus.NOT_FOUND, "존재하지 않는 Log입니다."),
 
     /**
      * 500 INTERNAL SERVER ERROR
