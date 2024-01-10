@@ -34,9 +34,7 @@ public class LogService {
 
     @Transactional
     public void createRecordLog(Long userId, LogCreateRequestDto request) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(UserNotFoundException::new);
-        KeyResult keyResult = keyResultRepository.findById(request.keyResultId())
+        KeyResult keyResult = keyResultRepository.findKeyResultAndObjective(request.keyResultId())
                 .orElseThrow(KeyResultNotFoundException::new);
         if (!keyResult.getObjective().getUser().getId().equals(userId)) {
             throw new AccessDeniedException();
@@ -102,21 +100,21 @@ public class LogService {
         return logRepository.findAllByKeyResultOrderByIdDesc(keyResult);
     }
 
-    public List<LogResponseDto> getLogResponseDto(List<Log> logList) {
+    public List<LogResponseDto> getLogResponseDto(List<Log> logList, KeyResult keyResult) {
         return logList.stream()
                 .map(log -> LogResponseDto.of(log.getState().getValue(),
                         log.getDate(),
-                        setTitle(log.getPrevNum(), log.getCurrNum(), log),
+                        setTitle(log.getPrevNum(), log.getCurrNum(), log, keyResult),
                         log.getContent()))
                 .toList();
     }
 
-    public String setTitle(long prevNum, long currNum, Log log) {
+    public String setTitle(long prevNum, long currNum, Log log, KeyResult keyResult) {
         if (log.getState() == LogState.CREATE) {
-            return log.getKeyResult().getDescriptionBefore() + " " + log.getKeyResult().getTarget() + log.getKeyResult().getMetric() + " " + log.getKeyResult().getDescriptionAfter();
+            return keyResult.getDescriptionBefore() + " " + keyResult.getTarget() + keyResult.getMetric() + " " + keyResult.getDescriptionAfter();
         } else {
-            return (prevNum == -1 ? "0" : prevNum) + log.getKeyResult().getMetric()
-                    + " → " + currNum + log.getKeyResult().getMetric();
+            return (prevNum == -1 ? "0" : prevNum) + keyResult.getMetric()
+                    + " → " + currNum + keyResult.getMetric();
         }
     }
 

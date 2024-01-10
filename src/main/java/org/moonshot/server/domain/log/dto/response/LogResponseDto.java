@@ -15,5 +15,4 @@ public record LogResponseDto(
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         return new LogResponseDto(logState, dateTime.format(formatter), title, content);
     }
-
 }

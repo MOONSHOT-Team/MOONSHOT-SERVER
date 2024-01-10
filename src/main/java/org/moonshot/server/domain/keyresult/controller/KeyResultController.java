@@ -41,7 +41,7 @@ public class KeyResultController {
 
     @GetMapping("/{keyResultId}")
     public ApiResponse<KRDetailResponseDto> getKRDetails(Principal principal, @PathVariable("keyResultId") Long keyResultId) {
-        return ApiResponse.success(SuccessType.GET_KR_DETAIL_SUCCESS, keyResultService.getkRDetails(JwtTokenProvider.getUserIdFromPrincipal(principal), keyResultId));
+        return ApiResponse.success(SuccessType.GET_KR_DETAIL_SUCCESS, keyResultService.getKRDetails(JwtTokenProvider.getUserIdFromPrincipal(principal), keyResultId));
     }
 
 }
