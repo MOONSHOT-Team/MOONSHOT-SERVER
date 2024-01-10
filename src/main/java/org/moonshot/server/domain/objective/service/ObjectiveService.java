@@ -2,7 +2,9 @@ package org.moonshot.server.domain.objective.service;
 
 import lombok.RequiredArgsConstructor;
 import org.moonshot.server.domain.keyresult.service.KeyResultService;
+import org.moonshot.server.domain.objective.dto.request.ModifyObjectiveRequestDto;
 import org.moonshot.server.domain.objective.dto.request.OKRCreateRequestDto;
+import org.moonshot.server.domain.objective.dto.response.ModifyObjectiveResponseDto;
 import org.moonshot.server.domain.objective.exception.ObjectiveNotFoundException;
 import org.moonshot.server.domain.objective.exception.ObjectiveNumberExceededException;
 import org.moonshot.server.domain.objective.model.Objective;
@@ -56,4 +58,14 @@ public class ObjectiveService {
         objectiveRepository.delete(objective);
     }
 
+    public ModifyObjectiveResponseDto modifyObjective(Long userId, ModifyObjectiveRequestDto request) {
+        Objective objective = objectiveRepository.findObjectiveAndUserById(request.objectiveId())
+                .orElseThrow(ObjectiveNotFoundException::new);
+        objective.modifyClosed(request.isClosed());
+        if(!request.isClosed()) {
+            objective.modifyPeriod(Period.of(objective.getPeriod().getStartAt(), request.expireAt()));
+        }
+        return ModifyObjectiveResponseDto.of(objective.getId(), objective.isClosed(), objective.getPeriod().getExpireAt());
+    }
+    
 }
