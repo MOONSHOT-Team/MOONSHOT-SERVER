@@ -47,6 +47,7 @@ public class Log {
                 .state(state)
                 .prevNum(prevNum)
                 .currNum(currNum)
+                .content(content)
                 .keyResult(keyResult)
                 .build();
     }

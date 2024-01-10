@@ -23,6 +23,7 @@ public enum ErrorType {
     ACTIVE_TASK_NUMBER_EXCEEDED(HttpStatus.BAD_REQUEST, "허용된 Task 개수를 초과하였습니다."),
     INVALID_KEY_RESULT_ORDER(HttpStatus.BAD_REQUEST, "정상적이지 않은 KeyResult 위치입니다."),
     INVALID_TASK_ORDER(HttpStatus.BAD_REQUEST, "정상적이지 않은 Task 위치입니다."),
+    INVALID_LOG_VALUE(HttpStatus.BAD_REQUEST, "진척 정도는 이전 값보다 큰 값이 입력되어야합니다."),
 
     /**
      * 401 UNAUTHROZIED

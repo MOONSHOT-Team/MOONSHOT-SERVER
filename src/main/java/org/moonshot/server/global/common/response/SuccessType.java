@@ -18,6 +18,7 @@ public enum SuccessType {
     POST_REISSUE_SUCCESS(HttpStatus.OK, "엑세스 토큰 재발급에 성공하였습니다."),
     POST_LOGOUT_SUCCESS(HttpStatus.OK, "로그아웃에 성공하였습니다."),
     PATCH_PROFILE_SUCCESS(HttpStatus.OK, "사용자 프로필 업데이트에 성공하였습니다."),
+    GET_KR_DETAIL_SUCCESS(HttpStatus.OK, "KR 상세 조회에 성공하였습니다." ),
 
     /**
      * 201 CREATED

@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = TargetNumberValidator.class)
+@Constraint(validatedBy = LimitValueValidator.class)
 public @interface ValidLimitValue {
 
     String message() default "수치는 99,999,999,999까지만 가능합니다.";
