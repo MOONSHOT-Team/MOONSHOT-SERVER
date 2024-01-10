@@ -61,11 +61,6 @@ public class KeyResultService implements IndexService {
                     .build());
             logService.createKRLog(dto, keyResult.getId());
             if (dto.taskList() != null) {
-                taskRepository.saveAll(dto.taskList().stream().map((task) -> Task.builder()
-                        .title(task.title())
-                        .idx(task.idx())
-                        .keyResult(keyResult)
-                        .build()).toList());
                 for (TaskCreateRequestDto taskDto : dto.taskList()) {
                     taskService.saveTask(keyResult, taskDto);
                 }
