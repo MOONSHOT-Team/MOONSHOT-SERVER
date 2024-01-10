@@ -1,10 +1,15 @@
 package org.moonshot.server.domain.objective.model;
 
 import jakarta.persistence.*;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.moonshot.server.domain.keyresult.model.KeyResult;
 import org.moonshot.server.domain.user.model.User;
 import org.moonshot.server.global.common.model.Period;
 
@@ -45,12 +50,21 @@ public class Objective {
 
     @Builder.Default
     @Column(columnDefinition = "smallint default -1")
-    private short order = -1;
+    private short idx = -1;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
+
+    @BatchSize(size = 10)
+    @OneToMany(mappedBy = "objective", fetch = FetchType.LAZY)
+    List<KeyResult> keyResultList = new ArrayList<>();
+
+    public String getDateString() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy-MM-dd");
+        return this.period.getStartAt().format(formatter) + " - " + this.period.getExpireAt().format(formatter);
+    }
 
     public void  modifyClosed(boolean isClosed) { this.isClosed = isClosed; }
     public void modifyPeriod(Period period) { this.period = period; }

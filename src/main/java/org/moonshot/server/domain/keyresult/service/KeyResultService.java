@@ -23,7 +23,6 @@ import org.moonshot.server.domain.objective.model.IndexService;
 import org.moonshot.server.domain.objective.model.Objective;
 import org.moonshot.server.domain.objective.repository.ObjectiveRepository;
 import org.moonshot.server.domain.task.dto.request.TaskCreateRequestDto;
-import org.moonshot.server.domain.task.model.Task;
 import org.moonshot.server.domain.task.repository.TaskRepository;
 import org.moonshot.server.domain.task.service.TaskService;
 import org.moonshot.server.domain.user.service.UserService;
@@ -65,11 +64,6 @@ public class KeyResultService implements IndexService {
                     .build());
             logService.createKRLog(dto, keyResult.getId());
             if (dto.taskList() != null) {
-                taskRepository.saveAll(dto.taskList().stream().map((task) -> Task.builder()
-                        .title(task.title())
-                        .idx(task.idx())
-                        .keyResult(keyResult)
-                        .build()).toList());
                 for (TaskCreateRequestDto taskDto : dto.taskList()) {
                     taskService.saveTask(keyResult, taskDto);
                 }

@@ -14,6 +14,7 @@ public enum SuccessType {
      */
     OK(HttpStatus.OK, "성공"),
     GET_PRESIGNED_URL_SUCCESS(HttpStatus.OK, "Presigned Url 조회에 성공하였습니다."),
+    GET_OKR_LIST_SUCCESS(HttpStatus.OK, "O-KR 목록 조회에 성공하였습니다."),
     POST_LOGIN_SUCCESS(HttpStatus.OK, "로그인에 성공하였습니다."),
     POST_REISSUE_SUCCESS(HttpStatus.OK, "엑세스 토큰 재발급에 성공하였습니다."),
     POST_LOGOUT_SUCCESS(HttpStatus.OK, "로그아웃에 성공하였습니다."),

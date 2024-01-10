@@ -1,5 +1,6 @@
 package org.moonshot.server.domain.task.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.moonshot.server.domain.keyresult.model.KeyResult;
@@ -22,6 +23,7 @@ public class Task {
     @Column(nullable = false)
     private Integer idx;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "key_result_id")
     private KeyResult keyResult;

@@ -1,9 +1,11 @@
 package org.moonshot.server.domain.objective.service;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.moonshot.server.domain.keyresult.service.KeyResultService;
 import org.moonshot.server.domain.objective.dto.request.ModifyObjectiveRequestDto;
 import org.moonshot.server.domain.objective.dto.request.OKRCreateRequestDto;
+import org.moonshot.server.domain.objective.dto.response.DashboardResponseDto;
 import org.moonshot.server.domain.objective.exception.InvalidExpiredAtException;
 import org.moonshot.server.domain.objective.exception.ObjectiveNotFoundException;
 import org.moonshot.server.domain.objective.exception.ObjectiveNumberExceededException;
@@ -74,6 +76,16 @@ public class ObjectiveService {
             }
             objective.modifyPeriod(Period.of(objective.getPeriod().getStartAt(), request.expireAt()));
         }
+    }
+
+    public DashboardResponseDto getObjectiveInDashboard(Long userId) {
+        List<Objective> objList = objectiveRepository.findAllByUserId(userId);
+        Objective objective = objectiveRepository.findByIdWithKeyResultsAndTasks(objList.get(0).getId())
+                .orElseThrow(ObjectiveNotFoundException::new);
+        if (!objective.getUser().getId().equals(userId)) {
+            throw new AccessDeniedException();
+        }
+        return DashboardResponseDto.of(objective, objList);
     }
 
 }

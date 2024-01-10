@@ -1,7 +1,5 @@
 package org.moonshot.server.domain.log.dto.response;
 
-import org.moonshot.server.domain.log.model.LogState;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 

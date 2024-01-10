@@ -13,6 +13,7 @@ spring:
         format_sql: true
         show_sql: true
         auto_quote_keyword: true
+        default_batch_fetch_size: 10
 
   config:
     import: optional:application-secret.properties
@@ -66,3 +67,6 @@ springdoc:
     cache:
       disabled: true
   show-login-endpoint: true
+
+mybatis:
+  mapper-locations: mappers/*.xml
