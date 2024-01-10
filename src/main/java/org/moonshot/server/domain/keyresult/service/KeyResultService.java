@@ -15,9 +15,11 @@ import org.moonshot.server.domain.keyresult.model.KeyResult;
 import org.moonshot.server.domain.keyresult.repository.KeyResultRepository;
 import org.moonshot.server.domain.log.model.Log;
 import org.moonshot.server.domain.log.model.LogState;
+import org.moonshot.server.domain.objective.dto.request.ModifyIndexRequestDto;
 import org.moonshot.server.domain.log.repository.LogRepository;
 import org.moonshot.server.domain.log.service.LogService;
 import org.moonshot.server.domain.objective.exception.ObjectiveNotFoundException;
+import org.moonshot.server.domain.objective.model.IndexService;
 import org.moonshot.server.domain.objective.model.Objective;
 import org.moonshot.server.domain.objective.repository.ObjectiveRepository;
 import org.moonshot.server.domain.task.dto.request.TaskCreateRequestDto;
@@ -32,7 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class KeyResultService {
+public class KeyResultService implements IndexService {
 
     private static final int ACTIVE_KEY_RESULT_NUMBER = 3;
 
@@ -89,7 +91,7 @@ public class KeyResultService {
             throw new KeyResultInvalidPositionException();
         }
 
-        for (short i = request.idx(); i < krList.size(); i++) {
+        for (int i = request.idx(); i < krList.size(); i++) {
             krList.get(i).incrementIdx();
         }
         KeyResult keyResult = keyResultRepository.save(KeyResult.builder()
@@ -148,7 +150,25 @@ public class KeyResultService {
         if (request.state() != null) {
             keyResult.modifyState(request.state());
         }
+    }
 
+    @Override
+    @Transactional
+    public void modifyIdx(ModifyIndexRequestDto request, Long userId) {
+        KeyResult keyResult = keyResultRepository.findKeyResultAndObjective(request.id())
+                .orElseThrow(KeyResultNotFoundException::new);
+        userService.validateUserAuthorization(keyResult.getObjective().getUser(), userId);
+        Integer prevIdx = keyResult.getIdx();
+        if (prevIdx.equals(request.idx())) {
+            return;
+        }
+
+        keyResult.modifyIdx(request.idx());
+        if (prevIdx < request.idx()) {
+            keyResultRepository.bulkUpdateIdxDecrease(prevIdx + 1, request.idx(), keyResult.getObjective().getId(), keyResult.getId());
+        } else {
+            keyResultRepository.bulkUpdateIdxIncrease(request.idx(), prevIdx, keyResult.getObjective().getId(), keyResult.getId());
+        }
     }
 
     public KRDetailResponseDto getKRDetails(Long userId, Long keyResultId) {

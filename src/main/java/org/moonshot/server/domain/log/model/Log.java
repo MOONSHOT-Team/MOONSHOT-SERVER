@@ -2,11 +2,8 @@ package org.moonshot.server.domain.log.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.moonshot.server.domain.keyresult.model.KeyResult;
-import org.moonshot.server.domain.user.model.SocialPlatform;
-import org.moonshot.server.domain.user.model.User;
 
 import java.time.LocalDateTime;
 

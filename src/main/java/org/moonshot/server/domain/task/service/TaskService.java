@@ -5,11 +5,15 @@ import lombok.RequiredArgsConstructor;
 import org.moonshot.server.domain.keyresult.exception.KeyResultInvalidPositionException;
 import org.moonshot.server.domain.keyresult.model.KeyResult;
 import org.moonshot.server.domain.keyresult.repository.KeyResultRepository;
+import org.moonshot.server.domain.objective.dto.request.ModifyIndexRequestDto;
+import org.moonshot.server.domain.objective.model.IndexService;
 import org.moonshot.server.domain.task.dto.request.TaskCreateRequestDto;
 import org.moonshot.server.domain.task.dto.request.TaskSingleCreateRequestDto;
+import org.moonshot.server.domain.task.exception.TaskNotFoundException;
 import org.moonshot.server.domain.task.exception.TaskNumberExceededException;
 import org.moonshot.server.domain.task.model.Task;
 import org.moonshot.server.domain.task.repository.TaskRepository;
+import org.moonshot.server.domain.user.service.UserService;
 import org.moonshot.server.global.auth.exception.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,12 +21,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class TaskService {
+public class TaskService implements IndexService {
 
     private static final int ACTIVE_TASK_NUMBER = 3;
 
     private final KeyResultRepository keyResultRepository;
     private final TaskRepository taskRepository;
+    private final UserService userService;
 
     @Transactional
     public void createTask(TaskSingleCreateRequestDto request, Long userId) {
@@ -40,7 +45,7 @@ public class TaskService {
             throw new KeyResultInvalidPositionException();
         }
 
-        for (short i = request.idx(); i < taskList.size(); i++) {
+        for (int i = request.idx(); i < taskList.size(); i++) {
             taskList.get(i).incrementIdx();
         }
 
@@ -61,6 +66,26 @@ public class TaskService {
                 .idx(request.idx())
                 .keyResult(keyResult)
                 .build());
+    }
+
+    @Override
+    @Transactional
+    public void modifyIdx(ModifyIndexRequestDto request, Long userId) {
+        Task task = taskRepository.findTaskWithFetchJoin(request.id())
+                .orElseThrow(TaskNotFoundException::new);
+        userService.validateUserAuthorization(task.getKeyResult().getObjective().getUser(), userId);
+        Integer prevIdx = task.getIdx();
+        if (prevIdx.equals(request.idx())) {
+            return;
+        }
+        List<Task> taskList = taskRepository.findAllByKeyResult(task.getKeyResult());
+
+        task.modifyIdx(request.idx());
+        if (prevIdx < request.idx()) {
+            taskRepository.bulkUpdateTaskIdxDecrease(prevIdx + 1, request.idx(), task.getKeyResult().getId(), task.getId());
+        } else {
+            taskRepository.bulkUpdateTaskIdxIncrease(request.idx(), prevIdx, task.getKeyResult().getId(), task.getId());
+        }
     }
 
 }
