@@ -85,7 +85,6 @@ public class ObjectiveService {
         if (!objective.getUser().getId().equals(userId)) {
             throw new AccessDeniedException();
         }
-
         return DashboardResponseDto.of(objective, objList);
     }
 
