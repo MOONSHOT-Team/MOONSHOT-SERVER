@@ -18,7 +18,4 @@ public interface LogRepository extends JpaRepository<Log, Long> {
     @Query("select l FROM Log l JOIN FETCH l.keyResult k WHERE l.state = :state and l.keyResult.id = :keyResultId ORDER BY l.id DESC LIMIT 1")
     Optional<Log> findLatestLogByKeyResultId(@Param("state") LogState state, @Param("keyResultId") Long keyResultId);
 
-    @Query("select l FROM Log l JOIN FETCH l.keyResult k WHERE l.keyResult.id = :keyResultId ORDER BY l.id LIMIT 1")
-    Optional<Log> findOldestLogByKeyResultId(@Param("keyResultId") Long keyResultId);
-
 }

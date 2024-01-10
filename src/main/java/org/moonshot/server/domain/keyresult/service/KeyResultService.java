@@ -158,17 +158,24 @@ public class KeyResultService {
         KeyResult keyResult = keyResultRepository.findKeyResultAndObjective(keyResultId)
                 .orElseThrow(KeyResultNotFoundException::new);
         userService.validateUserAuthorization(keyResult.getObjective().getUser(), userId);
+        List<Log> logList = logService.getLogList(keyResult);
+        Log target = null;
+        for (Log log : logList) {
+            if (log.getState().equals(LogState.RECORD)) {
+                target = log;
+            }
+        }
         return KRDetailResponseDto.of(keyResult.getTitle(),
-                calculateProgressBar(keyResult),
+                calculateProgressBar(target, keyResult),
                 keyResult.getState().getValue(),
                 keyResult.getPeriod().getStartAt(),
                 keyResult.getPeriod().getExpireAt(),
-                logService.getLogList(keyResult));
+                logService.getLogResponseDto(logList));
+
     }
 
-    public int calculateProgressBar(KeyResult keyResult) {
-        Optional<Log> log = logRepository.findLatestLogByKeyResultId(LogState.RECORD, keyResult.getId());
-        return log.map(value -> (int) Math.round((value.getCurrNum() / (double) keyResult.getTarget()) * 100)).orElse(0);
+    public int calculateProgressBar(Log log, KeyResult keyResult) {
+        return (log != null) ? (int) (Math.round(log.getCurrNum() / (double) keyResult.getTarget() * 100)) : 0;
     }
 
 }

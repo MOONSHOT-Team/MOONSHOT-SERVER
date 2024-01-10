@@ -98,26 +98,25 @@ public class LogService {
         }
     }
 
-    public List<LogResponseDto> getLogList(KeyResult keyResult) {
-        return logRepository.findAllByKeyResultOrderByIdDesc(keyResult)
-                .stream()
+    public List<Log> getLogList(KeyResult keyResult) {
+        return logRepository.findAllByKeyResultOrderByIdDesc(keyResult);
+    }
+
+    public List<LogResponseDto> getLogResponseDto(List<Log> logList) {
+        return logList.stream()
                 .map(log -> LogResponseDto.of(log.getState().getValue(),
                         log.getDate(),
-                        setTitle(log),
+                        setTitle(log.getPrevNum(), log.getCurrNum(), log),
                         log.getContent()))
                 .toList();
     }
 
-    public String setTitle(Log log) {
+    public String setTitle(long prevNum, long currNum, Log log) {
         if (log.getState() == LogState.CREATE) {
-            Optional<Log> createLog = logRepository.findOldestLogByKeyResultId(log.getKeyResult().getId());
-            return log.getKeyResult().getDescriptionBefore() + " " + createLog.get().getKeyResult().getTarget() + log.getKeyResult().getMetric() + " " + log.getKeyResult().getDescriptionAfter();
-        } else if(log.getState() == LogState.UPDATE) {
-            Optional<Log> updateLog = logRepository.findLatestLogByKeyResultId(LogState.UPDATE, log.getKeyResult().getId());
-            return updateLog.get().getPrevNum() + log.getKeyResult().getMetric() + " → " + log.getCurrNum() + log.getKeyResult().getMetric();
+            return log.getKeyResult().getDescriptionBefore() + " " + log.getKeyResult().getTarget() + log.getKeyResult().getMetric() + " " + log.getKeyResult().getDescriptionAfter();
         } else {
-            Optional<Log> recordLog = logRepository.findLatestLogByKeyResultId(LogState.RECORD, log.getKeyResult().getId());
-            return (recordLog.get().getPrevNum() == -1 ? "0" : recordLog.get().getPrevNum()) + log.getKeyResult().getMetric() + " → " + log.getCurrNum() + log.getKeyResult().getMetric();
+            return (prevNum == -1 ? "0" : prevNum) + log.getKeyResult().getMetric()
+                    + " → " + currNum + log.getKeyResult().getMetric();
         }
     }
 
