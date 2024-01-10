@@ -48,7 +48,7 @@ public class LogService {
         long prevNum = -1;
         if (!prevLog.isEmpty()) {
             prevNum = prevLog.get().getCurrNum();
-            if(request.logNum() < prevNum) {
+            if(request.logNum() == prevNum) {
                 throw new InvalidLogValueException();
             }
         }
@@ -64,10 +64,10 @@ public class LogService {
     }
 
     @Transactional
-    public void createUpdateLog(KeyResultModifyRequestDto request, Long keyResultId) {
+    public Log createUpdateLog(KeyResultModifyRequestDto request, Long keyResultId) {
         KeyResult keyResult = keyResultRepository.findById(keyResultId)
                 .orElseThrow(KeyResultNotFoundException::new);
-        Log log = logRepository.save(Log.builder()
+        return logRepository.save(Log.builder()
                 .date(LocalDateTime.now())
                 .state(LogState.UPDATE)
                 .currNum(request.target())
@@ -75,7 +75,6 @@ public class LogService {
                 .content(request.logContent())
                 .keyResult(keyResult)
                 .build());
-        keyResult.modifyProgress(calculateProgressBar(log, keyResult));
     }
 
     @Transactional
