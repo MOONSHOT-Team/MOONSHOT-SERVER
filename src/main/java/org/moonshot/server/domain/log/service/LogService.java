@@ -9,6 +9,7 @@ import org.moonshot.server.domain.keyresult.model.KeyResult;
 import org.moonshot.server.domain.keyresult.repository.KeyResultRepository;
 import org.moonshot.server.domain.log.dto.request.LogCreateRequestDto;
 import org.moonshot.server.domain.log.dto.response.LogResponseDto;
+import org.moonshot.server.domain.log.exception.InvalidLogValueException;
 import org.moonshot.server.domain.log.model.Log;
 import org.moonshot.server.domain.log.model.LogState;
 import org.moonshot.server.domain.log.repository.LogRepository;
@@ -16,6 +17,7 @@ import org.moonshot.server.domain.user.exception.UserNotFoundException;
 import org.moonshot.server.domain.user.model.User;
 import org.moonshot.server.domain.user.repository.UserRepository;
 import org.moonshot.server.global.auth.exception.AccessDeniedException;
+import org.moonshot.server.global.auth.exception.InvalidAuthException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,6 +45,9 @@ public class LogService {
         long prevNum = -1;
         if (!prevLog.isEmpty()) {
             prevNum = prevLog.get().getCurrNum();
+            if(request.logNum() < prevNum) {
+                throw new InvalidLogValueException();
+            }
         }
         logRepository.save(Log.builder()
                 .date(LocalDateTime.now())
