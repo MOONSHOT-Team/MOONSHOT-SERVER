@@ -1,5 +1,6 @@
 package org.moonshot.server.domain.objective.controller;
 
+import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,8 +49,8 @@ public class ObjectiveController {
     }
 
     @GetMapping
-    public ApiResponse<DashboardResponseDto> getObjectiveInDashboard(Principal principal) {
-        DashboardResponseDto response = objectiveService.getObjectiveInDashboard(JwtTokenProvider.getUserIdFromPrincipal(principal));
+    public ApiResponse<DashboardResponseDto> getObjectiveInDashboard(Principal principal, @Nullable @RequestParam("objectiveId") Long objectiveId) {
+        DashboardResponseDto response = objectiveService.getObjectiveInDashboard(JwtTokenProvider.getUserIdFromPrincipal(principal), objectiveId);
         return ApiResponse.success(SuccessType.GET_OKR_LIST_SUCCESS, response);
     }
 
