@@ -1,5 +1,6 @@
 package org.moonshot.server.domain.user.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.moonshot.server.domain.user.dto.request.UserInfoRequest;
 import org.moonshot.server.domain.user.dto.response.UserInfoResponse;
@@ -46,8 +47,14 @@ public class UserController {
     }
 
     @PatchMapping("/profile")
-    public ApiResponse<UserInfoResponse> modifyProfile(Principal principal, @RequestBody UserInfoRequest userInfoRequest) {
-        return ApiResponse.success(SuccessType.PATCH_PROFILE_SUCCESS, userService.modifyProfile(JwtTokenProvider.getUserIdFromPrincipal(principal), userInfoRequest));
+    public ApiResponse<?> modifyProfile(Principal principal, @Valid  @RequestBody UserInfoRequest userInfoRequest) {
+        userService.modifyProfile(JwtTokenProvider.getUserIdFromPrincipal(principal), userInfoRequest);
+        return ApiResponse.success(SuccessType.PATCH_PROFILE_SUCCESS);
+    }
+
+    @GetMapping("/mypage")
+    public ApiResponse<UserInfoResponse> getMyProfile(Principal principal) {
+        return ApiResponse.success(SuccessType.GET_PROFILE_SUCCESS, userService.getMyProfile(JwtTokenProvider.getUserIdFromPrincipal(principal)));
     }
 
 //    @GetMapping("/login/oauth2/code/kakao")
