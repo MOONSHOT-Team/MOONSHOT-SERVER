@@ -14,6 +14,7 @@ import org.moonshot.server.domain.keyresult.exception.KeyResultNotFoundException
 import org.moonshot.server.domain.keyresult.exception.KeyResultNumberExceededException;
 import org.moonshot.server.domain.keyresult.model.KeyResult;
 import org.moonshot.server.domain.keyresult.repository.KeyResultRepository;
+import org.moonshot.server.domain.log.dto.response.AchieveResponseDto;
 import org.moonshot.server.domain.log.exception.InvalidLogValueException;
 import org.moonshot.server.domain.log.exception.LogNotFoundException;
 import org.moonshot.server.domain.log.model.Log;
@@ -125,7 +126,7 @@ public class KeyResultService implements IndexService {
     }
 
     @Transactional
-    public void modifyKeyResult(KeyResultModifyRequestDto request, Long userId) {
+    public Optional<AchieveResponseDto> modifyKeyResult(KeyResultModifyRequestDto request, Long userId) {
         KeyResult keyResult = keyResultRepository.findKeyResultAndObjective(request.keyResultId())
                 .orElseThrow(KeyResultNotFoundException::new);
         userService.validateUserAuthorization(keyResult.getObjective().getUser(), userId);
@@ -146,11 +147,17 @@ public class KeyResultService implements IndexService {
             Log prevLog = logRepository.findLatestLogByKeyResultId(LogState.RECORD, request.keyResultId())
                     .orElseThrow(LogNotFoundException::new);
             keyResult.modifyTarget(request.target());
-            keyResult.modifyProgress(logService.calculateProgressBar(prevLog, keyResult));
+            keyResult.modifyProgress(logService.calculateKRProgressBar(prevLog, keyResult));
+            short progress = logService.calculateOProgressBar(keyResult.getObjective());
+            keyResult.getObjective().modifyProgress(progress);
+            if (keyResult.getObjective().getProgress() == 100) {
+                return Optional.of(AchieveResponseDto.of(keyResult.getObjective().getUser().getNickname(), progress));
+            }
         }
         if (request.state() != null) {
             keyResult.modifyState(request.state());
         }
+        return Optional.empty();
     }
 
     @Override
@@ -185,7 +192,7 @@ public class KeyResultService implements IndexService {
             }
         }
         return KRDetailResponseDto.of(keyResult.getTitle(),
-                logService.calculateProgressBar(target, keyResult),
+                logService.calculateKRProgressBar(target, keyResult),
                 keyResult.getState().getValue(),
                 keyResult.getPeriod().getStartAt(),
                 keyResult.getPeriod().getExpireAt(),

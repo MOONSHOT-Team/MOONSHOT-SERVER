@@ -4,11 +4,14 @@ import static org.moonshot.server.global.common.response.SuccessType.*;
 
 import jakarta.validation.Valid;
 import java.security.Principal;
+import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
 import org.moonshot.server.domain.keyresult.dto.request.KeyResultCreateRequestDto;
 import org.moonshot.server.domain.keyresult.dto.request.KeyResultModifyRequestDto;
 import org.moonshot.server.domain.keyresult.service.KeyResultService;
 import org.moonshot.server.domain.keyresult.dto.response.KRDetailResponseDto;
+import org.moonshot.server.domain.log.dto.response.AchieveResponseDto;
 import org.moonshot.server.global.auth.jwt.JwtTokenProvider;
 import org.moonshot.server.global.common.response.ApiResponse;
 import org.moonshot.server.global.common.response.SuccessType;
@@ -35,7 +38,10 @@ public class KeyResultController {
 
     @PatchMapping
     public ApiResponse<?> modifyKeyResult(Principal principal, @RequestBody @Valid KeyResultModifyRequestDto request) {
-        keyResultService.modifyKeyResult(request, JwtTokenProvider.getUserIdFromPrincipal(principal));
+        Optional<AchieveResponseDto> response = keyResultService.modifyKeyResult(request, JwtTokenProvider.getUserIdFromPrincipal(principal));
+        if (response.isPresent()) {
+            return ApiResponse.success(PATCH_KR_ACHIEVE_SUCCESS, response);
+        }
         return ApiResponse.success(PATCH_KEY_RESULT_SUCCESS);
     }
 
