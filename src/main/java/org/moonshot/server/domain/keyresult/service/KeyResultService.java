@@ -147,9 +147,10 @@ public class KeyResultService implements IndexService {
             Log prevLog = logRepository.findLatestLogByKeyResultId(LogState.RECORD, request.keyResultId())
                     .orElseThrow(LogNotFoundException::new);
             keyResult.modifyTarget(request.target());
-            short progress = logService.calculateProgressBar(prevLog, keyResult);
-            keyResult.modifyProgress(logService.calculateProgressBar(prevLog, keyResult));
-            if (keyResult.getProgress() >= 70) {
+            keyResult.modifyProgress(logService.calculateKRProgressBar(prevLog, keyResult));
+            short progress = logService.calculateOProgressBar(keyResult.getObjective());
+            keyResult.getObjective().modifyProgress(progress);
+            if (keyResult.getObjective().getProgress() >= 70) {
                 return Optional.of(AchieveResponseDto.of(keyResult.getObjective().getUser().getNickname(), progress));
             }
         }
@@ -191,7 +192,7 @@ public class KeyResultService implements IndexService {
             }
         }
         return KRDetailResponseDto.of(keyResult.getTitle(),
-                logService.calculateProgressBar(target, keyResult),
+                logService.calculateKRProgressBar(target, keyResult),
                 keyResult.getState().getValue(),
                 keyResult.getPeriod().getStartAt(),
                 keyResult.getPeriod().getExpireAt(),

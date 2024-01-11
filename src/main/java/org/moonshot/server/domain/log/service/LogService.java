@@ -7,7 +7,6 @@ import org.moonshot.server.domain.keyresult.dto.request.KeyResultModifyRequestDt
 import org.moonshot.server.domain.keyresult.exception.KeyResultNotFoundException;
 import org.moonshot.server.domain.keyresult.model.KeyResult;
 import org.moonshot.server.domain.keyresult.repository.KeyResultRepository;
-import org.moonshot.server.domain.keyresult.service.KeyResultService;
 import org.moonshot.server.domain.log.dto.request.LogCreateRequestDto;
 import org.moonshot.server.domain.log.dto.response.AchieveResponseDto;
 import org.moonshot.server.domain.log.dto.response.LogResponseDto;
@@ -16,10 +15,8 @@ import org.moonshot.server.domain.log.exception.InvalidRecordException;
 import org.moonshot.server.domain.log.model.Log;
 import org.moonshot.server.domain.log.model.LogState;
 import org.moonshot.server.domain.log.repository.LogRepository;
-import org.moonshot.server.domain.user.repository.UserRepository;
+import org.moonshot.server.domain.objective.model.Objective;
 import org.moonshot.server.global.auth.exception.AccessDeniedException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,9 +58,10 @@ public class LogService {
                 .content(request.logContent())
                 .keyResult(keyResult)
                 .build());
-        keyResult.modifyProgress(calculateProgressBar(log, keyResult));
-        if (keyResult.getProgress() >= 70) {
-            return Optional.of(AchieveResponseDto.of(keyResult.getObjective().getUser().getNickname(), calculateProgressBar(log, keyResult)));
+        keyResult.modifyProgress(calculateKRProgressBar(log, keyResult));
+        keyResult.getObjective().modifyProgress(calculateOProgressBar(keyResult.getObjective()));
+        if (keyResult.getObjective().getProgress() >= 70) {
+            return Optional.of(AchieveResponseDto.of(keyResult.getObjective().getUser().getNickname(), calculateOProgressBar(keyResult.getObjective())));
         }
         return Optional.empty();
     }
@@ -131,8 +129,19 @@ public class LogService {
         }
     }
 
-    public short calculateProgressBar(Log log, KeyResult keyResult) {
+    public short calculateKRProgressBar(Log log, KeyResult keyResult) {
         return (log != null) ? (short) (Math.round(log.getCurrNum() / (double) keyResult.getTarget() * 100)) : 0;
+    }
+
+    public short calculateOProgressBar(Objective objective) {
+        int totalKRProgress = 0;
+        for (int i = 0; i < objective.getKeyResultList().size(); i++) {
+            short krProgress = objective.getKeyResultList().get(i).getProgress();
+            totalKRProgress += (krProgress >= 70) ? 100 : krProgress;
+        }
+        short averageProgress = (short) (totalKRProgress / objective.getKeyResultList().size());
+        System.out.println(averageProgress);
+        return averageProgress;
     }
 
 }
