@@ -156,7 +156,7 @@ public class KeyResultService implements IndexService {
         if (request.state() != null) {
             keyResult.modifyState(request.state());
         }
-        return null;
+        return Optional.empty();
     }
 
     @Override

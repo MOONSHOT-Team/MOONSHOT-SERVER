@@ -65,7 +65,7 @@ public class LogService {
         if (keyResult.getProgress() >= 70) {
             return Optional.of(AchieveResponseDto.of(keyResult.getObjective().getUser().getNickname(), calculateProgressBar(log, keyResult)));
         }
-        return null;
+        return Optional.empty();
     }
 
     @Transactional
