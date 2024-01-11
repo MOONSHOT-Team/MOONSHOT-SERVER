@@ -36,6 +36,9 @@ public class Objective {
     @Column(nullable = false)
     private String content;
 
+    @Builder.Default
+    private short progress;
+
     @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean isPublic;
 
@@ -68,5 +71,6 @@ public class Objective {
 
     public void  modifyClosed(boolean isClosed) { this.isClosed = isClosed; }
     public void modifyPeriod(Period period) { this.period = period; }
+    public void modifyProgress(short progress) { this.progress = progress; }
 
 }
