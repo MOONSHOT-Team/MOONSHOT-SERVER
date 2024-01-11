@@ -24,8 +24,12 @@ public class LogController {
     private final LogService logService;
 
     @PostMapping
-    public ApiResponse<Optional<AchieveResponseDto>> create(Principal principal, @RequestBody @Valid LogCreateRequestDto logCreateRequestDto) {
-        return ApiResponse.success(SuccessType.POST_LOG_SUCCESS, logService.createRecordLog(JwtTokenProvider.getUserIdFromPrincipal(principal), logCreateRequestDto));
+    public ApiResponse<?> create(Principal principal, @RequestBody @Valid LogCreateRequestDto logCreateRequestDto) {
+        Optional<AchieveResponseDto> response = logService.createRecordLog(JwtTokenProvider.getUserIdFromPrincipal(principal), logCreateRequestDto);
+        if (response.isPresent()) {
+            return ApiResponse.success(SuccessType.POST_LOG_ACHIEVE_SUCCESS, response);
+        }
+        return ApiResponse.success(SuccessType.POST_LOG_SUCCESS);
     }
 
 }

@@ -37,8 +37,12 @@ public class KeyResultController {
     }
 
     @PatchMapping
-    public ApiResponse<Optional<AchieveResponseDto>> modifyKeyResult(Principal principal, @RequestBody @Valid KeyResultModifyRequestDto request) {
-        return ApiResponse.success(PATCH_KEY_RESULT_SUCCESS, keyResultService.modifyKeyResult(request, JwtTokenProvider.getUserIdFromPrincipal(principal)));
+    public ApiResponse<?> modifyKeyResult(Principal principal, @RequestBody @Valid KeyResultModifyRequestDto request) {
+        Optional<AchieveResponseDto> response = keyResultService.modifyKeyResult(request, JwtTokenProvider.getUserIdFromPrincipal(principal));
+        if (response.isPresent()) {
+            return ApiResponse.success(PATCH_KR_ACHIEVE_SUCCESS, response);
+        }
+        return ApiResponse.success(PATCH_KEY_RESULT_SUCCESS);
     }
 
     @GetMapping("/{keyResultId}")
