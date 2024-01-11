@@ -20,6 +20,7 @@ import org.moonshot.server.global.auth.exception.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -61,7 +62,7 @@ public class LogService {
         keyResult.modifyProgress(calculateKRProgressBar(log, keyResult));
         keyResult.getObjective().modifyProgress(calculateOProgressBar(keyResult.getObjective()));
         if (keyResult.getObjective().getProgress() == 100) {
-            return Optional.of(AchieveResponseDto.of(keyResult.getObjective().getUser().getNickname(), calculateOProgressBar(keyResult.getObjective())));
+            return Optional.of(AchieveResponseDto.of(keyResult.getObjective().getId(), keyResult.getObjective().getUser().getNickname(), calculateOProgressBar(keyResult.getObjective())));
         }
         return Optional.empty();
     }
@@ -124,8 +125,8 @@ public class LogService {
         if (log.getState() == LogState.CREATE) {
             return keyResult.getDescriptionBefore() + " " + keyResult.getTarget() + keyResult.getMetric() + " " + keyResult.getDescriptionAfter();
         } else {
-            return (prevNum == -1 ? "0" : prevNum) + keyResult.getMetric()
-                    + " → " + currNum + keyResult.getMetric();
+            return (prevNum == -1 ? "0" : NumberFormat.getNumberInstance().format(prevNum)) + keyResult.getMetric()
+                    + " → " + NumberFormat.getNumberInstance().format(currNum) + keyResult.getMetric();
         }
     }
 
