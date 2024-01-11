@@ -1,5 +1,6 @@
 package org.moonshot.server.domain.objective.service;
 
+import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.moonshot.server.domain.keyresult.service.KeyResultService;
@@ -19,8 +20,6 @@ import org.moonshot.server.global.auth.exception.AccessDeniedException;
 import org.moonshot.server.global.common.model.Period;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
 
 @Service
 @Transactional(readOnly = true)
@@ -71,7 +70,7 @@ public class ObjectiveService {
         userService.validateUserAuthorization(objective.getUser(), userId);
         objective.modifyClosed(request.isClosed());
         if (!request.isClosed()) {
-            if (request.expireAt().isBefore(LocalDateTime.now())) {
+            if (request.expireAt().isBefore(LocalDate.now())) {
                 throw new InvalidExpiredAtException();
             }
             objective.modifyPeriod(Period.of(objective.getPeriod().getStartAt(), request.expireAt()));

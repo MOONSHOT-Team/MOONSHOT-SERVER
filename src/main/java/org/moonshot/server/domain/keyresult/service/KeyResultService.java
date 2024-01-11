@@ -1,8 +1,7 @@
 package org.moonshot.server.domain.keyresult.service;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 import lombok.RequiredArgsConstructor;
 import org.moonshot.server.domain.keyresult.dto.request.KeyResultCreateRequestDto;
@@ -135,8 +134,8 @@ public class KeyResultService implements IndexService {
             keyResult.modifyTitle(request.title());
         }
         if (request.startAt() != null || request.expireAt() != null) {
-            LocalDateTime newStartAt = (request.startAt() != null) ? request.startAt() : keyResult.getPeriod().getStartAt();
-            LocalDateTime newExpireAt = (request.expireAt() != null) ? request.expireAt() : keyResult.getPeriod().getExpireAt();
+            LocalDate newStartAt = (request.startAt() != null) ? request.startAt() : keyResult.getPeriod().getStartAt();
+            LocalDate newExpireAt = (request.expireAt() != null) ? request.expireAt() : keyResult.getPeriod().getExpireAt();
             keyResult.modifyPeriod(Period.of(newStartAt, newExpireAt));
         }
         if (request.target() != null && request.logContent() !=  null) {
