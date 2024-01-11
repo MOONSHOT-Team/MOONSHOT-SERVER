@@ -7,7 +7,7 @@ public record ObjectiveResponseDto(
         Long id,
         String title,
         String content,
-        Category category,
+        String category,
         String date,
         short progress
 ) {
@@ -16,7 +16,7 @@ public record ObjectiveResponseDto(
                 objective.getId(),
                 objective.getTitle(),
                 objective.getContent(),
-                objective.getCategory(),
+                objective.getCategory().getValue(),
                 objective.getDateString(),
                 objective.getProgress()
         );
