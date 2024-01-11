@@ -150,7 +150,7 @@ public class KeyResultService implements IndexService {
             keyResult.modifyProgress(logService.calculateKRProgressBar(prevLog, keyResult));
             short progress = logService.calculateOProgressBar(keyResult.getObjective());
             keyResult.getObjective().modifyProgress(progress);
-            if (keyResult.getObjective().getProgress() >= 70) {
+            if (keyResult.getObjective().getProgress() == 100) {
                 return Optional.of(AchieveResponseDto.of(keyResult.getObjective().getUser().getNickname(), progress));
             }
         }

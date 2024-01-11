@@ -60,7 +60,7 @@ public class LogService {
                 .build());
         keyResult.modifyProgress(calculateKRProgressBar(log, keyResult));
         keyResult.getObjective().modifyProgress(calculateOProgressBar(keyResult.getObjective()));
-        if (keyResult.getObjective().getProgress() >= 70) {
+        if (keyResult.getObjective().getProgress() == 100) {
             return Optional.of(AchieveResponseDto.of(keyResult.getObjective().getUser().getNickname(), calculateOProgressBar(keyResult.getObjective())));
         }
         return Optional.empty();
