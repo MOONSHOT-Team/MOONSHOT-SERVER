@@ -37,7 +37,7 @@ public class Objective {
     private String content;
 
     @Builder.Default
-    private short progress;
+    private short progress = 0;
 
     @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean isPublic;
