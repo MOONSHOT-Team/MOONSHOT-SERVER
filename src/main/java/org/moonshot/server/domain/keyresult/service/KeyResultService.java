@@ -151,7 +151,7 @@ public class KeyResultService implements IndexService {
             short progress = logService.calculateOProgressBar(keyResult.getObjective());
             keyResult.getObjective().modifyProgress(progress);
             if (keyResult.getObjective().getProgress() == 100) {
-                return Optional.of(AchieveResponseDto.of(keyResult.getObjective().getUser().getNickname(), progress));
+                return Optional.of(AchieveResponseDto.of(keyResult.getObjective().getId(), keyResult.getObjective().getUser().getNickname(), progress));
             }
         }
         if (request.state() != null) {
@@ -192,6 +192,10 @@ public class KeyResultService implements IndexService {
             }
         }
         return KRDetailResponseDto.of(keyResult.getTitle(),
+                keyResult.getDescriptionBefore(),
+                keyResult.getTarget(),
+                keyResult.getMetric(),
+                keyResult.getDescriptionAfter(),
                 logService.calculateKRProgressBar(target, keyResult),
                 keyResult.getState().getValue(),
                 keyResult.getPeriod().getStartAt(),

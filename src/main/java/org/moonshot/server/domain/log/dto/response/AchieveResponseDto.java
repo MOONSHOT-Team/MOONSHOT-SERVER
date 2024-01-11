@@ -1,10 +1,11 @@
 package org.moonshot.server.domain.log.dto.response;
 
 public record AchieveResponseDto(
+        long objId,
         String nickname,
         short progress
 ) {
-    public static AchieveResponseDto of(String nickname, short progress) {
-        return new AchieveResponseDto(nickname, progress);
+    public static AchieveResponseDto of(long objId, String nickname, short progress) {
+        return new AchieveResponseDto(objId, nickname, progress);
     }
 }
