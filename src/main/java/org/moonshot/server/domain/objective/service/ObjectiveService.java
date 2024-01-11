@@ -78,9 +78,10 @@ public class ObjectiveService {
         }
     }
 
-    public DashboardResponseDto getObjectiveInDashboard(Long userId) {
+    public DashboardResponseDto getObjectiveInDashboard(Long userId, Long objectiveId) {
         List<Objective> objList = objectiveRepository.findAllByUserId(userId);
-        Objective objective = objectiveRepository.findByIdWithKeyResultsAndTasks(objList.get(0).getId())
+        Long treeId = objectiveId == null ? objList.get(0).getId() : objectiveId;
+        Objective objective = objectiveRepository.findByIdWithKeyResultsAndTasks(treeId)
                 .orElseThrow(ObjectiveNotFoundException::new);
         if (!objective.getUser().getId().equals(userId)) {
             throw new AccessDeniedException();
