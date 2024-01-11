@@ -152,7 +152,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserInfoResponse modifyProfile(Long userId, UserInfoRequest request) {
+    public void modifyProfile(Long userId, UserInfoRequest request) {
         User user =  userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
         if (request.nickname() != null) {
@@ -161,7 +161,6 @@ public class UserService {
         if (request.description() != null) {
             user.modifyDescription(request.description());
         }
-        return UserInfoResponse.of(user);
     }
 
     public void validateUserAuthorization(User user, Long userId) {
@@ -175,5 +174,5 @@ public class UserService {
                 .orElseThrow(UserNotFoundException::new);
         return UserInfoResponse.of(user);
     }
-    
+
 }

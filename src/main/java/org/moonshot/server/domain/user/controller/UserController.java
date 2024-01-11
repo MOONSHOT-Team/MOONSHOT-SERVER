@@ -46,8 +46,9 @@ public class UserController {
     }
 
     @PatchMapping("/profile")
-    public ApiResponse<UserInfoResponse> modifyProfile(Principal principal, @RequestBody UserInfoRequest userInfoRequest) {
-        return ApiResponse.success(SuccessType.PATCH_PROFILE_SUCCESS, userService.modifyProfile(JwtTokenProvider.getUserIdFromPrincipal(principal), userInfoRequest));
+    public ApiResponse<?> modifyProfile(Principal principal, @RequestBody UserInfoRequest userInfoRequest) {
+        userService.modifyProfile(JwtTokenProvider.getUserIdFromPrincipal(principal), userInfoRequest);
+        return ApiResponse.success(SuccessType.PATCH_PROFILE_SUCCESS);
     }
 
     @GetMapping("/mypage")

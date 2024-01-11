@@ -19,7 +19,6 @@ public enum SuccessType {
     POST_REISSUE_SUCCESS(HttpStatus.OK, "엑세스 토큰 재발급에 성공하였습니다."),
     POST_LOGOUT_SUCCESS(HttpStatus.OK, "로그아웃에 성공하였습니다."),
     GET_PROFILE_SUCCESS(HttpStatus.OK, "사용자 프로필 조회에 성공하였습니다."),
-    PATCH_PROFILE_SUCCESS(HttpStatus.OK, "사용자 프로필 업데이트에 성공하였습니다."),
     GET_KR_DETAIL_SUCCESS(HttpStatus.OK, "KR 상세 조회에 성공하였습니다."),
 
     /**
@@ -34,6 +33,7 @@ public enum SuccessType {
     /**
      * 204 NO CONTENT
      */
+    PATCH_PROFILE_SUCCESS(HttpStatus.NO_CONTENT, "사용자 프로필 업데이트에 성공하였습니다."),
     PATCH_OBJECTIVE_SUCCESS(HttpStatus.OK, "Objective 수정에 성공하였습니다"),
     PATCH_KEY_RESULT_SUCCESS(HttpStatus.NO_CONTENT, "KeyResult 수정을 성공하였습니다."),
     PATCH_TARGET_INDEX_SUCCESS(HttpStatus.NO_CONTENT, "대상의 순서 수정을 성공하였습니다."),
