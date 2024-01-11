@@ -8,7 +8,8 @@ public record ObjectiveResponseDto(
         String title,
         String content,
         Category category,
-        String date
+        String date,
+        short progress
 ) {
     public static ObjectiveResponseDto of(Objective objective) {
         return new ObjectiveResponseDto(
@@ -16,7 +17,8 @@ public record ObjectiveResponseDto(
                 objective.getTitle(),
                 objective.getContent(),
                 objective.getCategory(),
-                objective.getDateString()
+                objective.getDateString(),
+                objective.getProgress()
         );
     }
 }
