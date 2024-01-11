@@ -7,16 +7,18 @@ public record ObjectiveResponseDto(
         Long id,
         String title,
         String content,
-        Category category,
-        String date
+        String category,
+        String date,
+        short progress
 ) {
     public static ObjectiveResponseDto of(Objective objective) {
         return new ObjectiveResponseDto(
                 objective.getId(),
                 objective.getTitle(),
                 objective.getContent(),
-                objective.getCategory(),
-                objective.getDateString()
+                objective.getCategory().getValue(),
+                objective.getDateString(),
+                objective.getProgress()
         );
     }
 }

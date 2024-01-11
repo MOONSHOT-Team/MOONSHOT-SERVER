@@ -65,7 +65,7 @@ public class Objective {
     List<KeyResult> keyResultList = new ArrayList<>();
 
     public String getDateString() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy-MM-dd");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy.MM.dd");
         return this.period.getStartAt().format(formatter) + " - " + this.period.getExpireAt().format(formatter);
     }
 
