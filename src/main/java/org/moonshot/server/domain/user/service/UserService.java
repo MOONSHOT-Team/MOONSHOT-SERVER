@@ -170,4 +170,10 @@ public class UserService {
         }
     }
 
+    public UserInfoResponse getMyProfile(Long userId) {
+        User user =  userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+        return UserInfoResponse.of(user);
+    }
+    
 }

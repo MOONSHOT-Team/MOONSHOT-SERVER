@@ -50,6 +50,11 @@ public class UserController {
         return ApiResponse.success(SuccessType.PATCH_PROFILE_SUCCESS, userService.modifyProfile(JwtTokenProvider.getUserIdFromPrincipal(principal), userInfoRequest));
     }
 
+    @GetMapping("/mypage")
+    public ApiResponse<UserInfoResponse> getMyProfile(Principal principal) {
+        return ApiResponse.success(SuccessType.GET_PROFILE_SUCCESS, userService.getMyProfile(JwtTokenProvider.getUserIdFromPrincipal(principal)));
+    }
+
 //    @GetMapping("/login/oauth2/code/kakao")
 //    public String kakaoSuccess(@RequestParam String code) {
 //        return code;
