@@ -2,12 +2,11 @@ package org.moonshot.server.global.common.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import java.time.LocalDate;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 @Embeddable
 @Getter
@@ -16,12 +15,12 @@ import java.time.LocalDateTime;
 public class Period {
 
     @Column(nullable = false)
-    private LocalDateTime startAt;
+    private LocalDate startAt;
 
     @Column(nullable = false)
-    private LocalDateTime expireAt;
+    private LocalDate expireAt;
 
-    public static Period of(LocalDateTime startAt, LocalDateTime expireAt) {
+    public static Period of(LocalDate startAt, LocalDate expireAt) {
         return new Period(startAt, expireAt);
     }
 
