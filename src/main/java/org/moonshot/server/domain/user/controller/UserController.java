@@ -1,7 +1,11 @@
 package org.moonshot.server.domain.user.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.extern.slf4j.XSlf4j;
 import org.moonshot.server.domain.user.dto.request.UserInfoRequest;
 import org.moonshot.server.domain.user.dto.response.UserInfoResponse;
 import org.moonshot.server.domain.user.dto.request.SocialLoginRequest;
@@ -11,15 +15,25 @@ import org.moonshot.server.global.auth.jwt.JwtTokenProvider;
 import org.moonshot.server.global.auth.jwt.TokenResponse;
 import org.moonshot.server.global.common.response.ApiResponse;
 import org.moonshot.server.global.common.response.SuccessType;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.security.Principal;
 
 @RestController
+@Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/v1/user")
 public class UserController {
+    @Value("${google.client-id}")
+    private String googleClientId;
+
+    @Value("${google.client-secret}")
+    private String googleClientSecret;
+
+    @Value("${google.redirect-url}")
+    private String googleRedirectUrl;
 
     private final UserService userService;
 
@@ -55,6 +69,19 @@ public class UserController {
     @GetMapping("/mypage")
     public ApiResponse<UserInfoResponse> getMyProfile(Principal principal) {
         return ApiResponse.success(SuccessType.GET_PROFILE_SUCCESS, userService.getMyProfile(JwtTokenProvider.getUserIdFromPrincipal(principal)));
+    }
+
+    @GetMapping("/googleLogin")
+    public String authTest(HttpServletRequest request, HttpServletResponse response) {
+        String redirectURL = "https://accounts.google.com/o/oauth2/v2/auth?client_id=" + googleClientId
+                + "&redirect_uri=" + googleRedirectUrl + "&response_type=code&scope=email profile";
+        try {
+            response.sendRedirect(redirectURL);
+        } catch (Exception e) {
+            log.info("authTest = {}", e);
+        }
+
+        return "SUCCESS";
     }
 
 //    @GetMapping("/login/oauth2/code/kakao")
