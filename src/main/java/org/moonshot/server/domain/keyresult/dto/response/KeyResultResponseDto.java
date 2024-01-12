@@ -7,12 +7,14 @@ import org.moonshot.server.domain.task.dto.response.TaskResponseDto;
 public record KeyResultResponseDto(
         Long keyResultId,
         String keyResultTitle,
+        Integer idx,
         List<TaskResponseDto> taskList
 ) {
     public static List<KeyResultResponseDto> of(List<KeyResult> krList) {
         return krList.stream().map(kr -> new KeyResultResponseDto(
                 kr.getId(),
                 kr.getTitle(),
+                kr.getIdx(),
                 TaskResponseDto.of(kr.getTaskList())
         )).toList();
     }
