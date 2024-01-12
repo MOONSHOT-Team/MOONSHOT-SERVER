@@ -10,7 +10,7 @@ public class TargetNumberValidator implements ConstraintValidator<ValidTargetNum
         if (value == null) {
             return true;
         } else {
-            return value >= 0 && value % 1000 == 0;
+            return value > 0 && value % 1000 == 0;
         }
     }
 
