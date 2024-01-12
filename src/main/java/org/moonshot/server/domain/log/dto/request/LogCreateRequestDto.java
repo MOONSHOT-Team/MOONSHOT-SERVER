@@ -2,13 +2,13 @@ package org.moonshot.server.domain.log.dto.request;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import org.moonshot.server.global.common.model.validator.ValidLimitValue;
+import org.hibernate.validator.constraints.Range;
 
 public record LogCreateRequestDto(
         Long keyResultId,
 
         @NotNull(message = "Log의 수치를 입력해주세요.")
-        @ValidLimitValue
+        @Range(min = 0, max = 99999999999L)
         long logNum,
 
         @NotNull(message = "Log의 체크인 본문을 입력해주세요.")

@@ -1,15 +1,13 @@
 package org.moonshot.server.domain.objective.dto.request;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.List;
+
+import org.hibernate.validator.constraints.Range;
 import org.moonshot.server.domain.task.dto.request.TaskCreateRequestDto;
-import org.moonshot.server.global.common.model.validator.ValidTargetNumber;
-import org.springframework.format.annotation.DateTimeFormat;
 
 public record KRCreateRequestDto(
         @Size(min = 1, max = 30, message = "KR은 30자 이하여야 합니다.")
@@ -19,7 +17,7 @@ public record KRCreateRequestDto(
         @NotNull(message = "KR 종료 날짜를 선택해주세요.")
         LocalDate expireAt,
         @NotNull(message = "KR 목표 수치를 입력해주세요.")
-        @ValidTargetNumber
+        @Range(min = 0, max = 99999999999L)
         Integer target,
         @NotNull(message = "KR 목표 수치의 단위를 입력해주세요.")
         String metric,

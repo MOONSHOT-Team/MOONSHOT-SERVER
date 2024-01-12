@@ -25,7 +25,6 @@ public enum ErrorType {
     INVALID_TASK_ORDER(HttpStatus.BAD_REQUEST, "정상적이지 않은 Task 위치입니다."),
     INVALID_LOG_VALUE(HttpStatus.BAD_REQUEST, "Log 입력값은 이전 값과 동일할 수 없습니다."),
     INVALID_EXPIRE_AT(HttpStatus.BAD_REQUEST, "Objective 종료 기간은 오늘보다 이전 날짜일 수 없습니다."),
-    INVALID_RECORD_VALUE(HttpStatus.BAD_REQUEST, "진척 정도는 목표값보다 작은 값이 입력되어야 합니다."),
 
     /**
      * 401 UNAUTHROZIED
