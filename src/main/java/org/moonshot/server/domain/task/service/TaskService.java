@@ -61,11 +61,13 @@ public class TaskService implements IndexService {
     }
 
     public void saveTask(KeyResult keyResult, TaskCreateRequestDto request) {
-        taskRepository.save(Task.builder()
-                .title(request.title())
-                .idx(request.idx())
-                .keyResult(keyResult)
-                .build());
+        if (!request.title().isEmpty()) {
+            taskRepository.save(Task.builder()
+                    .title(request.title())
+                    .idx(request.idx())
+                    .keyResult(keyResult)
+                    .build());
+        }
     }
 
     @Override

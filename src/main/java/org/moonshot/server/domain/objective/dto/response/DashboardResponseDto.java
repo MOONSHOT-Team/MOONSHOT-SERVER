@@ -6,20 +6,12 @@ import org.moonshot.server.domain.keyresult.dto.response.KeyResultResponseDto;
 import org.moonshot.server.domain.objective.model.Objective;
 
 public record DashboardResponseDto(
-        Long objId,
-        String objTitle,
-        boolean objIsExpired,
-        int objListSize,
-        List<KeyResultResponseDto> krList,
+        TreeResponseDto tree,
         List<ObjectiveResponseDto> objList
 ) {
     public static DashboardResponseDto of(Objective objective, List<Objective> objList) {
         return new DashboardResponseDto(
-                objective.getId(),
-                objective.getTitle(),
-                !objective.isClosed() && objective.getPeriod().getExpireAt().isBefore(LocalDate.now()),
-                objList.size(),
-                KeyResultResponseDto.of(objective.getKeyResultList()),
+                TreeResponseDto.of(objective, objList.size(), KeyResultResponseDto.of(objective.getKeyResultList())),
                 objList.stream().map(ObjectiveResponseDto::of).toList()
         );
     }
