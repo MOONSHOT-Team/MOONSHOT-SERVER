@@ -6,7 +6,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.moonshot.server.domain.objective.dto.request.ModifyObjectiveRequestDto;
 import org.moonshot.server.domain.objective.dto.request.OKRCreateRequestDto;
+import org.moonshot.server.domain.objective.dto.request.ObjectiveHistoryRequestDto;
 import org.moonshot.server.domain.objective.dto.response.DashboardResponseDto;
+import org.moonshot.server.domain.objective.dto.response.HistoryResponseDto;
 import org.moonshot.server.domain.objective.service.ObjectiveService;
 import org.moonshot.server.global.auth.jwt.JwtTokenProvider;
 import org.moonshot.server.global.common.response.ApiResponse;
@@ -52,6 +54,13 @@ public class ObjectiveController {
     public ApiResponse<DashboardResponseDto> getObjectiveInDashboard(Principal principal, @Nullable @RequestParam("objectiveId") Long objectiveId) {
         DashboardResponseDto response = objectiveService.getObjectiveInDashboard(JwtTokenProvider.getUserIdFromPrincipal(principal), objectiveId);
         return ApiResponse.success(SuccessType.GET_OKR_LIST_SUCCESS, response);
+    }
+
+    @GetMapping("/history")
+    public ApiResponse<HistoryResponseDto> getObjectiveHistory(Principal principal, @RequestBody ObjectiveHistoryRequestDto request) {
+        HistoryResponseDto response = objectiveService.getObjectiveHistory(
+                JwtTokenProvider.getUserIdFromPrincipal(principal), request);
+        return ApiResponse.success(SuccessType.OK, response);
     }
 
 }
