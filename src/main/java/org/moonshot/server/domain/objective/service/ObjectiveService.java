@@ -6,11 +6,15 @@ import lombok.RequiredArgsConstructor;
 import org.moonshot.server.domain.keyresult.service.KeyResultService;
 import org.moonshot.server.domain.objective.dto.request.ModifyObjectiveRequestDto;
 import org.moonshot.server.domain.objective.dto.request.OKRCreateRequestDto;
+import org.moonshot.server.domain.objective.dto.request.ObjectiveHistoryRequestDto;
 import org.moonshot.server.domain.objective.dto.response.DashboardResponseDto;
+import org.moonshot.server.domain.objective.dto.response.HistoryResponseDto;
 import org.moonshot.server.domain.objective.exception.InvalidExpiredAtException;
 import org.moonshot.server.domain.objective.exception.ObjectiveNotFoundException;
 import org.moonshot.server.domain.objective.exception.ObjectiveNumberExceededException;
+import org.moonshot.server.domain.objective.model.Category;
 import org.moonshot.server.domain.objective.model.Objective;
+import org.moonshot.server.domain.objective.repository.ObjectiveCustomRepository;
 import org.moonshot.server.domain.objective.repository.ObjectiveRepository;
 import org.moonshot.server.domain.user.exception.UserNotFoundException;
 import org.moonshot.server.domain.user.model.User;
@@ -32,6 +36,7 @@ public class ObjectiveService {
     private final KeyResultService keyResultService;
     private final UserRepository userRepository;
     private final ObjectiveRepository objectiveRepository;
+    private final ObjectiveCustomRepository objectiveCustomRepository;
 
     @Transactional
     public void createObjective(Long userId, OKRCreateRequestDto request) {
@@ -86,6 +91,10 @@ public class ObjectiveService {
             throw new AccessDeniedException();
         }
         return DashboardResponseDto.of(objective, objList);
+    }
+
+    public HistoryResponseDto getObjectiveHistory(Long userId, ObjectiveHistoryRequestDto request) {
+        return objectiveCustomRepository.findObjectives(request);
     }
 
 }
