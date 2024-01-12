@@ -60,7 +60,7 @@ public class Objective {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
-    @BatchSize(size = 10)
+    @BatchSize(size = 200)
     @OneToMany(mappedBy = "objective", fetch = FetchType.LAZY)
     List<KeyResult> keyResultList = new ArrayList<>();
 

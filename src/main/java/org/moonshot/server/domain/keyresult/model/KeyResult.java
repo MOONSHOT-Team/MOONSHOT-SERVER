@@ -55,7 +55,7 @@ public class KeyResult {
     private Objective objective;
 
     @JsonIgnore
-    @BatchSize(size = 10)
+    @BatchSize(size = 200)
     @OneToMany(mappedBy = "keyResult", fetch = FetchType.LAZY)
     List<Task> taskList = new ArrayList<>();
 
