@@ -91,7 +91,6 @@ public class ObjectiveService {
             throw new AccessDeniedException();
         }
         return DashboardResponseDto.of(objective, objList);
-//        return objectiveCustomRepository.findObjectives();
     }
 
     public HistoryResponseDto getObjectiveHistory(Long userId, ObjectiveHistoryRequestDto request) {
