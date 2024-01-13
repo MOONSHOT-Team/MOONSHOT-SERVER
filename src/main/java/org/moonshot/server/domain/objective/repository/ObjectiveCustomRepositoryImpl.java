@@ -24,7 +24,6 @@ import org.moonshot.server.domain.task.model.QTask;
 import org.springframework.stereotype.Repository;
 
 @Slf4j
-@Repository
 @RequiredArgsConstructor
 public class ObjectiveCustomRepositoryImpl implements ObjectiveCustomRepository {
 
