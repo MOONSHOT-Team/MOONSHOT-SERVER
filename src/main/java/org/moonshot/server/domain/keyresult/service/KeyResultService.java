@@ -35,7 +35,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class KeyResultService implements IndexService {
 
@@ -49,11 +48,6 @@ public class KeyResultService implements IndexService {
     private final LogService logService;
     private final LogRepository logRepository;
 
-    //TODO
-    // 여기 모든 로직에 User 관련 기능이 추가된 이후
-    // KeyResult의 소유자인지 확인하는 절차를 추가해야 함.
-
-    @Transactional
     public void createInitKRWithObjective(Objective objective, List<KeyResultCreateRequestInfoDto> requests) {
         for (KeyResultCreateRequestInfoDto dto : requests) {
             KeyResult keyResult = keyResultRepository.save(KeyResult.builder()
@@ -75,7 +69,6 @@ public class KeyResultService implements IndexService {
         }
     }
 
-    @Transactional
     public void createKeyResult(KeyResultCreateRequestDto request, Long userId) {
         Objective objective = objectiveRepository.findObjectiveAndUserById(request.objectiveId())
                 .orElseThrow(ObjectiveNotFoundException::new);
@@ -104,7 +97,6 @@ public class KeyResultService implements IndexService {
       logService.createKRLog(request, keyResult.getId());
     }
 
-    @Transactional
     public void deleteKeyResult(Long keyResultId, Long userId) {
         KeyResult keyResult = keyResultRepository.findKeyResultAndObjective(keyResultId)
                 .orElseThrow(KeyResultNotFoundException::new);
@@ -115,7 +107,6 @@ public class KeyResultService implements IndexService {
         keyResultRepository.delete(keyResult);
     }
 
-    @Transactional
     public void deleteKeyResult(Objective objective) {
         cascadeDelete(keyResultRepository.findAllByObjective(objective));
     }
@@ -128,7 +119,6 @@ public class KeyResultService implements IndexService {
         keyResultRepository.deleteAllInBatch(krList);
     }
 
-    @Transactional
     public Optional<AchieveResponseDto> modifyKeyResult(KeyResultModifyRequestDto request, Long userId) {
         KeyResult keyResult = keyResultRepository.findKeyResultAndObjective(request.keyResultId())
                 .orElseThrow(KeyResultNotFoundException::new);
@@ -164,7 +154,6 @@ public class KeyResultService implements IndexService {
     }
 
     @Override
-    @Transactional
     public void modifyIdx(ModifyIndexRequestDto request, Long userId) {
         KeyResult keyResult = keyResultRepository.findKeyResultAndObjective(request.id())
                 .orElseThrow(KeyResultNotFoundException::new);
@@ -182,6 +171,7 @@ public class KeyResultService implements IndexService {
         }
     }
 
+    @Transactional(readOnly = true)
     public KRDetailResponseDto getKRDetails(Long userId, Long keyResultId) {
         KeyResult keyResult = keyResultRepository.findKeyResultAndObjective(keyResultId)
                 .orElseThrow(KeyResultNotFoundException::new);

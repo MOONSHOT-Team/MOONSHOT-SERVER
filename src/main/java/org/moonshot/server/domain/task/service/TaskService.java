@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 public class TaskService implements IndexService {
 
     private static final int ACTIVE_TASK_NUMBER = 3;
@@ -29,7 +29,6 @@ public class TaskService implements IndexService {
     private final TaskRepository taskRepository;
     private final UserService userService;
 
-    @Transactional
     public void createTask(TaskSingleCreateRequestDto request, Long userId) {
         KeyResult keyResult = keyResultRepository.findKeyResultAndObjective(request.keyResultId())
                 .orElseThrow();
@@ -71,7 +70,6 @@ public class TaskService implements IndexService {
     }
 
     @Override
-    @Transactional
     public void modifyIdx(ModifyIndexRequestDto request, Long userId) {
         Task task = taskRepository.findTaskWithFetchJoin(request.id())
                 .orElseThrow(TaskNotFoundException::new);

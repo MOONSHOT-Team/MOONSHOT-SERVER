@@ -30,7 +30,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 public class UserService {
 
     @Value("${google.client-id}")
@@ -55,19 +55,17 @@ public class UserService {
     private final KakaoApiClient kakaoApiClient;
     private final JwtTokenProvider jwtTokenProvider;
 
-    @Transactional
     public SocialLoginResponse login(SocialLoginRequest request) throws IOException {
         switch (request.socialPlatform().getValue()){
             case "google":
-                return gooleLogin(request);
+                return googleLogin(request);
             case "kakao":
                 return kakaoLogin(request);
         }
         return null;
     }
 
-    @Transactional
-    public SocialLoginResponse gooleLogin(SocialLoginRequest request) throws IOException {
+    public SocialLoginResponse googleLogin(SocialLoginRequest request) throws IOException {
         GoogleTokenResponse tokenResponse = googleAuthApiClient.googleAuth(
                 request.code(),
                 googleClientId,
@@ -98,7 +96,6 @@ public class UserService {
         return SocialLoginResponse.of(user.getId(), user.getName(), token);
     }
 
-    @Transactional
     public SocialLoginResponse kakaoLogin(SocialLoginRequest request) throws IOException {
         KakaoTokenResponse tokenResponse = kakaoAuthApiClient.getOAuth2AccessToken(
                 "authorization_code",
@@ -130,7 +127,6 @@ public class UserService {
         return SocialLoginResponse.of(user.getId(), user.getName(), token);
     }
 
-    @Transactional
     public TokenResponse reissue(String refreshToken) {
         String token = refreshToken.substring("Bearer ".length());
         Long userId = jwtTokenProvider.validateRefreshToken(token);
@@ -139,19 +135,16 @@ public class UserService {
         return jwtTokenProvider.reissuedToken(userAuthentication);
     }
 
-    @Transactional
     public void logout(Long userId) {
         jwtTokenProvider.deleteRefreshToken(userId);
     }
 
-    @Transactional
     public void withdrawal(Long userId) {
         User user =  userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
         user.modifySocialPlatform(SocialPlatform.WITHDRAWAL);
     }
 
-    @Transactional
     public void modifyProfile(Long userId, UserInfoRequest request) {
         User user =  userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
