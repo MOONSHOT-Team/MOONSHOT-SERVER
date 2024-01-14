@@ -38,4 +38,5 @@ public class UserBadge {
         this.user = user;
         this.badge = badge;
     }
+
 }
