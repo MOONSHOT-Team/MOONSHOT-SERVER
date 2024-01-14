@@ -18,13 +18,13 @@ public class MoonshotExceptionHandler implements AccessDeniedHandler, Authentica
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException authException) throws IOException, ServletException {
-
+        log.error("Authentication Exception Occurs!");
     }
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response,
                        AccessDeniedException accessDeniedException) throws IOException, ServletException {
-
+        log.error("Forbidden Exception Occurs!");
     }
 
 }

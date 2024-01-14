@@ -15,6 +15,7 @@ import org.moonshot.server.global.auth.jwt.JwtTokenProvider;
 import org.moonshot.server.global.auth.jwt.JwtValidationType;
 import org.moonshot.server.global.common.exception.MoonshotException;
 import org.moonshot.server.global.common.response.ErrorType;
+import org.moonshot.server.global.constants.WhiteListConstants;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
@@ -32,8 +33,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws IOException, ServletException, IOException {
-        if (request.getAttribute("exception") != null) {
-            throw new MoonshotException((ErrorType) request.getAttribute("exception"));
+        if (WhiteListConstants.WHITELIST.contains(request.getRequestURI())) {
+            filterChain.doFilter(request, response);
+            return;
         }
         final String token = getJwtFromRequest(request);
         if (jwtTokenProvider.validateAccessToken(token) == JwtValidationType.VALID_JWT) {

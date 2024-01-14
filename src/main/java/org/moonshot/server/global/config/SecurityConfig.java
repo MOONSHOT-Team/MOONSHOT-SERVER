@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.moonshot.server.global.auth.filter.MoonshotExceptionHandler;
 import org.moonshot.server.global.auth.security.JwtAuthenticationFilter;
 import org.moonshot.server.global.auth.security.JwtExceptionFilter;
+import org.moonshot.server.global.constants.WhiteListConstants;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,18 +22,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-
-    private static final String[] WHITELIST = {
-            "/login/**",
-            "/",
-            "/actuator/health",
-            "/v1/user/**",
-            "/v1/image",
-            "/error",
-            "/swagger-ui/**",
-            "/swagger-resources/**",
-            "/api-docs/**"
-    };
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final MoonshotExceptionHandler moonshotExceptionHandler;
@@ -57,7 +46,7 @@ public class SecurityConfig {
                 .exceptionHandling(exceptionHandlingConfigurer ->
                         exceptionHandlingConfigurer.accessDeniedHandler(moonshotExceptionHandler))
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
-                        authorizationManagerRequestMatcherRegistry.requestMatchers(WHITELIST).permitAll())
+                        authorizationManagerRequestMatcherRegistry.requestMatchers(WhiteListConstants.WHITELIST.toArray(new String[0])).permitAll())
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
                         authorizationManagerRequestMatcherRegistry.anyRequest().authenticated())
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
