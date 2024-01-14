@@ -11,9 +11,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserBadge {
 
     @Id
@@ -33,5 +31,12 @@ public class UserBadge {
     @JoinColumn(name = "badge_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Badge badge;
+
+    @Builder
+    public UserBadge(LocalDateTime obtainAt, User user, Badge badge) {
+        this.obtainAt = obtainAt;
+        this.user = user;
+        this.badge = badge;
+    }
 
 }

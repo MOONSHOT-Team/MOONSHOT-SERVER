@@ -7,9 +7,7 @@ import org.moonshot.server.domain.keyresult.model.KeyResult;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class Task {
 
     @Id
@@ -36,4 +34,10 @@ public class Task {
         this.idx = idx;
     }
 
+    @Builder
+    private Task(String title, Integer idx, KeyResult keyResult) {
+        this.title = title;
+        this.idx = idx;
+        this.keyResult = keyResult;
+    }
 }

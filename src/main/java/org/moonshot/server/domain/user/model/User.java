@@ -5,9 +5,7 @@ import lombok.*;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
 
     @Id
@@ -33,6 +31,18 @@ public class User {
     private String nickname;
 
     private String description;
+
+    @Builder
+    private User(String socialId, SocialPlatform socialPlatform, String name, String profileImage, String email,
+                String nickname, String description) {
+        this.socialId = socialId;
+        this.socialPlatform = socialPlatform;
+        this.name = name;
+        this.profileImage = profileImage;
+        this.email = email;
+        this.nickname = nickname;
+        this.description = description;
+    }
 
     @Builder(builderMethodName = "builderWithSignIn")
     public static User of(String socialId, SocialPlatform socialPlatform, String name, String profileImage, String email) {

@@ -13,10 +13,8 @@ import org.moonshot.server.global.common.model.Period;
 
 @Entity
 @Getter
-@Builder
 @DynamicInsert
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class KeyResult {
 
     @Id
@@ -43,11 +41,10 @@ public class KeyResult {
 
     private String descriptionAfter;
 
-    @Builder.Default
     private short progress = 0;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "enum('DONE','HOLD','PROGRESS','WAITING') default 'PROGRESS'")
+    @Column(nullable = false)
     private KRState state;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -91,4 +88,19 @@ public class KeyResult {
         this.progress = progress;
     }
 
+    @Builder
+    private KeyResult(String title, Period period, Long target, Integer idx, String metric, String descriptionBefore,
+                     String descriptionAfter, KRState state, Objective objective) {
+        this.title = title;
+        this.period = period;
+        this.target = target;
+        this.idx = idx;
+        this.metric = metric;
+        this.descriptionBefore = descriptionBefore;
+        this.descriptionAfter = descriptionAfter;
+        this.progress = 0;
+        this.state = KRState.PROGRESS;
+        this.objective = objective;
+        this.taskList = new ArrayList<>();
+    }
 }

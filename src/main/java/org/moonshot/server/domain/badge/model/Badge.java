@@ -5,9 +5,7 @@ import lombok.*;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class Badge {
 
     @Id
@@ -20,5 +18,11 @@ public class Badge {
 
     @Column(nullable = false)
     private String imageUrl;
+
+    @Builder
+    private Badge(String name, String imageUrl) {
+        this.name = name;
+        this.imageUrl = imageUrl;
+    }
 
 }
