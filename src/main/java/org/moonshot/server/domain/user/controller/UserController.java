@@ -5,7 +5,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import lombok.extern.slf4j.XSlf4j;
 import org.moonshot.server.domain.user.dto.request.UserInfoRequest;
 import org.moonshot.server.domain.user.dto.response.UserInfoResponse;
 import org.moonshot.server.domain.user.dto.request.SocialLoginRequest;
@@ -16,7 +15,6 @@ import org.moonshot.server.global.auth.jwt.TokenResponse;
 import org.moonshot.server.global.common.response.ApiResponse;
 import org.moonshot.server.global.common.response.SuccessType;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -57,16 +55,15 @@ public class UserController {
     }
 
     @DeleteMapping("/withdrawal")
-    public ResponseEntity<ApiResponse<?>> withdrawal(Principal principal) {
+    public ResponseEntity<?> withdrawal(Principal principal) {
         userService.withdrawal(JwtTokenProvider.getUserIdFromPrincipal(principal));
-        ApiResponse.success(SuccessType.DELETE_USER_SUCCESS);
-        return null;
+        return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/profile")
-    public ApiResponse<?> modifyProfile(Principal principal, @Valid  @RequestBody UserInfoRequest userInfoRequest) {
+    public ResponseEntity<?> modifyProfile(Principal principal, @Valid  @RequestBody UserInfoRequest userInfoRequest) {
         userService.modifyProfile(JwtTokenProvider.getUserIdFromPrincipal(principal), userInfoRequest);
-        return ApiResponse.success(SuccessType.PATCH_PROFILE_SUCCESS);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/mypage")
