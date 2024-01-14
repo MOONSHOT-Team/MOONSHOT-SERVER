@@ -16,6 +16,8 @@ import org.moonshot.server.global.auth.jwt.TokenResponse;
 import org.moonshot.server.global.common.response.ApiResponse;
 import org.moonshot.server.global.common.response.SuccessType;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -38,26 +40,27 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/login")
-    public ApiResponse<SocialLoginResponse> login(@RequestHeader("Authorization") String authorization,
+    public ResponseEntity<ApiResponse<SocialLoginResponse>> login(@RequestHeader("Authorization") String authorization,
                                                   @RequestBody SocialLoginRequest socialLoginRequest) throws IOException {
-        return ApiResponse.success(SuccessType.POST_LOGIN_SUCCESS, userService.login(SocialLoginRequest.of(socialLoginRequest.socialPlatform(), authorization)));
+        return ResponseEntity.ok(ApiResponse.success(SuccessType.POST_LOGIN_SUCCESS, userService.login(SocialLoginRequest.of(socialLoginRequest.socialPlatform(), authorization))));
     }
 
     @PostMapping("/reissue")
-    public ApiResponse<TokenResponse> reissue(@RequestHeader("Authorization") String refreshToken) {
-        return ApiResponse.success(SuccessType.POST_REISSUE_SUCCESS, userService.reissue(refreshToken));
+    public ResponseEntity<ApiResponse<TokenResponse>> reissue(@RequestHeader("Authorization") String refreshToken) {
+        return ResponseEntity.ok(ApiResponse.success(SuccessType.POST_REISSUE_SUCCESS, userService.reissue(refreshToken)));
     }
 
     @PostMapping("/log-out")
-    public ApiResponse<?> logout(Principal principal) {
+    public ResponseEntity<ApiResponse<?>> logout(Principal principal) {
         userService.logout(JwtTokenProvider.getUserIdFromPrincipal(principal));
-        return ApiResponse.success(SuccessType.POST_LOGOUT_SUCCESS);
+        return ResponseEntity.ok(ApiResponse.success(SuccessType.POST_LOGOUT_SUCCESS));
     }
 
     @DeleteMapping("/withdrawal")
-    public ApiResponse<?> withdrawal(Principal principal) {
+    public ResponseEntity<ApiResponse<?>> withdrawal(Principal principal) {
         userService.withdrawal(JwtTokenProvider.getUserIdFromPrincipal(principal));
-        return ApiResponse.success(SuccessType.DELETE_USER_SUCCESS);
+        ApiResponse.success(SuccessType.DELETE_USER_SUCCESS);
+        return null;
     }
 
     @PatchMapping("/profile")
@@ -67,8 +70,8 @@ public class UserController {
     }
 
     @GetMapping("/mypage")
-    public ApiResponse<UserInfoResponse> getMyProfile(Principal principal) {
-        return ApiResponse.success(SuccessType.GET_PROFILE_SUCCESS, userService.getMyProfile(JwtTokenProvider.getUserIdFromPrincipal(principal)));
+    public ResponseEntity<ApiResponse<UserInfoResponse>> getMyProfile(Principal principal) {
+        return ResponseEntity.ok(ApiResponse.success(SuccessType.GET_PROFILE_SUCCESS, userService.getMyProfile(JwtTokenProvider.getUserIdFromPrincipal(principal))));
     }
 
     @GetMapping("/googleLogin")
