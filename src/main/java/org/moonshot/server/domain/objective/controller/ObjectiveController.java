@@ -11,7 +11,7 @@ import org.moonshot.server.domain.objective.dto.response.DashboardResponseDto;
 import org.moonshot.server.domain.objective.dto.response.HistoryResponseDto;
 import org.moonshot.server.domain.objective.service.ObjectiveService;
 import org.moonshot.server.global.auth.jwt.JwtTokenProvider;
-import org.moonshot.server.global.common.response.ApiResponse;
+import org.moonshot.server.global.common.response.MoonshotResponse;
 import org.moonshot.server.global.common.response.SuccessType;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,9 +35,9 @@ public class ObjectiveController {
     private final ObjectiveService objectiveService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<?>> createObjective(Principal principal, @RequestBody @Valid OKRCreateRequestDto request) {
+    public ResponseEntity<MoonshotResponse<?>> createObjective(Principal principal, @RequestBody @Valid OKRCreateRequestDto request) {
         objectiveService.createObjective(JwtTokenProvider.getUserIdFromPrincipal(principal), request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(SuccessType.POST_OKR_SUCCESS));
+        return ResponseEntity.status(HttpStatus.CREATED).body(MoonshotResponse.success(SuccessType.POST_OKR_SUCCESS));
     }
 
     @DeleteMapping("/{objectiveId}")
@@ -47,22 +47,22 @@ public class ObjectiveController {
     }
 
     @PatchMapping
-    public ResponseEntity<ApiResponse<?>> modifyObjective(Principal principal, @RequestBody ModifyObjectiveRequestDto request) {
+    public ResponseEntity<MoonshotResponse<?>> modifyObjective(Principal principal, @RequestBody ModifyObjectiveRequestDto request) {
         objectiveService.modifyObjective(JwtTokenProvider.getUserIdFromPrincipal(principal), request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(SuccessType.PATCH_OBJECTIVE_SUCCESS));
+        return ResponseEntity.status(HttpStatus.CREATED).body(MoonshotResponse.success(SuccessType.PATCH_OBJECTIVE_SUCCESS));
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<DashboardResponseDto>> getObjectiveInDashboard(Principal principal, @Nullable @RequestParam("objectiveId") Long objectiveId) {
+    public ResponseEntity<MoonshotResponse<DashboardResponseDto>> getObjectiveInDashboard(Principal principal, @Nullable @RequestParam("objectiveId") Long objectiveId) {
         DashboardResponseDto response = objectiveService.getObjectiveInDashboard(JwtTokenProvider.getUserIdFromPrincipal(principal), objectiveId);
-        return ResponseEntity.ok(ApiResponse.success(SuccessType.GET_OKR_LIST_SUCCESS, response));
+        return ResponseEntity.ok(MoonshotResponse.success(SuccessType.GET_OKR_LIST_SUCCESS, response));
     }
 
     @GetMapping("/history")
-    public ResponseEntity<ApiResponse<HistoryResponseDto>> getObjectiveHistory(Principal principal, @RequestBody ObjectiveHistoryRequestDto request) {
+    public ResponseEntity<MoonshotResponse<HistoryResponseDto>> getObjectiveHistory(Principal principal, @RequestBody ObjectiveHistoryRequestDto request) {
         HistoryResponseDto response = objectiveService.getObjectiveHistory(
                 JwtTokenProvider.getUserIdFromPrincipal(principal), request);
-        return ResponseEntity.ok(ApiResponse.success(SuccessType.OK, response));
+        return ResponseEntity.ok(MoonshotResponse.success(SuccessType.OK, response));
     }
 
 }

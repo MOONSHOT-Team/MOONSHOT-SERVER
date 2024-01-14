@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintDefinitionException;
 import jakarta.validation.UnexpectedTypeException;
 import lombok.extern.slf4j.Slf4j;
-import org.moonshot.server.global.common.response.ApiResponse;
+import org.moonshot.server.global.common.response.MoonshotResponse;
 import org.moonshot.server.global.common.response.ErrorType;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -32,7 +32,7 @@ public class MoonshotControllerAdvice {
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ApiResponse handleMethodArgumentNotValidException(final MethodArgumentNotValidException e) {
+    public MoonshotResponse handleMethodArgumentNotValidException(final MethodArgumentNotValidException e) {
 
         Errors errors = e.getBindingResult();
         Map<String, String> validateDetails = new HashMap<>();
@@ -42,47 +42,47 @@ public class MoonshotControllerAdvice {
             validateDetails.put(validKeyName, error.getDefaultMessage());
         }
         log.error(e.getMessage(), e);
-        return ApiResponse.error(ErrorType.REQUEST_VALIDATION_EXCEPTION, validateDetails);
+        return MoonshotResponse.error(ErrorType.REQUEST_VALIDATION_EXCEPTION, validateDetails);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(UnexpectedTypeException.class)
-    public ApiResponse<?> handleUnexpectedTypeException(final UnexpectedTypeException e) {
+    public MoonshotResponse<?> handleUnexpectedTypeException(final UnexpectedTypeException e) {
         log.error(e.getMessage(), e);
-        return ApiResponse.error(ErrorType.INVALID_TYPE);
+        return MoonshotResponse.error(ErrorType.INVALID_TYPE);
     }
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ApiResponse<?> handlerMethodArgumentTypeMismatchException(final MethodArgumentTypeMismatchException e) {
+    public MoonshotResponse<?> handlerMethodArgumentTypeMismatchException(final MethodArgumentTypeMismatchException e) {
         log.error(e.getMessage(), e);
-        return ApiResponse.error(ErrorType.INVALID_TYPE);
+        return MoonshotResponse.error(ErrorType.INVALID_TYPE);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MissingRequestHeaderException.class)
-    public ApiResponse<?> handlerMissingRequestHeaderException(final MissingRequestHeaderException e) {
+    public MoonshotResponse<?> handlerMissingRequestHeaderException(final MissingRequestHeaderException e) {
         log.error(e.getMessage(), e);
-        return ApiResponse.error(ErrorType.INVALID_MISSING_HEADER);
+        return MoonshotResponse.error(ErrorType.INVALID_MISSING_HEADER);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ApiResponse<?> handlerHttpMessageNotReadableException(final HttpMessageNotReadableException e) {
+    public MoonshotResponse<?> handlerHttpMessageNotReadableException(final HttpMessageNotReadableException e) {
         log.error(e.getMessage(), e);
-        return ApiResponse.error(ErrorType.INVALID_HTTP_REQUEST);
+        return MoonshotResponse.error(ErrorType.INVALID_HTTP_REQUEST);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public ApiResponse<?> handlerHttpRequestMethodNotSupportedException(final HttpRequestMethodNotSupportedException e) {
+    public MoonshotResponse<?> handlerHttpRequestMethodNotSupportedException(final HttpRequestMethodNotSupportedException e) {
         log.error(e.getMessage(), e);
-        return ApiResponse.error(ErrorType.INVALID_HTTP_METHOD);
+        return MoonshotResponse.error(ErrorType.INVALID_HTTP_METHOD);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ConstraintDefinitionException.class)
-    protected ApiResponse<?> handlerConstraintDefinitionException(final ConstraintDefinitionException e) {
-        return ApiResponse.error(ErrorType.INVALID_HTTP_REQUEST, e.toString());
+    protected MoonshotResponse<?> handlerConstraintDefinitionException(final ConstraintDefinitionException e) {
+        return MoonshotResponse.error(ErrorType.INVALID_HTTP_REQUEST, e.toString());
     }
 
     /**
@@ -90,9 +90,9 @@ public class MoonshotControllerAdvice {
      */
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(FeignException.class)
-    public ApiResponse<?> handlerFeignException(final FeignException e) {
+    public MoonshotResponse<?> handlerFeignException(final FeignException e) {
         log.error(e.getMessage(), e);
-        return ApiResponse.error(ErrorType.INVALID_AUTHORIZATION_ERROR);
+        return MoonshotResponse.error(ErrorType.INVALID_AUTHORIZATION_ERROR);
     }
 
     /**
@@ -100,39 +100,39 @@ public class MoonshotControllerAdvice {
      */
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
-    public ApiResponse<?> handleException(final Exception e, final HttpServletRequest request) throws IOException {
+    public MoonshotResponse<?> handleException(final Exception e, final HttpServletRequest request) throws IOException {
         log.error(e.getMessage(), e);
-        return ApiResponse.error(ErrorType.INTERNAL_SERVER_ERROR);
+        return MoonshotResponse.error(ErrorType.INTERNAL_SERVER_ERROR);
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(IllegalArgumentException.class)
-    public ApiResponse<?> handlerIllegalArgumentException(final IllegalArgumentException e, final HttpServletRequest request) {
+    public MoonshotResponse<?> handlerIllegalArgumentException(final IllegalArgumentException e, final HttpServletRequest request) {
         log.error(e.getMessage(), e);
-        return ApiResponse.error(ErrorType.INTERNAL_SERVER_ERROR);
+        return MoonshotResponse.error(ErrorType.INTERNAL_SERVER_ERROR);
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(IOException.class)
-    public ApiResponse<?> handlerIOException(final IOException e, final HttpServletRequest request) {
+    public MoonshotResponse<?> handlerIOException(final IOException e, final HttpServletRequest request) {
         log.error(e.getMessage(), e);
-        return ApiResponse.error(ErrorType.INTERNAL_SERVER_ERROR);
+        return MoonshotResponse.error(ErrorType.INTERNAL_SERVER_ERROR);
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(RuntimeException.class)
-    public ApiResponse<?> handlerRuntimeException(final RuntimeException e, final HttpServletRequest request) {
+    public MoonshotResponse<?> handlerRuntimeException(final RuntimeException e, final HttpServletRequest request) {
         log.error(e.getMessage(), e);
-        return ApiResponse.error(ErrorType.INTERNAL_SERVER_ERROR);
+        return MoonshotResponse.error(ErrorType.INTERNAL_SERVER_ERROR);
     }
 
     /**
      * CUSTOM_ERROR
      */
     @ExceptionHandler(MoonshotException.class)
-    public ApiResponse<?> handleCustomException(MoonshotException e) {
+    public MoonshotResponse<?> handleCustomException(MoonshotException e) {
         log.error(e.getMessage(), e);
-        return ApiResponse.error(e.getErrorType());
+        return MoonshotResponse.error(e.getErrorType());
     }
 
 }

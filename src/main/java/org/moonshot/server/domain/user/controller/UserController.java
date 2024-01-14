@@ -12,7 +12,7 @@ import org.moonshot.server.domain.user.dto.response.SocialLoginResponse;
 import org.moonshot.server.domain.user.service.UserService;
 import org.moonshot.server.global.auth.jwt.JwtTokenProvider;
 import org.moonshot.server.global.auth.jwt.TokenResponse;
-import org.moonshot.server.global.common.response.ApiResponse;
+import org.moonshot.server.global.common.response.MoonshotResponse;
 import org.moonshot.server.global.common.response.SuccessType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +25,7 @@ import java.security.Principal;
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/v1/user")
-public class UserController {
+public class UserController implements UserApi {
     @Value("${google.client-id}")
     private String googleClientId;
 
@@ -38,20 +38,20 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<SocialLoginResponse>> login(@RequestHeader("Authorization") String authorization,
-                                                  @RequestBody SocialLoginRequest socialLoginRequest) throws IOException {
-        return ResponseEntity.ok(ApiResponse.success(SuccessType.POST_LOGIN_SUCCESS, userService.login(SocialLoginRequest.of(socialLoginRequest.socialPlatform(), authorization))));
+    public ResponseEntity<MoonshotResponse<SocialLoginResponse>> login(@RequestHeader("Authorization") String authorization,
+                                                                       @RequestBody SocialLoginRequest socialLoginRequest) throws IOException {
+        return ResponseEntity.ok(MoonshotResponse.success(SuccessType.POST_LOGIN_SUCCESS, userService.login(SocialLoginRequest.of(socialLoginRequest.socialPlatform(), authorization))));
     }
 
     @PostMapping("/reissue")
-    public ResponseEntity<ApiResponse<TokenResponse>> reissue(@RequestHeader("Authorization") String refreshToken) {
-        return ResponseEntity.ok(ApiResponse.success(SuccessType.POST_REISSUE_SUCCESS, userService.reissue(refreshToken)));
+    public ResponseEntity<MoonshotResponse<TokenResponse>> reissue(@RequestHeader("Authorization") String refreshToken) {
+        return ResponseEntity.ok(MoonshotResponse.success(SuccessType.POST_REISSUE_SUCCESS, userService.reissue(refreshToken)));
     }
 
     @PostMapping("/log-out")
-    public ResponseEntity<ApiResponse<?>> logout(Principal principal) {
+    public ResponseEntity<MoonshotResponse<?>> logout(Principal principal) {
         userService.logout(JwtTokenProvider.getUserIdFromPrincipal(principal));
-        return ResponseEntity.ok(ApiResponse.success(SuccessType.POST_LOGOUT_SUCCESS));
+        return ResponseEntity.ok(MoonshotResponse.success(SuccessType.POST_LOGOUT_SUCCESS));
     }
 
     @DeleteMapping("/withdrawal")
@@ -67,8 +67,8 @@ public class UserController {
     }
 
     @GetMapping("/mypage")
-    public ResponseEntity<ApiResponse<UserInfoResponse>> getMyProfile(Principal principal) {
-        return ResponseEntity.ok(ApiResponse.success(SuccessType.GET_PROFILE_SUCCESS, userService.getMyProfile(JwtTokenProvider.getUserIdFromPrincipal(principal))));
+    public ResponseEntity<MoonshotResponse<UserInfoResponse>> getMyProfile(Principal principal) {
+        return ResponseEntity.ok(MoonshotResponse.success(SuccessType.GET_PROFILE_SUCCESS, userService.getMyProfile(JwtTokenProvider.getUserIdFromPrincipal(principal))));
     }
 
     @GetMapping("/googleLogin")
