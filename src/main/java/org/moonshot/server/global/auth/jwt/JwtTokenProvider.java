@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.moonshot.server.global.auth.exception.InvalidAuthException;
 import org.moonshot.server.global.auth.exception.InvalidRefreshTokenException;
+import org.moonshot.server.global.common.exception.MoonshotException;
+import org.moonshot.server.global.common.response.ErrorType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -91,14 +93,14 @@ public class JwtTokenProvider {
         try {
             final Claims claims = getBody(token);
             return JwtValidationType.VALID_JWT;
-        } catch (MalformedJwtException ex) {
-            return JwtValidationType.INVALID_JWT_TOKEN;
-        } catch (ExpiredJwtException ex) {
-            return JwtValidationType.EXPIRED_JWT_TOKEN;
-        } catch (UnsupportedJwtException ex) {
-            return JwtValidationType.UNSUPPORTED_JWT_TOKEN;
-        } catch (IllegalArgumentException ex) {
-            return JwtValidationType.EMPTY_JWT;
+        } catch (MalformedJwtException e) {
+            throw new MoonshotException(ErrorType.WRONG_TYPE_TOKEN_ERROR);
+        } catch (ExpiredJwtException e) {
+            throw new MoonshotException(ErrorType.EXPIRED_TOKEN_ERROR);
+        } catch (IllegalArgumentException e) {
+            throw new MoonshotException(ErrorType.UNKNOWN_TOKEN_ERROR);
+        } catch (UnsupportedJwtException e) {
+            throw new MoonshotException(ErrorType.UNSUPPORTED_TOKEN_ERROR);
         }
     }
 
