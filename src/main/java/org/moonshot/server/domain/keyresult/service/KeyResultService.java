@@ -121,7 +121,10 @@ public class KeyResultService implements IndexService {
     }
 
     private void cascadeDelete(List<KeyResult> krList) {
-        krList.forEach((kr) -> taskRepository.deleteAllInBatch(taskRepository.findAllByKeyResult(kr)));
+        krList.forEach((kr) -> {
+            logRepository.deleteAllInBatch(logRepository.findAllByKeyResult(kr));
+            taskRepository.deleteAllInBatch(kr.getTaskList());
+        });
         keyResultRepository.deleteAllInBatch(krList);
     }
 
