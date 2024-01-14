@@ -9,6 +9,7 @@ public class WhiteListConstants {
             "/login/oauth2/code/google",
             "/v1/user/login",
             "/v1/user/googleLogin",
+            "/oauth/authorize",
             "user/googleLogin",
             "/login/**",
             "/",
