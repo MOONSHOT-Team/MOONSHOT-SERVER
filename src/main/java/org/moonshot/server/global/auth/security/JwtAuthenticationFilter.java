@@ -36,15 +36,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throw new MoonshotException((ErrorType) request.getAttribute("exception"));
         }
         final String token = getJwtFromRequest(request);
-        try {
-            if (jwtTokenProvider.validateAccessToken(token) == JwtValidationType.VALID_JWT) {
-                Long userId = jwtTokenProvider.getUserFromJwt(token);
-                UserAuthentication authentication = new UserAuthentication(userId, null, null);
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            }
-        } catch (Exception exception) {
-            log.info("Error Occured: ", exception);
+        if (jwtTokenProvider.validateAccessToken(token) == JwtValidationType.VALID_JWT) {
+            Long userId = jwtTokenProvider.getUserFromJwt(token);
+            UserAuthentication authentication = new UserAuthentication(userId, null, null);
+            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
         }
         filterChain.doFilter(request, response);
     }
