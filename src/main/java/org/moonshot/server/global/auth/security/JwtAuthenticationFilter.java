@@ -37,9 +37,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-        if (request.getAttribute("exception") != null) {
-            throw new MoonshotException((ErrorType) request.getAttribute("exception"));
-        }
         final String token = getJwtFromRequest(request);
         if (jwtTokenProvider.validateAccessToken(token) == JwtValidationType.VALID_JWT) {
             Long userId = jwtTokenProvider.getUserFromJwt(token);
