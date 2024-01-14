@@ -3,6 +3,7 @@ package org.moonshot.server.global.config;
 import lombok.RequiredArgsConstructor;
 import org.moonshot.server.global.auth.filter.MoonshotExceptionHandler;
 import org.moonshot.server.global.auth.security.JwtAuthenticationFilter;
+import org.moonshot.server.global.auth.security.JwtExceptionFilter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,6 +36,8 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final MoonshotExceptionHandler moonshotExceptionHandler;
+    private final JwtExceptionFilter jwtExceptionFilter;
+
     @Value("${server.ip}")
     private String serverIp;
     @Value("${server.domain}")
@@ -59,6 +62,8 @@ public class SecurityConfig {
                         authorizationManagerRequestMatcherRegistry.anyRequest().authenticated())
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
                         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class))
+                .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
+                        http.addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter.class))
                 .build();
     }
 
