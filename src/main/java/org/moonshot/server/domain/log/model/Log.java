@@ -28,8 +28,7 @@ public class Log {
     private LogState state;
 
     @Builder.Default
-    @Column(columnDefinition = "bigint default -1")
-    private long prevNum = -1;
+    private long prevNum = -1L;
 
     @Column(nullable = false)
     private long currNum;
@@ -40,16 +39,5 @@ public class Log {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "key_result_id")
     private KeyResult keyResult;
-
-    public static Log of(LocalDateTime date, LogState state, int prevNum, int currNum, String content, KeyResult keyResult) {
-        return Log.builder()
-                .date(date)
-                .state(state)
-                .prevNum(prevNum)
-                .currNum(currNum)
-                .content(content)
-                .keyResult(keyResult)
-                .build();
-    }
 
 }

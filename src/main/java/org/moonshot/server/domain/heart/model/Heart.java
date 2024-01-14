@@ -7,9 +7,7 @@ import org.moonshot.server.domain.user.model.User;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class Heart {
 
     @Id
@@ -23,4 +21,9 @@ public class Heart {
     @ManyToOne(fetch = FetchType.LAZY)
     private Objective objective;
 
+    @Builder
+    private Heart(User user, Objective objective) {
+        this.user = user;
+        this.objective = objective;
+    }
 }
