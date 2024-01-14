@@ -33,9 +33,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws IOException, ServletException, IOException {
-        if (WhiteListConstants.WHITELIST.contains(request.getRequestURI())) {
-            filterChain.doFilter(request, response);
-            return;
+        for (String whiteUrl : WhiteListConstants.WHITELIST) {
+            if (request.getRequestURI().contains(whiteUrl)) {
+                filterChain.doFilter(request, response);
+                return;
+            }
         }
         final String token = getJwtFromRequest(request);
         if (jwtTokenProvider.validateAccessToken(token) == JwtValidationType.VALID_JWT) {
