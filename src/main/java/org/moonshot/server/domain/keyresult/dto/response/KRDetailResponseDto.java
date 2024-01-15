@@ -8,10 +8,8 @@ import java.util.List;
 
 public record KRDetailResponseDto(
         String title,
-        String descriptionBefore,
         long target,
         String metric,
-        String descriptionAfter,
         short progressBar,
         String krState,
         String startAt,
@@ -19,8 +17,8 @@ public record KRDetailResponseDto(
         List<LogResponseDto> logList
 ) {
 
-    public static KRDetailResponseDto of(String title, String descriptionBefore, long target, String metric, String descriptionAfter, short progressBar, String krState, LocalDate startAt, LocalDate expireAt, List<LogResponseDto> logList) {
-        return new KRDetailResponseDto(title, descriptionBefore, target, metric, descriptionAfter, progressBar, krState, startAt.format(DateTimeFormatter.ISO_LOCAL_DATE), expireAt.format(DateTimeFormatter.ISO_LOCAL_DATE), logList);
+    public static KRDetailResponseDto of(String title, long target, String metric, short progressBar, String krState, LocalDate startAt, LocalDate expireAt, List<LogResponseDto> logList) {
+        return new KRDetailResponseDto(title + ": ", target, metric, progressBar, krState, startAt.format(DateTimeFormatter.ISO_LOCAL_DATE), expireAt.format(DateTimeFormatter.ISO_LOCAL_DATE), logList);
     }
 
 }

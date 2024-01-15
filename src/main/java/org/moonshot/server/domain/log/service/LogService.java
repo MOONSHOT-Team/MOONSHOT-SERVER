@@ -119,7 +119,7 @@ public class LogService {
 
     public String setTitle(long prevNum, long currNum, Log log, KeyResult keyResult) {
         if (log.getState() == LogState.CREATE) {
-            return keyResult.getDescriptionBefore() + " " + keyResult.getTarget() + keyResult.getMetric() + " " + keyResult.getDescriptionAfter();
+            return keyResult.getTitle() + ": " + keyResult.getTarget() + keyResult.getMetric();
         } else {
             return (prevNum == -1 ? "0" : NumberFormat.getNumberInstance().format(prevNum)) + keyResult.getMetric()
                     + " → " + NumberFormat.getNumberInstance().format(currNum) + keyResult.getMetric();

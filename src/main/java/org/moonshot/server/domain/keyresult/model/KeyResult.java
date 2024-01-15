@@ -37,10 +37,6 @@ public class KeyResult {
     @Column(nullable = false)
     private String metric;
 
-    private String descriptionBefore;
-
-    private String descriptionAfter;
-
     private short progress = 0;
 
     @Enumerated(EnumType.STRING)
@@ -89,15 +85,12 @@ public class KeyResult {
     }
 
     @Builder
-    private KeyResult(String title, Period period, Long target, Integer idx, String metric, String descriptionBefore,
-                     String descriptionAfter, KRState state, Objective objective) {
+    private KeyResult(String title, Period period, Long target, Integer idx, String metric, KRState state, Objective objective) {
         this.title = title;
         this.period = period;
         this.target = target;
         this.idx = idx;
         this.metric = metric;
-        this.descriptionBefore = descriptionBefore;
-        this.descriptionAfter = descriptionAfter;
         this.progress = 0;
         this.state = KRState.PROGRESS;
         this.objective = objective;
