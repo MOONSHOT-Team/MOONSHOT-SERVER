@@ -9,6 +9,7 @@ import org.moonshot.server.domain.objective.dto.request.OKRCreateRequestDto;
 import org.moonshot.server.domain.objective.dto.request.ObjectiveHistoryRequestDto;
 import org.moonshot.server.domain.objective.dto.response.DashboardResponseDto;
 import org.moonshot.server.domain.objective.dto.response.HistoryResponseDto;
+import org.moonshot.server.domain.objective.exception.DateInputRequiredException;
 import org.moonshot.server.domain.objective.exception.InvalidExpiredAtException;
 import org.moonshot.server.domain.objective.exception.ObjectiveNotFoundException;
 import org.moonshot.server.domain.objective.exception.ObjectiveNumberExceededException;
@@ -72,7 +73,9 @@ public class ObjectiveService {
         userService.validateUserAuthorization(objective.getUser(), userId);
         objective.modifyClosed(request.isClosed());
         if (!request.isClosed()) {
-            if (request.expireAt().isBefore(LocalDate.now())) {
+            if (request.expireAt() == null) {
+                throw new DateInputRequiredException();
+            } else if (request.expireAt().isBefore(LocalDate.now())) {
                 throw new InvalidExpiredAtException();
             }
             objective.modifyPeriod(Period.of(objective.getPeriod().getStartAt(), request.expireAt()));
