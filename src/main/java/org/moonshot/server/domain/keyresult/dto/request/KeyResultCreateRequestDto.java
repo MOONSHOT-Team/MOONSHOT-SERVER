@@ -25,10 +25,6 @@ public record KeyResultCreateRequestDto(
         @Range(min = 1, max = 99999999999L)
         Long target,
         @NotNull(message = "KR 목표 수치의 단위를 입력해주세요.")
-        String metric,
-        @NotNull(message = "KR 목표의 이전 수식을 입력해주세요.")
-        String descriptionBefore,
-        @NotNull(message = "KR 목표의 이후 수식을 입력해주세요.")
-        String descriptionAfter
+        String metric
 ) {
 }

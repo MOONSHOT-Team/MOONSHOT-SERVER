@@ -56,8 +56,6 @@ public class KeyResultService implements IndexService {
                     .idx(dto.idx())
                     .target(dto.target())
                     .metric(dto.metric())
-                    .descriptionBefore(dto.descriptionBefore())
-                    .descriptionAfter(dto.descriptionAfter())
                     .objective(objective)
                     .build());
             logService.createKRLog(dto, keyResult.getId());
@@ -91,9 +89,7 @@ public class KeyResultService implements IndexService {
                 .period(Period.of(request.startAt(), request.expireAt()))
                 .idx(request.idx())
                 .target(request.target())
-                .metric(request.metric())
-                .descriptionBefore(request.descriptionBefore())
-                .descriptionAfter(request.descriptionAfter()).build());
+                .metric(request.metric()).build());
       logService.createKRLog(request, keyResult.getId());
     }
 
@@ -185,10 +181,8 @@ public class KeyResultService implements IndexService {
             }
         }
         return KRDetailResponseDto.of(keyResult.getTitle(),
-                keyResult.getDescriptionBefore(),
                 keyResult.getTarget(),
                 keyResult.getMetric(),
-                keyResult.getDescriptionAfter(),
                 logService.calculateKRProgressBar(target, keyResult),
                 keyResult.getState().getValue(),
                 keyResult.getPeriod().getStartAt(),

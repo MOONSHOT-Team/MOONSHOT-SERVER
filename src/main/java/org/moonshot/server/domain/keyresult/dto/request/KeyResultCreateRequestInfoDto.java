@@ -23,10 +23,6 @@ public record KeyResultCreateRequestInfoDto(
         Long target,
         @NotNull(message = "KR 목표 수치의 단위를 입력해주세요.")
         String metric,
-        @NotNull(message = "KR 목표의 이전 수식을 입력해주세요.")
-        String descriptionBefore,
-        @NotNull(message = "KR 목표의 이후 수식을 입력해주세요.")
-        String descriptionAfter,
         @Valid @Size(max = 3, message = "Task 개수는 최대 3개로 제한되어 있습니다.")
         List<TaskCreateRequestDto> taskList
 ) {
