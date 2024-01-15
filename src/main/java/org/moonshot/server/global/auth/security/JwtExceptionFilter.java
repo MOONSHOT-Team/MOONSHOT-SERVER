@@ -37,6 +37,8 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
                 setErrorResponse(response, ErrorType.EXPIRED_TOKEN_ERROR);
             } else if(e.getErrorType().equals(ErrorType.UNSUPPORTED_TOKEN_ERROR)) {
                 setErrorResponse(response, ErrorType.UNSUPPORTED_TOKEN_ERROR);
+            } else if(e.getErrorType().equals(ErrorType.WRONG_SIGNATURE_TOKEN_ERROR)) {
+                setErrorResponse(response, ErrorType.WRONG_SIGNATURE_TOKEN_ERROR);
             }
         }
     }

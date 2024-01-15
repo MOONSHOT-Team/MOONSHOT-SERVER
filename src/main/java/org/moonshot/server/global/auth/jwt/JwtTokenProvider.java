@@ -2,6 +2,7 @@ package org.moonshot.server.global.auth.jwt;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -101,6 +102,8 @@ public class JwtTokenProvider {
             throw new MoonshotException(ErrorType.UNKNOWN_TOKEN_ERROR);
         } catch (UnsupportedJwtException e) {
             throw new MoonshotException(ErrorType.UNSUPPORTED_TOKEN_ERROR);
+        } catch (SignatureException e) {
+            throw new MoonshotException(ErrorType.WRONG_SIGNATURE_TOKEN_ERROR);
         }
     }
 
