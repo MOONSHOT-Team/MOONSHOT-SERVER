@@ -36,10 +36,10 @@ public class Objective {
 
     private short progress;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TINYINT(1)")
     private boolean isPublic;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TINYINT(1)")
     private boolean isClosed;
 
     @Column(nullable = false)
