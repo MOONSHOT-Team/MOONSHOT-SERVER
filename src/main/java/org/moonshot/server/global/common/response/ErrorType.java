@@ -25,6 +25,7 @@ public enum ErrorType {
     INVALID_TASK_ORDER(HttpStatus.BAD_REQUEST, "정상적이지 않은 Task 위치입니다."),
     INVALID_LOG_VALUE(HttpStatus.BAD_REQUEST, "Log 입력값은 이전 값과 동일할 수 없습니다."),
     INVALID_EXPIRE_AT(HttpStatus.BAD_REQUEST, "Objective 종료 기간은 오늘보다 이전 날짜일 수 없습니다."),
+    REQUIRED_EXPIRE_AT(HttpStatus.BAD_REQUEST, "기간 연장시 목표 종료 기간은 필수 입력값입니다."),
 
     /**
      * 401 UNAUTHROZIED
@@ -35,8 +36,9 @@ public enum ErrorType {
     INVALID_ACCESS_TOKEN_ERROR(HttpStatus.UNAUTHORIZED, "유효하지 않은 AccessToken입니다."),
     INVALID_REFRESHTOKEN_ERROR(HttpStatus.UNAUTHORIZED, "유효하지 않은 RefreshToken입니다."),
     INVALID_AUTH_ERROR(HttpStatus.UNAUTHORIZED, "인증되지 않은 사용자입니다."),
-    EXPIRED_TOKEN_ERROR(HttpStatus.UNAUTHORIZED, "만료된 TOKEN입니다."),
-    WRONG_TYPE_TOKEN_ERROR(HttpStatus.UNAUTHORIZED, "잘못된 형식의 TOKEN입니다"),
+    EXPIRED_TOKEN_ERROR(HttpStatus.UNAUTHORIZED, "만료된 Token입니다."),
+    WRONG_TYPE_TOKEN_ERROR(HttpStatus.UNAUTHORIZED, "잘못된 형식의 Token입니다"),
+    WRONG_SIGNATURE_TOKEN_ERROR(HttpStatus.UNAUTHORIZED, "Signature가 잘못된 Token입니다."),
     ACCESS_DENIED(HttpStatus.UNAUTHORIZED,"알 수 없는 이유로 요청이 거절되었습니다."),
 
 

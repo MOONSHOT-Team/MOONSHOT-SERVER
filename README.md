@@ -9,11 +9,11 @@
 
 ## 🧑‍💻 MOONSHOT Server Developers
 
-| 최영린 | 신민철 | 
-| :---: | :---: | 
-|<img width="250" alt="branch" src="https://github.com/MOONSHOT-Team/MOONSHOT-SERVER/assets/48898994/b337f737-0872-45cd-9ed6-52d9fab01202"> |<img width="250" alt="branch" src="https://github.com/MOONSHOT-Team/MOONSHOT-SERVER/assets/48898994/b337f737-0872-45cd-9ed6-52d9fab01202"> | 
-| [0lynny](https://github.com/0lynny) | [its-sky](https://github.com/its-sky) |
-| Entity 초기 세팅 <br> ERD 및 DB 설계 <br> Swagger 세팅 <br> 인증 / 인가 구현 (Redis) | AWS 서버 구축 <br> CI/CD 구축 <br> ERD 및 DB 설계 <br> Presigned Url(S3) 이미지 서비스 <br> Mybatis 동적 쿼리 <br> Discord 알림 |
+| 최영린 |                                                                    신민철                                                                     | 
+| :---: |:------------------------------------------------------------------------------------------------------------------------------------------:| 
+|<img width="250" alt="branch" src="https://github.com/MOONSHOT-Team/MOONSHOT-SERVER/assets/75068759/d3e9eaf3-098b-4f92-9fdd-413f54d7dcb2"> | <img width="250" alt="branch" src="https://github.com/MOONSHOT-Team/MOONSHOT-SERVER/assets/75068759/5ea7a44c-b3ca-4c85-8f4f-f678cd90d2f7"> | 
+| [0lynny](https://github.com/0lynny) |                                                   [its-sky](https://github.com/its-sky)                                                    |
+| Entity 초기 세팅 <br> ERD 및 DB 설계 <br> Swagger 세팅 <br> 인증 / 인가 구현 (Redis) |            AWS 서버 구축 <br> CI/CD 구축 <br> ERD 및 DB 설계 <br> Presigned Url(S3) 이미지 서비스 <br> Mybatis, Querydsl 동적 쿼리 <br> Discord 알림            |
 
 <br/>
 
@@ -104,7 +104,7 @@
 <br/>
 
 ## 🔗 ERD
-<img width="1408" alt="MOONSHOT_ERD" src="https://github.com/MOONSHOT-Team/MOONSHOT-SERVER/assets/75068759/5dc5c652-87ee-4a90-b633-e5f6f77e992b">
+<img width="1408" alt="MOONSHOT_ERD" src="https://github.com/MOONSHOT-Team/MOONSHOT-SERVER/assets/75068759/935de91d-f1e6-4e5d-a2d4-ee1ab55ad80c">
 
 <br/>
 
