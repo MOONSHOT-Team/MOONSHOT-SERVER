@@ -46,7 +46,7 @@ public class SecurityConfig {
                 .exceptionHandling(exceptionHandlingConfigurer ->
                         exceptionHandlingConfigurer.accessDeniedHandler(moonshotExceptionHandler))
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
-                        authorizationManagerRequestMatcherRegistry.requestMatchers(WhiteListConstants.WHITELIST.toArray(new String[0])).permitAll())
+                        authorizationManagerRequestMatcherRegistry.requestMatchers(WhiteListConstants.SECURITY_WHITE_LIST).permitAll())
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
                         authorizationManagerRequestMatcherRegistry.anyRequest().authenticated())
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
