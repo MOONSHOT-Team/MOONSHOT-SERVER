@@ -18,7 +18,7 @@ import java.util.Optional;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v1/log")
-public class LogController {
+public class LogController implements LogApi {
 
     private final LogService logService;
 
