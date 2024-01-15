@@ -71,7 +71,7 @@ public interface UserApi {
     })
     @Operation(summary = "프로필 수정")
     public ResponseEntity<?> modifyProfile(Principal principal,
-                                           @Parameter(in = ParameterIn.DEFAULT, name = "UserInfoRequest", description = "유저 정보 요청 body", schema = @Schema(type = "string"))
+                                           @Parameter(in = ParameterIn.DEFAULT, name = "UserInfoRequest", description = "유저 정보 요청 body")
                                            @Valid @RequestBody UserInfoRequest userInfoRequest);
 
     @ApiResponses(value = {
