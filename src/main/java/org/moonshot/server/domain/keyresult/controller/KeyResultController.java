@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v1/key-result")
-public class KeyResultController {
+public class KeyResultController implements KeyResultApi {
 
     private final KeyResultService keyResultService;
 

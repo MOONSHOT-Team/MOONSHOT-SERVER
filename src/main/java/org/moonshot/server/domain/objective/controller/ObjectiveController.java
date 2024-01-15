@@ -30,7 +30,7 @@ import java.security.Principal;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v1/objective")
-public class ObjectiveController {
+public class ObjectiveController implements ObjectiveApi {
 
     private final ObjectiveService objectiveService;
 
@@ -49,7 +49,7 @@ public class ObjectiveController {
     @PatchMapping
     public ResponseEntity<MoonshotResponse<?>> modifyObjective(Principal principal, @RequestBody ModifyObjectiveRequestDto request) {
         objectiveService.modifyObjective(JwtTokenProvider.getUserIdFromPrincipal(principal), request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(MoonshotResponse.success(SuccessType.PATCH_OBJECTIVE_SUCCESS));
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping
