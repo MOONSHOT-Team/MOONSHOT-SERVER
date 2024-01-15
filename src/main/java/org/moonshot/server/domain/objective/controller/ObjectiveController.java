@@ -47,7 +47,7 @@ public class ObjectiveController implements ObjectiveApi {
     }
 
     @PatchMapping
-    public ResponseEntity<MoonshotResponse<?>> modifyObjective(Principal principal, @RequestBody ModifyObjectiveRequestDto request) {
+    public ResponseEntity<?> modifyObjective(Principal principal, @RequestBody ModifyObjectiveRequestDto request) {
         objectiveService.modifyObjective(JwtTokenProvider.getUserIdFromPrincipal(principal), request);
         return ResponseEntity.noContent().build();
     }
@@ -60,8 +60,7 @@ public class ObjectiveController implements ObjectiveApi {
 
     @GetMapping("/history")
     public ResponseEntity<MoonshotResponse<HistoryResponseDto>> getObjectiveHistory(Principal principal, @RequestBody ObjectiveHistoryRequestDto request) {
-        HistoryResponseDto response = objectiveService.getObjectiveHistory(
-                JwtTokenProvider.getUserIdFromPrincipal(principal), request);
+        HistoryResponseDto response = objectiveService.getObjectiveHistory(JwtTokenProvider.getUserIdFromPrincipal(principal), request);
         return ResponseEntity.ok(MoonshotResponse.success(SuccessType.OK, response));
     }
 

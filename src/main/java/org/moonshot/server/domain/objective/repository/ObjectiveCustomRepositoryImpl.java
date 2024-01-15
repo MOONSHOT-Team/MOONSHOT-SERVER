@@ -30,24 +30,21 @@ public class ObjectiveCustomRepositoryImpl implements ObjectiveCustomRepository 
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public HistoryResponseDto findObjectives(ObjectiveHistoryRequestDto request) {
-        List<Objective> objectives = queryFactory.selectFrom(objective).distinct()
+    public List<Objective> findObjectives(Long userId, ObjectiveHistoryRequestDto request) {
+        return queryFactory.selectFrom(objective).distinct()
                 .join(objective.keyResultList, keyResult).fetchJoin()
                 .join(keyResult.taskList, task)
-                .where(yearEq(request.year()), categoryEq(request.category()))
-                .orderBy(order(request.criteria()), keyResult.idx.asc())
+                .where(objective.isClosed.eq(true), userEq(userId), yearEq(request.year()), categoryEq(request.category()))
+                .orderBy(order(request.criteria()), keyResult.idx.asc(), task.idx.asc())
                 .fetch();
+    }
 
-        Map<Integer, List<Objective>> groups = objectives.stream()
-                .collect(Collectors.groupingBy(objective -> objective.getPeriod().getStartAt().getYear()));
-
-        List<String> categories = objectives.stream().map(objective -> objective.getCategory().getValue()).toList();
-
-        return HistoryResponseDto.of(groups, categories);
+    private BooleanExpression userEq(Long userId) {
+        return userId != null ? objective.user.id.eq(userId) : null;
     }
 
     private BooleanExpression yearEq(Integer year) {
-        return year != null ? objective.period.expireAt.year().eq(year) : null;
+        return year != null ? objective.period.startAt.year().eq(year) : null;
     }
 
     private BooleanExpression categoryEq(Category category) {

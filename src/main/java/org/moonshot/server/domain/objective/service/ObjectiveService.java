@@ -2,6 +2,8 @@ package org.moonshot.server.domain.objective.service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.moonshot.server.domain.keyresult.service.KeyResultService;
 import org.moonshot.server.domain.objective.dto.request.ModifyObjectiveRequestDto;
@@ -94,7 +96,12 @@ public class ObjectiveService {
     }
 
     public HistoryResponseDto getObjectiveHistory(Long userId, ObjectiveHistoryRequestDto request) {
-        return objectiveRepository.findObjectives(request);
+        List<Objective> objectives = objectiveRepository.findObjectives(userId, request);
+        Map<Integer, List<Objective>> groups = objectives.stream()
+                .collect(Collectors.groupingBy(objective -> objective.getPeriod().getStartAt().getYear()));
+        List<String> categories = objectives.stream().map(objective -> objective.getCategory().getValue()).toList();
+
+        return HistoryResponseDto.of(groups, categories);
     }
 
 }
