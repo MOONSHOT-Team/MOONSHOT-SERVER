@@ -35,7 +35,7 @@ public class ObjectiveCustomRepositoryImpl implements ObjectiveCustomRepository 
                 .join(objective.keyResultList, keyResult).fetchJoin()
                 .join(keyResult.taskList, task)
                 .where(objective.isClosed.eq(true), userEq(userId), yearEq(request.year()), categoryEq(request.category()))
-                .orderBy(order(request.criteria()), keyResult.idx.asc())
+                .orderBy(order(request.criteria()), keyResult.idx.asc(), task.idx.asc())
                 .fetch();
     }
 
