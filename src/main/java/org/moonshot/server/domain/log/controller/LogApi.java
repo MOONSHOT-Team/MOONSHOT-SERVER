@@ -20,8 +20,7 @@ import java.security.Principal;
 public interface LogApi {
 
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Log 생성을 성공하였습니다.",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = MoonshotResponse.class))),
+            @ApiResponse(responseCode = "201", description = "Log 생성을 성공하였습니다."),
             @ApiResponse(responseCode = "400", description = "Log 입력값은 이전 값과 동일할 수 없습니다.",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = MoonshotResponse.class))),
             @ApiResponse(responseCode = "403", description = "해당 자원에 접근 권한이 없습니다.",

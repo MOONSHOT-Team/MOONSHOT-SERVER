@@ -20,8 +20,7 @@ import java.security.Principal;
 public interface TaskApi {
 
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Task 생성을 성공하였습니다",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = MoonshotResponse.class))),
+            @ApiResponse(responseCode = "201", description = "Task 생성을 성공하였습니다"),
             @ApiResponse(responseCode = "400", description = "1.해당 자원에 접근 권한이 없습니다\t\n2.허용된 Task 개수를 초과하였습니다\t\n3.정상적이지 않은 KeyResult 위치입니다\t\n",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = MoonshotResponse.class)))
     })
