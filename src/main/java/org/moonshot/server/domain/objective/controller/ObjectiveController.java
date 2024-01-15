@@ -47,7 +47,7 @@ public class ObjectiveController implements ObjectiveApi {
     }
 
     @PatchMapping
-    public ResponseEntity<MoonshotResponse<?>> modifyObjective(Principal principal, @RequestBody ModifyObjectiveRequestDto request) {
+    public ResponseEntity<?> modifyObjective(Principal principal, @RequestBody ModifyObjectiveRequestDto request) {
         objectiveService.modifyObjective(JwtTokenProvider.getUserIdFromPrincipal(principal), request);
         return ResponseEntity.noContent().build();
     }
