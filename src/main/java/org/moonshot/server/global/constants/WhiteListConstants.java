@@ -28,6 +28,8 @@ public class WhiteListConstants {
             "/swagger-ui/**",
             "/swagger-resources/**",
             "/api-docs/**",
+            "/v3/api-docs/**",
+            "/webjars/**",
             "/googleLogin"
     };
 
