@@ -78,6 +78,7 @@ public class SecurityConfig {
         return source;
     }
 
+    @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return web -> web.ignoring().requestMatchers(WhiteListConstants.SWAGGER_WHITE_LIST);
     }
