@@ -10,7 +10,6 @@ public record ModifyIndexRequestDto(
         @NotNull(message = "대상을 지정해주세요.")
         IndexTarget target,
         @NotNull(message = "대상의 이동할 위치 값을 입력하세요.")
-        @Range(min = 0, max = 2, message = "순서는 0부터 2까지로 설정할 수 있습니다.")
         Integer idx
 ) {
 }
