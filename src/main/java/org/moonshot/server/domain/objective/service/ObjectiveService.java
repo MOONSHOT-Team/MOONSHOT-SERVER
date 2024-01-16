@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.moonshot.server.domain.keyresult.service.KeyResultService;
+import org.moonshot.server.domain.objective.dto.request.ModifyIndexRequestDto;
 import org.moonshot.server.domain.objective.dto.request.ModifyObjectiveRequestDto;
 import org.moonshot.server.domain.objective.dto.request.OKRCreateRequestDto;
 import org.moonshot.server.domain.objective.dto.request.ObjectiveHistoryRequestDto;
@@ -13,8 +14,10 @@ import org.moonshot.server.domain.objective.dto.response.DashboardResponseDto;
 import org.moonshot.server.domain.objective.dto.response.HistoryResponseDto;
 import org.moonshot.server.domain.objective.exception.DateInputRequiredException;
 import org.moonshot.server.domain.objective.exception.InvalidExpiredAtException;
+import org.moonshot.server.domain.objective.exception.ObjectiveInvalidIndexException;
 import org.moonshot.server.domain.objective.exception.ObjectiveNotFoundException;
 import org.moonshot.server.domain.objective.exception.ObjectiveNumberExceededException;
+import org.moonshot.server.domain.objective.model.IndexService;
 import org.moonshot.server.domain.objective.model.Objective;
 import org.moonshot.server.domain.objective.repository.ObjectiveRepository;
 import org.moonshot.server.domain.user.exception.UserNotFoundException;
@@ -27,9 +30,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 @RequiredArgsConstructor
-public class ObjectiveService {
+public class ObjectiveService implements IndexService {
 
     private static final int ACTIVE_OBJECTIVE_NUMBER = 10;
 
@@ -38,14 +41,15 @@ public class ObjectiveService {
     private final UserRepository userRepository;
     private final ObjectiveRepository objectiveRepository;
 
-    @Transactional
     public void createObjective(Long userId, OKRCreateRequestDto request) {
         User user =  userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
-        if (objectiveRepository.countAllByUserAndIsClosed(user, false) >= ACTIVE_OBJECTIVE_NUMBER) {
+        List<Objective> objectives = objectiveRepository.findAllByUserId(userId);
+        if (objectives.size() >= ACTIVE_OBJECTIVE_NUMBER) {
             throw new ObjectiveNumberExceededException();
         }
+        objectiveRepository.bulkUpdateIdxIncrease(userId);
 
         Objective newObjective = objectiveRepository.save(Objective.builder()
                 .title(request.objTitle())
@@ -57,7 +61,6 @@ public class ObjectiveService {
         keyResultService.createInitKRWithObjective(newObjective, request.krList());
     }
 
-    @Transactional
     public void deleteObjective(Long userId, Long objectiveId) {
         Objective objective = objectiveRepository.findObjectiveAndUserById(objectiveId)
                 .orElseThrow(ObjectiveNotFoundException::new);
@@ -68,7 +71,6 @@ public class ObjectiveService {
         objectiveRepository.delete(objective);
     }
 
-    @Transactional
     public void modifyObjective(Long userId, ModifyObjectiveRequestDto request) {
         Objective objective = objectiveRepository.findObjectiveAndUserById(request.objectiveId())
                 .orElseThrow(ObjectiveNotFoundException::new);
@@ -84,6 +86,7 @@ public class ObjectiveService {
         }
     }
 
+    @Transactional(readOnly = true)
     public DashboardResponseDto getObjectiveInDashboard(Long userId, Long objectiveId) {
         List<Objective> objList = objectiveRepository.findAllByUserId(userId);
         Long treeId = objectiveId == null ? objList.get(0).getId() : objectiveId;
@@ -95,6 +98,7 @@ public class ObjectiveService {
         return DashboardResponseDto.of(objective, objList);
     }
 
+    @Transactional(readOnly = true)
     public HistoryResponseDto getObjectiveHistory(Long userId, ObjectiveHistoryRequestDto request) {
         List<Objective> objectives = objectiveRepository.findObjectives(userId, request);
         Map<Integer, List<Objective>> groups = objectives.stream()
@@ -104,4 +108,35 @@ public class ObjectiveService {
         return HistoryResponseDto.of(groups, categories);
     }
 
+    @Override
+    public void modifyIdx(ModifyIndexRequestDto request, Long userId) {
+        Long objectiveCount = objectiveRepository.countAllByUserId(userId);
+        if (isInvalidIdx(objectiveCount, request.idx())) {
+            throw new ObjectiveInvalidIndexException();
+        }
+        Objective objective = objectiveRepository.findObjectiveAndUserById(request.id())
+                .orElseThrow(ObjectiveNotFoundException::new);
+
+        userService.validateUserAuthorization(objective.getUser(), userId);
+
+        Integer prevIdx = objective.getIdx();
+        if (prevIdx.equals(request.idx())) {
+            return;
+        }
+
+        objective.modifyIdx(request.idx());
+        if (isIndexIncreased(prevIdx, request.idx())) {
+            objectiveRepository.bulkUpdateIdxDecrease(prevIdx + 1, request.idx(), userId, objective.getId());
+        } else {
+            objectiveRepository.bulkUpdateIdxIncrease(request.idx(), prevIdx, userId, objective.getId());
+        }
+    }
+
+    private boolean isInvalidIdx(Long objectiveCount, int idx) {
+        return (objectiveCount <= idx) || (idx < 0);
+    }
+
+    private boolean isIndexIncreased(int prevIdx, int idx) {
+        return prevIdx < idx;
+    }
 }

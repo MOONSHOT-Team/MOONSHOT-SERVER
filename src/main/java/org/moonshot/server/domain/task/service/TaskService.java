@@ -2,7 +2,7 @@ package org.moonshot.server.domain.task.service;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.moonshot.server.domain.keyresult.exception.KeyResultInvalidPositionException;
+import org.moonshot.server.domain.keyresult.exception.KeyResultInvalidIndexException;
 import org.moonshot.server.domain.keyresult.model.KeyResult;
 import org.moonshot.server.domain.keyresult.repository.KeyResultRepository;
 import org.moonshot.server.domain.objective.dto.request.ModifyIndexRequestDto;
@@ -19,8 +19,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@RequiredArgsConstructor
 @Transactional
+@RequiredArgsConstructor
 public class TaskService implements IndexService {
 
     private static final int ACTIVE_TASK_NUMBER = 3;
@@ -41,7 +41,7 @@ public class TaskService implements IndexService {
             throw new TaskNumberExceededException();
         }
         if (request.idx() > taskList.size()) {
-            throw new KeyResultInvalidPositionException();
+            throw new KeyResultInvalidIndexException();
         }
 
         for (int i = request.idx(); i < taskList.size(); i++) {
@@ -74,11 +74,14 @@ public class TaskService implements IndexService {
         Task task = taskRepository.findTaskWithFetchJoin(request.id())
                 .orElseThrow(TaskNotFoundException::new);
         userService.validateUserAuthorization(task.getKeyResult().getObjective().getUser(), userId);
+        Long taskCount = taskRepository.countAllByKeyResultId(task.getKeyResult().getId());
+        if (isInvalidIdx(taskCount, request.idx())) {
+            throw new KeyResultInvalidIndexException();
+        }
         Integer prevIdx = task.getIdx();
         if (prevIdx.equals(request.idx())) {
             return;
         }
-        List<Task> taskList = taskRepository.findAllByKeyResult(task.getKeyResult());
 
         task.modifyIdx(request.idx());
         if (prevIdx < request.idx()) {
@@ -86,6 +89,10 @@ public class TaskService implements IndexService {
         } else {
             taskRepository.bulkUpdateTaskIdxIncrease(request.idx(), prevIdx, task.getKeyResult().getId(), task.getId());
         }
+    }
+
+    private boolean isInvalidIdx(Long taskCount, int idx) {
+        return (taskCount <= idx) || (idx < 0);
     }
 
 }

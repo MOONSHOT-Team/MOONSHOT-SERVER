@@ -8,6 +8,7 @@ import lombok.Getter;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public enum IndexTarget {
 
+    OBJECTIVE("objective"),
     KEY_RESULT("keyResult"),
     TASK("task");
 

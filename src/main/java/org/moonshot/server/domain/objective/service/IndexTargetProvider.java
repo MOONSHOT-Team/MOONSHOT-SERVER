@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 public class IndexTargetProvider {
 
     private static final Map<IndexTarget, IndexService> indexServiceMap = new HashMap<>();
+    private final ObjectiveService objectiveService;
     private final KeyResultService keyResultService;
     private final TaskService taskService;
 
@@ -22,6 +23,7 @@ public class IndexTargetProvider {
     void initIndexServiceMap() {
         indexServiceMap.put(IndexTarget.KEY_RESULT, keyResultService);
         indexServiceMap.put(IndexTarget.TASK, taskService);
+        indexServiceMap.put(IndexTarget.OBJECTIVE, objectiveService);
     }
 
     public IndexService getIndexService(IndexTarget indexTarget) {

@@ -48,8 +48,7 @@ public class Objective {
     @Embedded
     private Period period;
 
-    @Column(columnDefinition = "smallint default -1")
-    private short idx;
+    private int idx;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -70,7 +69,7 @@ public class Objective {
         this.isClosed = false;
         this.heartCount = 0L;
         this.period = period;
-        this.idx = -1;
+        this.idx = 0;
         this.user = user;
         this.keyResultList = new ArrayList<>();
     }
@@ -90,6 +89,10 @@ public class Objective {
 
     public void modifyProgress(short progress) {
         this.progress = progress;
+    }
+
+    public void modifyIdx(Integer idx) {
+        this.idx = idx;
     }
 
 }

@@ -9,7 +9,7 @@ import org.moonshot.server.domain.keyresult.dto.request.KeyResultCreateRequestDt
 import org.moonshot.server.domain.keyresult.dto.request.KeyResultCreateRequestInfoDto;
 import org.moonshot.server.domain.keyresult.dto.request.KeyResultModifyRequestDto;
 import org.moonshot.server.domain.keyresult.dto.response.KRDetailResponseDto;
-import org.moonshot.server.domain.keyresult.exception.KeyResultInvalidPositionException;
+import org.moonshot.server.domain.keyresult.exception.KeyResultInvalidIndexException;
 import org.moonshot.server.domain.keyresult.exception.KeyResultNotFoundException;
 import org.moonshot.server.domain.keyresult.exception.KeyResultNumberExceededException;
 import org.moonshot.server.domain.keyresult.model.KeyResult;
@@ -35,6 +35,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class KeyResultService implements IndexService {
 
@@ -77,7 +78,7 @@ public class KeyResultService implements IndexService {
             throw new KeyResultNumberExceededException();
         }
         if (request.idx() > krList.size()) {
-            throw new KeyResultInvalidPositionException();
+            throw new KeyResultInvalidIndexException();
         }
 
         for (int i = request.idx(); i < krList.size(); i++) {
@@ -154,6 +155,12 @@ public class KeyResultService implements IndexService {
         KeyResult keyResult = keyResultRepository.findKeyResultAndObjective(request.id())
                 .orElseThrow(KeyResultNotFoundException::new);
         userService.validateUserAuthorization(keyResult.getObjective().getUser(), userId);
+
+        Long krCount = keyResultRepository.countAllByObjectiveId(keyResult.getObjective().getId());
+        if (isInvalidIdx(krCount, request.idx())) {
+            throw new KeyResultInvalidIndexException();
+        }
+
         Integer prevIdx = keyResult.getIdx();
         if (prevIdx.equals(request.idx())) {
             return;
@@ -188,6 +195,10 @@ public class KeyResultService implements IndexService {
                 keyResult.getPeriod().getStartAt(),
                 keyResult.getPeriod().getExpireAt(),
                 logService.getLogResponseDto(logList, keyResult));
+    }
+
+    private boolean isInvalidIdx(Long keyResultCount, int idx) {
+        return (keyResultCount <= idx) || (idx < 0);
     }
 
 }

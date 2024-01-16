@@ -13,6 +13,8 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
 
     List<Task> findAllByKeyResult(KeyResult keyResult);
     List<Task> findAllByKeyResultOrderByIdx(KeyResult keyResult);
+    @Query("select count(t) from Task t join t.keyResult kr where kr.id = :keyResultId")
+    Long countAllByKeyResultId(@Param("keyResultId") Long keyResultId);
     @Query("select t from Task t join fetch t.keyResult kr join fetch kr.objective obj join fetch obj.user u where t.id = :taskId")
     Optional<Task> findTaskWithFetchJoin(@Param("taskId") Long taskId);
     @Modifying(clearAutomatically = true)
