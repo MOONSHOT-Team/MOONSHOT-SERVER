@@ -6,7 +6,7 @@ import org.moonshot.server.global.common.response.ErrorType;
 public class KeyResultInvalidPositionException extends MoonshotException {
 
     public KeyResultInvalidPositionException() {
-        super(ErrorType.INVALID_KEY_RESULT_ORDER);
+        super(ErrorType.INVALID_KEY_RESULT_INDEX);
     }
 
 }
