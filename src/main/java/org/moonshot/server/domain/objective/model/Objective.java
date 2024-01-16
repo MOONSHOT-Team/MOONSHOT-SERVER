@@ -91,4 +91,8 @@ public class Objective {
         this.progress = progress;
     }
 
+    public void modifyIdx(Integer idx) {
+        this.idx = idx;
+    }
+
 }

@@ -16,10 +16,17 @@ public interface ObjectiveJpaRepository extends JpaRepository<Objective, Long> {
     Optional<Objective> findObjectiveAndUserById(@Param("objective_id") Long objectiveId);
     @Query("select distinct o from Objective o left join fetch o.keyResultList kr left join kr.taskList t where o.id = :objectiveId and o.isClosed = false and kr.id = t.keyResult.id")
     Optional<Objective> findByIdWithKeyResultsAndTasks(@Param("objectiveId") Long objectiveId);
-    @Query("select distinct o from Objective o where o.user.id = :userId and o.isClosed = false order by o.id desc")
+    @Query("select distinct o from Objective o where o.user.id = :userId and o.isClosed = false order by o.idx asc")
     List<Objective> findAllByUserId(@Param("userId") Long userId);
     @Modifying(clearAutomatically = true)
     @Query("UPDATE Objective o SET o.idx = o.idx + 1 WHERE o.user.id = :userId")
     void bulkUpdateIdxIncrease(@Param("userId") Long userId);
+    Long countAllByUserId(Long userId);
+    @Modifying(clearAutomatically = true)
+    @Query("UPDATE Objective o SET o.idx = o.idx + 1 WHERE o.idx >= :lBound AND o.idx < :uBound AND o.user.id = :userId AND o.id != :targetId")
+    void bulkUpdateIdxIncrease(@Param("lBound") int lowerBound, @Param("uBound") int upperBound, @Param("userId") Long userId, @Param("targetId") Long targetId);
+    @Modifying(clearAutomatically = true)
+    @Query("UPDATE Objective o SET o.idx = o.idx - 1 WHERE o.idx >= :lBound AND o.idx <= :uBound AND o.user.id = :userId AND o.id != :targetId")
+    void bulkUpdateIdxDecrease(@Param("lBound") int lowerBound, @Param("uBound") int upperBound, @Param("userId") Long userId, @Param("targetId") Long targetId);
 
 }
