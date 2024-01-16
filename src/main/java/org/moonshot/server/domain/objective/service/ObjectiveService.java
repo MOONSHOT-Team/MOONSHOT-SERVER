@@ -17,6 +17,7 @@ import org.moonshot.server.domain.objective.exception.InvalidExpiredAtException;
 import org.moonshot.server.domain.objective.exception.ObjectiveInvalidIndexException;
 import org.moonshot.server.domain.objective.exception.ObjectiveNotFoundException;
 import org.moonshot.server.domain.objective.exception.ObjectiveNumberExceededException;
+import org.moonshot.server.domain.objective.exception.UserObjectiveEmptyException;
 import org.moonshot.server.domain.objective.model.IndexService;
 import org.moonshot.server.domain.objective.model.Objective;
 import org.moonshot.server.domain.objective.repository.ObjectiveRepository;
@@ -89,6 +90,9 @@ public class ObjectiveService implements IndexService {
     @Transactional(readOnly = true)
     public DashboardResponseDto getObjectiveInDashboard(Long userId, Long objectiveId) {
         List<Objective> objList = objectiveRepository.findAllByUserId(userId);
+        if (objList.isEmpty()) {
+            throw new UserObjectiveEmptyException();
+        }
         Long treeId = objectiveId == null ? objList.get(0).getId() : objectiveId;
         Objective objective = objectiveRepository.findByIdWithKeyResultsAndTasks(treeId)
                 .orElseThrow(ObjectiveNotFoundException::new);
