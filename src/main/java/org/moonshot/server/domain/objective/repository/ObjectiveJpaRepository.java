@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.moonshot.server.domain.objective.model.Objective;
 import org.moonshot.server.domain.user.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -17,5 +18,8 @@ public interface ObjectiveJpaRepository extends JpaRepository<Objective, Long> {
     Optional<Objective> findByIdWithKeyResultsAndTasks(@Param("objectiveId") Long objectiveId);
     @Query("select distinct o from Objective o where o.user.id = :userId and o.isClosed = false order by o.id desc")
     List<Objective> findAllByUserId(@Param("userId") Long userId);
+    @Modifying(clearAutomatically = true)
+    @Query("UPDATE Objective o SET o.idx = o.idx + 1 WHERE o.user.id = :userId")
+    void bulkUpdateIdxIncrease(@Param("userId") Long userId);
 
 }

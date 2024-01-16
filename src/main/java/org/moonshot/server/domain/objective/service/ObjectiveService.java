@@ -42,9 +42,11 @@ public class ObjectiveService {
         User user =  userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
-        if (objectiveRepository.countAllByUserAndIsClosed(user, false) >= ACTIVE_OBJECTIVE_NUMBER) {
+        List<Objective> objectives = objectiveRepository.findAllByUserId(userId);
+        if (objectives.size() >= ACTIVE_OBJECTIVE_NUMBER) {
             throw new ObjectiveNumberExceededException();
         }
+        objectiveRepository.bulkUpdateIdxIncrease(userId);
 
         Objective newObjective = objectiveRepository.save(Objective.builder()
                 .title(request.objTitle())
