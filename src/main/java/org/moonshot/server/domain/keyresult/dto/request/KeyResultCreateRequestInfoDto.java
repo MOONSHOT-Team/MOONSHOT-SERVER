@@ -19,7 +19,7 @@ public record KeyResultCreateRequestInfoDto(
         @Range(min = 0, max = 2, message = "KeyResult의 순서는 0부터 2까지로 설정할 수 있습니다.")
         Integer idx,
         @NotNull(message = "KR 목표 수치를 입력해주세요.")
-        @Range(min = 1, max = 99999999999L)
+        @Range(min = 1, max = 999999L, message = "수치는 999,999 이하여야 합니다.")
         Long target,
         @NotNull(message = "KR 목표 수치의 단위를 입력해주세요.")
         String metric,

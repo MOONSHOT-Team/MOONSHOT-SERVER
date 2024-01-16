@@ -17,7 +17,7 @@ public record KRCreateRequestDto(
         @NotNull(message = "KR 종료 날짜를 선택해주세요.")
         LocalDate expireAt,
         @NotNull(message = "KR 목표 수치를 입력해주세요.")
-        @Range(min = 0, max = 99999999999L)
+        @Range(min = 0, max = 999999L)
         Integer target,
         @NotNull(message = "KR 목표 수치의 단위를 입력해주세요.")
         String metric,
