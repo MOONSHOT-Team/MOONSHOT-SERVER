@@ -10,7 +10,7 @@ public record HistoryObjectiveListDto(
         String objCategory,
         int progress,
         String objPeriod,
-        Short objIdx,
+        int objIdx,
         List<HistoryKeyResultDto> krList
 ) {
     public static HistoryObjectiveListDto of(Objective objective) {
