@@ -127,16 +127,13 @@ public class ObjectiveService implements IndexService {
         } else {
             objectiveRepository.bulkUpdateIdxIncrease(request.idx(), prevIdx, userId, objective.getId());
         }
-
     }
 
     private boolean isInvalidIdx(Long objectiveCount, int idx) {
         return (objectiveCount <= idx) || (idx < 0);
-
     }
 
     private boolean isIndexIncreased(int prevIdx, int idx) {
         return prevIdx < idx;
-
     }
 }
