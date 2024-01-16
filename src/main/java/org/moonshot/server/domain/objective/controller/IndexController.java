@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v1/index")
-public class IndexController {
+public class IndexController implements IndexApi {
 
     private final IndexTargetProvider indexTargetProvider;
 
@@ -27,7 +27,7 @@ public class IndexController {
     public ResponseEntity<MoonshotResponse<?>> modifyIdx(Principal principal, @RequestBody @Valid ModifyIndexRequestDto request) {
         IndexService indexService = indexTargetProvider.getIndexService(request.target());
         indexService.modifyIdx(request, JwtTokenProvider.getUserIdFromPrincipal(principal));
-        return ResponseEntity.status(HttpStatus.OK).body(MoonshotResponse.success(SuccessType.PATCH_TARGET_INDEX_SUCCESS));
+        return ResponseEntity.noContent().build();
     }
 
 }
