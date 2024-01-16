@@ -16,6 +16,8 @@ public interface KeyResultRepository extends JpaRepository<KeyResult, Long> {
     List<KeyResult> findAllByObjective(Objective objective);
     List<KeyResult> findAllByObjectiveOrderByIdx(Objective objective);
     List<KeyResult> findAllByObjectiveId(Long objectiveId);
+    @Query("select count(kr) from KeyResult kr join kr.objective obj where obj.id = :objectiveId")
+    Long countAllByObjectiveId(@Param("objectiveId") Long objectiveId);
     @Query("select kr from KeyResult kr join fetch kr.objective join fetch kr.objective.user where kr.id = :keyResultId")
     Optional<KeyResult> findKeyResultAndObjective(@Param("keyResultId") Long keyResultId);
     @Modifying(clearAutomatically = true)
