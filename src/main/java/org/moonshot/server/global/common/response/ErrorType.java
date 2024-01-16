@@ -21,8 +21,9 @@ public enum ErrorType {
     ACTIVE_OBJECTIVE_NUMBER_EXCEEDED(HttpStatus.BAD_REQUEST, "허용된 Objective 개수를 초과하였습니다"),
     ACTIVE_KEY_RESULT_NUMBER_EXCEEDED(HttpStatus.BAD_REQUEST, "허용된 Key Result 개수를 초과하였습니다"),
     ACTIVE_TASK_NUMBER_EXCEEDED(HttpStatus.BAD_REQUEST, "허용된 Task 개수를 초과하였습니다."),
-    INVALID_KEY_RESULT_ORDER(HttpStatus.BAD_REQUEST, "정상적이지 않은 KeyResult 위치입니다."),
-    INVALID_TASK_ORDER(HttpStatus.BAD_REQUEST, "정상적이지 않은 Task 위치입니다."),
+    INVALID_OBJECTIVE_INDEX(HttpStatus.BAD_REQUEST, "정상적이지 않은 Objective 위치입니다."),
+    INVALID_KEY_RESULT_INDEX(HttpStatus.BAD_REQUEST, "정상적이지 않은 KeyResult 위치입니다."),
+    INVALID_TASK_INDEX(HttpStatus.BAD_REQUEST, "정상적이지 않은 Task 위치입니다."),
     INVALID_LOG_VALUE(HttpStatus.BAD_REQUEST, "Log 입력값은 이전 값과 동일할 수 없습니다."),
     INVALID_EXPIRE_AT(HttpStatus.BAD_REQUEST, "Objective 종료 기간은 오늘보다 이전 날짜일 수 없습니다."),
 
