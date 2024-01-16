@@ -33,4 +33,12 @@ public class WhiteListConstants {
             "/googleLogin"
     };
 
+    public static final String[] SWAGGER_WHITE_LIST = {
+            "/swagger-ui/**",
+            "/swagger-resources/**",
+            "/api-docs/**",
+            "/v3/api-docs/**",
+            "/webjars/**"
+    };
+
 }
