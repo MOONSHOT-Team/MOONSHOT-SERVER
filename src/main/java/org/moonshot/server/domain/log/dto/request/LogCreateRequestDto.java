@@ -8,7 +8,7 @@ public record LogCreateRequestDto(
         Long keyResultId,
 
         @NotNull(message = "Log의 수치를 입력해주세요.")
-        @Range(min = 0, max = 99999999999L)
+        @Range(min = 0, max = 999999L, message = "수치는 999,999 이하여야 합니다.")
         long logNum,
 
         @NotNull(message = "Log의 체크인 본문을 입력해주세요.")

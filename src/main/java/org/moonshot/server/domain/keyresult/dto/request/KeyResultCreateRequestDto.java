@@ -22,7 +22,7 @@ public record KeyResultCreateRequestDto(
         Integer idx,
         @NotNull(message = "KR 목표 수치를 입력해주세요.")
 
-        @Range(min = 1, max = 99999999999L)
+        @Range(min = 1, max = 999999L, message = "수치는 999,999 이하여야 합니다.")
         Long target,
         @NotNull(message = "KR 목표 수치의 단위를 입력해주세요.")
         String metric

@@ -14,7 +14,7 @@ public record KeyResultModifyRequestDto(
         String title,
         LocalDate startAt,
         LocalDate expireAt,
-        @Range(min = 1, max = 99999999999L)
+        @Range(min = 1, max = 999999L, message = "수치는 999,999 이하여야 합니다.")
         Long target,
         KRState state,
         @Size(min = 1, max = 100, message = "본문은 100자 이하여야 합니다.")
