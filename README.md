@@ -109,26 +109,26 @@
 <br/>
 
 ## 📄 API 명세서
-[Moonshot API 명세서](https://moonshot-.notion.site/API-b02466b274e44584a66660e329cfbe4b?pvs=4)
-
 <img width="700" alt="MOONSHOT_ERD" src="https://github.com/MOONSHOT-Team/MOONSHOT-SERVER/assets/75068759/ea0c7725-ac26-44f6-b382-6f5fdb22dded">
 
 <br/>
 
 ## 🛠️ Tech Stack
-| 사용기술        | 정보                  |
-|-------------|---------------------|
-| Spring      | 3.1.7               |
-| Database    | AWS RDS(MySQL)      |
-| Instance    | AWS EC2(Ubuntu)     |
-| CI/CD	| Github Actions, Docker, Nginx |
-| Build Tool  | Gradle              |
-| ERD         | DBDiagram, DataGrip |
-| Java        | Java 17             |
-| Discord Appender | 1.0.0               |
- | Swagger(Springdoc) | 2.2.0               |
-| Redis       | 3.1.7               |
-| MyBatis     | 3.0.0 |
+| 사용기술               | 정보                            |
+|--------------------|-------------------------------|
+| Spring             | 3.1.7                         |
+| Database           | AWS RDS(MySQL)                |
+| Instance           | AWS EC2(Ubuntu)               |
+| CI/CD	             | Github Actions, Docker, Nginx |
+| Build Tool         | Gradle                        |
+| ERD                | DBDiagram, DataGrip           |
+| Java               | Java 17                       |
+| Discord Appender   | 1.0.0                         |
+ | Swagger(Springdoc) | 2.2.0                         |
+| Redis              | 3.1.7                         |
+| MyBatis            | 3.0.0                         |
+| Querydsl           | 5.0.0                         |
+
 
 
 <br/>
