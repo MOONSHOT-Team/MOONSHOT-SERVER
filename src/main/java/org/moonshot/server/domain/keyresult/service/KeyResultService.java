@@ -9,10 +9,7 @@ import org.moonshot.server.domain.keyresult.dto.request.KeyResultCreateRequestDt
 import org.moonshot.server.domain.keyresult.dto.request.KeyResultCreateRequestInfoDto;
 import org.moonshot.server.domain.keyresult.dto.request.KeyResultModifyRequestDto;
 import org.moonshot.server.domain.keyresult.dto.response.KRDetailResponseDto;
-import org.moonshot.server.domain.keyresult.exception.KeyResultInvalidIndexException;
-import org.moonshot.server.domain.keyresult.exception.KeyResultInvalidPeriodException;
-import org.moonshot.server.domain.keyresult.exception.KeyResultNotFoundException;
-import org.moonshot.server.domain.keyresult.exception.KeyResultNumberExceededException;
+import org.moonshot.server.domain.keyresult.exception.*;
 import org.moonshot.server.domain.keyresult.model.KeyResult;
 import org.moonshot.server.domain.keyresult.repository.KeyResultRepository;
 import org.moonshot.server.domain.log.dto.response.AchieveResponseDto;
@@ -33,6 +30,7 @@ import org.moonshot.server.domain.task.repository.TaskRepository;
 import org.moonshot.server.domain.task.service.TaskService;
 import org.moonshot.server.domain.user.service.UserService;
 import org.moonshot.server.global.common.model.Period;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -133,22 +131,26 @@ public class KeyResultService implements IndexService {
         if (request.startAt() != null || request.expireAt() != null) {
             LocalDate newStartAt = (request.startAt() != null) ? request.startAt() : keyResult.getPeriod().getStartAt();
             LocalDate newExpireAt = (request.expireAt() != null) ? request.expireAt() : keyResult.getPeriod().getExpireAt();
+            if(!(isValidKeyResultPeriod(keyResult, newStartAt, newExpireAt))) {
+                throw new KeyResultInvalidPeriodException();
+            };
             keyResult.modifyPeriod(Period.of(newStartAt, newExpireAt));
         }
-        if (request.target() != null && request.logContent() !=  null) {
-            Log updateLog = logService.createUpdateLog(request, keyResult.getId());
-            if (request.target().equals(updateLog.getKeyResult().getTarget())) {
-                throw new InvalidLogValueException();
-            }
-            Log prevLog = logRepository.findLatestLogByKeyResultId(LogState.UPDATE, request.keyResultId())
-                    .orElseThrow(LogNotFoundException::new);
-            keyResult.modifyTarget(request.target());
-            keyResult.modifyProgress(logService.calculateKRProgressBar(prevLog, keyResult));
-            short progress = logService.calculateOProgressBar(keyResult.getObjective());
-            keyResult.getObjective().modifyProgress(progress);
-            if (keyResult.getObjective().getProgress() == 100) {
-                return Optional.of(AchieveResponseDto.of(keyResult.getObjective().getId(), keyResult.getObjective().getUser().getNickname(), progress));
-            }
+        if (request.target() == null || request.logContent() == null){
+            throw new KeyResultRequiredException();
+        }
+        Log updateLog = logService.createUpdateLog(request, keyResult.getId());
+        if (request.target().equals(updateLog.getKeyResult().getTarget())) {
+            throw new InvalidLogValueException();
+        }
+        Log prevLog = logRepository.findLatestLogByKeyResultId(LogState.UPDATE, request.keyResultId())
+                .orElseThrow(LogNotFoundException::new);
+        keyResult.modifyTarget(request.target());
+        keyResult.modifyProgress(logService.calculateKRProgressBar(prevLog, keyResult));
+        short progress = logService.calculateOProgressBar(keyResult.getObjective());
+        keyResult.getObjective().modifyProgress(progress);
+        if (keyResult.getObjective().getProgress() == 100) {
+            return Optional.of(AchieveResponseDto.of(keyResult.getObjective().getId(), keyResult.getObjective().getUser().getNickname(), progress));
         }
         if (request.state() != null) {
             keyResult.modifyState(request.state());
@@ -203,6 +205,21 @@ public class KeyResultService implements IndexService {
                 logService.getLogResponseDto(logList, keyResult));
     }
 
+    private boolean isValidKeyResultPeriod(KeyResult keyResult, LocalDate newStartAt, LocalDate newExpireAt) {
+        if (newStartAt.isAfter(newExpireAt)) {
+            return false;
+        }
+        if (newStartAt.isBefore(keyResult.getObjective().getPeriod().getStartAt()) || newStartAt.isAfter(keyResult.getObjective().getPeriod().getExpireAt())) {
+            return false;
+        }
+        if (newExpireAt.isBefore(newStartAt)) {
+            return false;
+        }
+        if (newExpireAt.isBefore(keyResult.getObjective().getPeriod().getStartAt()) || newExpireAt.isAfter(keyResult.getObjective().getPeriod().getExpireAt())) {
+            return false;
+        }
+        return true;
+    }
     private boolean isInvalidIdx(Long keyResultCount, int idx) {
         return (keyResultCount <= idx) || (idx < 0);
     }

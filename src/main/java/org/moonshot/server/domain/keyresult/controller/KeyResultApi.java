@@ -40,7 +40,7 @@ public interface KeyResultApi {
 
     @ApiResponses(value =  {
             @ApiResponse(responseCode = "200", description = "KeyResult 수정 후 목표를 달성하였습니다\t\nKeyResult 수정을 성공하였습니다"),
-            @ApiResponse(responseCode = "400", description = "Log 입력값은 이전 값과 동일할 수 없습니다", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MoonshotResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Log 입력값은 이전 값과 동일할 수 없습니다\t\nKeyResult 기간 설정이 올바르지 않습니다\t\n", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MoonshotResponse.class))),
             @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자입니다", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MoonshotResponse.class))),
             @ApiResponse(responseCode = "403", description = "해당 자원에 접근 권한이 없습니다", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MoonshotResponse.class))),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 KeyResult입니다\t\n존재하지 않는 Log입니다", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MoonshotResponse.class)))
