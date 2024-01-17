@@ -37,13 +37,13 @@ interface ObjectiveApi {
                                                         @RequestBody @Valid OKRCreateRequestDto request);
 
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "O-KR 트리 삭제를 성공하였습니다"),
+            @ApiResponse(responseCode = "200", description = "O-KR 트리 삭제를 성공하였습니다"),
             @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자입니다", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MoonshotResponse.class))),
             @ApiResponse(responseCode = "403", description = "해당 자원에 접근 권한이 없습니다", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MoonshotResponse.class))),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 Objective입니다", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MoonshotResponse.class)))
     })
     @Operation(summary = "O-KR 데이터 삭제")
-    ResponseEntity<?> deleteObjective(@Parameter(in = ParameterIn.HEADER, name = "Authorization", description = "Access Token", required = true, schema = @Schema(type = "string")) Principal principal,
+    ResponseEntity<MoonshotResponse<DashboardResponseDto>> deleteObjective(@Parameter(in = ParameterIn.HEADER, name = "Authorization", description = "Access Token", required = true, schema = @Schema(type = "string")) Principal principal,
                                       @PathVariable("objectiveId") Long objectiveId);
 
     @ApiResponses(value = {
