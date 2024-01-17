@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.moonshot.server.domain.keyresult.exception.KeyResultInvalidPeriodException;
 import org.moonshot.server.domain.keyresult.service.KeyResultService;
 import org.moonshot.server.domain.objective.dto.request.ModifyIndexRequestDto;
 import org.moonshot.server.domain.objective.dto.request.ModifyObjectiveRequestDto;

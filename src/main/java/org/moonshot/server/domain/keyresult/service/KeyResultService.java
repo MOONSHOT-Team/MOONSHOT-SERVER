@@ -23,7 +23,6 @@ import org.moonshot.server.domain.log.model.LogState;
 import org.moonshot.server.domain.objective.dto.request.ModifyIndexRequestDto;
 import org.moonshot.server.domain.log.repository.LogRepository;
 import org.moonshot.server.domain.log.service.LogService;
-import org.moonshot.server.domain.objective.exception.InvalidExpiredAtException;
 import org.moonshot.server.domain.objective.exception.ObjectiveNotFoundException;
 import org.moonshot.server.domain.objective.model.IndexService;
 import org.moonshot.server.domain.objective.model.Objective;
