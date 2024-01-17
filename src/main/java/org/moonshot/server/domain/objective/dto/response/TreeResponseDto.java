@@ -9,6 +9,8 @@ public record TreeResponseDto(
         Long objId,
         String objTitle,
         boolean objIsExpired,
+        LocalDate objStartAt,
+        LocalDate objExpireAt,
         int objListSize,
         List<KeyResultResponseDto> krList
 ) {
@@ -17,6 +19,8 @@ public record TreeResponseDto(
                 objective.getId(),
                 objective.getTitle(),
                 !objective.isClosed() && objective.getPeriod().getExpireAt().isBefore(LocalDate.now()),
+                objective.getPeriod().getStartAt(),
+                objective.getPeriod().getExpireAt(),
                 objListSize,
                 krList
         );
