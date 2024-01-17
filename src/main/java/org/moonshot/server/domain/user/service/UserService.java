@@ -56,7 +56,6 @@ public class UserService {
     private final KakaoAuthApiClient kakaoAuthApiClient;
     private final KakaoApiClient kakaoApiClient;
     private final JwtTokenProvider jwtTokenProvider;
-//    private final DiscordAppender discordAppender;
 
     public SocialLoginResponse login(SocialLoginRequest request) throws IOException {
         switch (request.socialPlatform().getValue()){
