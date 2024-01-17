@@ -38,6 +38,11 @@ server:
   ip: ${SERVER_IP}
   domain: ${SERVER_DOMAIN}
 
+client:
+  domain:
+    a: ${CLIENT_A_DOMAIN}
+    b: ${CLIENT_B_DOMAIN}
+
 aws:
   access-key: ${AWS_ACCESS_KEY}
   secret-key: ${AWS_SECRET_KEY}

@@ -32,6 +32,10 @@ public class SecurityConfig {
     private String serverIp;
     @Value("${server.domain}")
     private String serverDomain;
+    @Value("${client.domain.a}")
+    private String clientDomainA;
+    @Value("${client.domain.b}")
+    private String clientDomainB;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -69,6 +73,8 @@ public class SecurityConfig {
         config.addAllowedOrigin("https://www.googleapis.com");
         config.addAllowedOrigin(serverIp);
         config.addAllowedOrigin(serverDomain);
+        config.addAllowedOrigin(clientDomainA);
+        config.addAllowedOrigin(clientDomainB);
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         config.addExposedHeader("Authorization");
