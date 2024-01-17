@@ -6,9 +6,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.moonshot.server.domain.objective.dto.request.ModifyObjectiveRequestDto;
 import org.moonshot.server.domain.objective.dto.request.OKRCreateRequestDto;
-import org.moonshot.server.domain.objective.dto.request.ObjectiveHistoryRequestDto;
 import org.moonshot.server.domain.objective.dto.response.DashboardResponseDto;
 import org.moonshot.server.domain.objective.dto.response.HistoryResponseDto;
+import org.moonshot.server.domain.objective.model.Category;
+import org.moonshot.server.domain.objective.model.Criteria;
 import org.moonshot.server.domain.objective.service.ObjectiveService;
 import org.moonshot.server.global.auth.jwt.JwtTokenProvider;
 import org.moonshot.server.global.common.response.MoonshotResponse;
@@ -59,8 +60,10 @@ public class ObjectiveController implements ObjectiveApi {
     }
 
     @GetMapping("/history")
-    public ResponseEntity<MoonshotResponse<HistoryResponseDto>> getObjectiveHistory(Principal principal, @RequestBody ObjectiveHistoryRequestDto request) {
-        HistoryResponseDto response = objectiveService.getObjectiveHistory(JwtTokenProvider.getUserIdFromPrincipal(principal), request);
+    public ResponseEntity<MoonshotResponse<HistoryResponseDto>> getObjectiveHistory(Principal principal, @RequestParam(required = false) Integer year,
+                                                                                    @RequestParam(required = false) Category category,
+                                                                                    @RequestParam(required = false) Criteria criteria) {
+        HistoryResponseDto response = objectiveService.getObjectiveHistory(JwtTokenProvider.getUserIdFromPrincipal(principal), year, category, criteria);
         return ResponseEntity.ok(MoonshotResponse.success(SuccessType.OK, response));
     }
 

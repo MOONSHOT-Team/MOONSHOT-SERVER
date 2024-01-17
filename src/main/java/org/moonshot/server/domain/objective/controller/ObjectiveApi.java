@@ -13,9 +13,10 @@ import jakarta.validation.Valid;
 import java.security.Principal;
 import org.moonshot.server.domain.objective.dto.request.ModifyObjectiveRequestDto;
 import org.moonshot.server.domain.objective.dto.request.OKRCreateRequestDto;
-import org.moonshot.server.domain.objective.dto.request.ObjectiveHistoryRequestDto;
 import org.moonshot.server.domain.objective.dto.response.DashboardResponseDto;
 import org.moonshot.server.domain.objective.dto.response.HistoryResponseDto;
+import org.moonshot.server.domain.objective.model.Category;
+import org.moonshot.server.domain.objective.model.Criteria;
 import org.moonshot.server.global.common.response.MoonshotResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -72,7 +73,8 @@ interface ObjectiveApi {
             @ApiResponse(responseCode = "403", description = "해당 자원에 접근 권한이 없습니다.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MoonshotResponse.class))),
     })
     @Operation(summary = "히스토리 목록 조회")
-    ResponseEntity<MoonshotResponse<HistoryResponseDto>> getObjectiveHistory(@Parameter(in = ParameterIn.HEADER, name = "Authorization", description = "Access Token", required = true, schema = @Schema(type = "string")) Principal principal,
-                                                                             @RequestBody ObjectiveHistoryRequestDto request);
+    ResponseEntity<MoonshotResponse<HistoryResponseDto>> getObjectiveHistory(Principal principal, @RequestParam(required = false) Integer year,
+                                                                                    @RequestParam(required = false) Category category,
+                                                                                    @RequestParam(required = false) Criteria criteria);
 
 }
