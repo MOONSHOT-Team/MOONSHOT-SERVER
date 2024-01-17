@@ -9,10 +9,7 @@ import org.moonshot.server.domain.keyresult.dto.request.KeyResultCreateRequestDt
 import org.moonshot.server.domain.keyresult.dto.request.KeyResultCreateRequestInfoDto;
 import org.moonshot.server.domain.keyresult.dto.request.KeyResultModifyRequestDto;
 import org.moonshot.server.domain.keyresult.dto.response.KRDetailResponseDto;
-import org.moonshot.server.domain.keyresult.exception.KeyResultInvalidIndexException;
-import org.moonshot.server.domain.keyresult.exception.KeyResultInvalidPeriodException;
-import org.moonshot.server.domain.keyresult.exception.KeyResultNotFoundException;
-import org.moonshot.server.domain.keyresult.exception.KeyResultNumberExceededException;
+import org.moonshot.server.domain.keyresult.exception.*;
 import org.moonshot.server.domain.keyresult.model.KeyResult;
 import org.moonshot.server.domain.keyresult.repository.KeyResultRepository;
 import org.moonshot.server.domain.log.dto.response.AchieveResponseDto;
@@ -136,20 +133,21 @@ public class KeyResultService implements IndexService {
             LocalDate newExpireAt = (request.expireAt() != null) ? request.expireAt() : keyResult.getPeriod().getExpireAt();
             keyResult.modifyPeriod(Period.of(newStartAt, newExpireAt));
         }
-        if (request.target() != null && request.logContent() !=  null) {
-            Log updateLog = logService.createUpdateLog(request, keyResult.getId());
-            if (request.target().equals(updateLog.getKeyResult().getTarget())) {
-                throw new InvalidLogValueException();
-            }
-            Log prevLog = logRepository.findLatestLogByKeyResultId(LogState.UPDATE, request.keyResultId())
-                    .orElseThrow(LogNotFoundException::new);
-            keyResult.modifyTarget(request.target());
-            keyResult.modifyProgress(logService.calculateKRProgressBar(prevLog, keyResult));
-            short progress = logService.calculateOProgressBar(keyResult.getObjective());
-            keyResult.getObjective().modifyProgress(progress);
-            if (keyResult.getObjective().getProgress() == 100) {
-                return Optional.of(AchieveResponseDto.of(keyResult.getObjective().getId(), keyResult.getObjective().getUser().getNickname(), progress));
-            }
+        if (request.target() == null || request.logContent() == null){
+            throw new KeyResultRequiredException();
+        }
+        Log updateLog = logService.createUpdateLog(request, keyResult.getId());
+        if (request.target().equals(updateLog.getKeyResult().getTarget())) {
+            throw new InvalidLogValueException();
+        }
+        Log prevLog = logRepository.findLatestLogByKeyResultId(LogState.UPDATE, request.keyResultId())
+                .orElseThrow(LogNotFoundException::new);
+        keyResult.modifyTarget(request.target());
+        keyResult.modifyProgress(logService.calculateKRProgressBar(prevLog, keyResult));
+        short progress = logService.calculateOProgressBar(keyResult.getObjective());
+        keyResult.getObjective().modifyProgress(progress);
+        if (keyResult.getObjective().getProgress() == 100) {
+            return Optional.of(AchieveResponseDto.of(keyResult.getObjective().getId(), keyResult.getObjective().getUser().getNickname(), progress));
         }
         if (request.state() != null) {
             keyResult.modifyState(request.state());

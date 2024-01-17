@@ -29,6 +29,8 @@ public enum ErrorType {
     INVALID_EXPIRE_AT(HttpStatus.BAD_REQUEST, "Objective 종료 기간은 오늘보다 이전 날짜일 수 없습니다."),
     INVALID_KEY_RESULT_PERIOD(HttpStatus.BAD_REQUEST, "KeyResult 기간 설정이 Objective의 기간 내에 이루어지지 않습니다."),
     REQUIRED_EXPIRE_AT(HttpStatus.BAD_REQUEST, "기간 연장시 목표 종료 기간은 필수 입력값입니다."),
+    REQUIRED_KEY_RESULT_VALUE(HttpStatus.BAD_REQUEST, "KR 수정시 목표값과 체크인 로그는 필수 입력값입니다."),
+    REQUIRED_LOG_VALUE(HttpStatus.BAD_REQUEST, "LOG 생성시 진척 상황과 체크인 로그는 필수 입력값입니다."),
 
     /**
      * 401 UNAUTHROZIED
