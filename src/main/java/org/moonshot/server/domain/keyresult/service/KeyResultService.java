@@ -133,26 +133,27 @@ public class KeyResultService implements IndexService {
             LocalDate newExpireAt = (request.expireAt() != null) ? request.expireAt() : keyResult.getPeriod().getExpireAt();
             if(!(isValidKeyResultPeriod(keyResult, newStartAt, newExpireAt))) {
                 throw new KeyResultInvalidPeriodException();
-            };
+            }
             keyResult.modifyPeriod(Period.of(newStartAt, newExpireAt));
         }
-        if (request.target() == null || request.logContent() == null){
+        if ((request.state() == null && request.target() == null) || (request.state() == null && request.logContent() == null)){
             throw new KeyResultRequiredException();
         }
-        Log updateLog = logService.createUpdateLog(request, keyResult.getId());
-        if (request.target().equals(updateLog.getKeyResult().getTarget())) {
-            throw new InvalidLogValueException();
-        }
-        Log prevLog = logRepository.findLatestLogByKeyResultId(LogState.UPDATE, request.keyResultId())
-                .orElseThrow(LogNotFoundException::new);
-        keyResult.modifyTarget(request.target());
-        keyResult.modifyProgress(logService.calculateKRProgressBar(prevLog, keyResult));
-        short progress = logService.calculateOProgressBar(keyResult.getObjective());
-        keyResult.getObjective().modifyProgress(progress);
-        if (keyResult.getObjective().getProgress() == 100) {
-            return Optional.of(AchieveResponseDto.of(keyResult.getObjective().getId(), keyResult.getObjective().getUser().getNickname(), progress));
-        }
-        if (request.state() != null) {
+        if (request.state() == null) {
+            Log updateLog = logService.createUpdateLog(request, keyResult.getId());
+            if (request.target().equals(updateLog.getKeyResult().getTarget())) {
+                throw new InvalidLogValueException();
+            }
+            Log prevLog = logRepository.findLatestLogByKeyResultId(LogState.UPDATE, request.keyResultId())
+                    .orElseThrow(LogNotFoundException::new);
+            keyResult.modifyTarget(request.target());
+            keyResult.modifyProgress(logService.calculateKRProgressBar(prevLog, keyResult));
+            short progress = logService.calculateOProgressBar(keyResult.getObjective());
+            keyResult.getObjective().modifyProgress(progress);
+            if (keyResult.getObjective().getProgress() == 100) {
+                return Optional.of(AchieveResponseDto.of(keyResult.getObjective().getId(), keyResult.getObjective().getUser().getNickname(), progress));
+            }
+        } else {
             keyResult.modifyState(request.state());
         }
         return Optional.empty();
