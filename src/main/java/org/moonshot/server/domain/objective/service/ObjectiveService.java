@@ -1,23 +1,27 @@
 package org.moonshot.server.domain.objective.service;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.moonshot.server.domain.keyresult.service.KeyResultService;
 import org.moonshot.server.domain.objective.dto.request.ModifyIndexRequestDto;
 import org.moonshot.server.domain.objective.dto.request.ModifyObjectiveRequestDto;
 import org.moonshot.server.domain.objective.dto.request.OKRCreateRequestDto;
-import org.moonshot.server.domain.objective.dto.request.ObjectiveHistoryRequestDto;
 import org.moonshot.server.domain.objective.dto.response.DashboardResponseDto;
 import org.moonshot.server.domain.objective.dto.response.HistoryResponseDto;
+import org.moonshot.server.domain.objective.dto.response.ObjectiveGroupByYearDto;
 import org.moonshot.server.domain.objective.exception.DateInputRequiredException;
 import org.moonshot.server.domain.objective.exception.InvalidExpiredAtException;
 import org.moonshot.server.domain.objective.exception.ObjectiveInvalidIndexException;
 import org.moonshot.server.domain.objective.exception.ObjectiveNotFoundException;
 import org.moonshot.server.domain.objective.exception.ObjectiveNumberExceededException;
 import org.moonshot.server.domain.objective.exception.UserObjectiveEmptyException;
+import org.moonshot.server.domain.objective.model.Category;
+import org.moonshot.server.domain.objective.model.Criteria;
 import org.moonshot.server.domain.objective.model.IndexService;
 import org.moonshot.server.domain.objective.model.Objective;
 import org.moonshot.server.domain.objective.repository.ObjectiveRepository;
@@ -103,13 +107,33 @@ public class ObjectiveService implements IndexService {
     }
 
     @Transactional(readOnly = true)
-    public HistoryResponseDto getObjectiveHistory(Long userId, ObjectiveHistoryRequestDto request) {
-        List<Objective> objectives = objectiveRepository.findObjectives(userId, request);
+    public HistoryResponseDto getObjectiveHistory(Long userId, Integer year, Category category, Criteria criteria) {
+        List<Objective> objectives = objectiveRepository.findObjectives(userId, year, category, criteria);
         Map<Integer, List<Objective>> groups = objectives.stream()
                 .collect(Collectors.groupingBy(objective -> objective.getPeriod().getStartAt().getYear()));
+        Map<Integer, Integer> years = groups.entrySet().stream()
+                .collect(Collectors.toMap(
+                        Entry::getKey,
+                        entry -> entry.getValue().size()
+                ));
         List<String> categories = objectives.stream().map(objective -> objective.getCategory().getValue()).toList();
 
-        return HistoryResponseDto.of(groups, categories);
+        List<ObjectiveGroupByYearDto> groupList = groups.entrySet().stream()
+                .map(entry -> ObjectiveGroupByYearDto.of(entry.getKey(), entry.getValue())).toList();
+
+        List<ObjectiveGroupByYearDto> groupsSortedByCriteria;
+        if (criteria.equals(Criteria.LATEST)) {
+            groupsSortedByCriteria = groupList.stream()
+                    .sorted(Comparator.comparingInt(ObjectiveGroupByYearDto::year).reversed()).toList();
+        } else if (criteria.equals(Criteria.OLDEST)) {
+            groupsSortedByCriteria = groupList.stream()
+                    .sorted(Comparator.comparingInt(ObjectiveGroupByYearDto::year)).toList();
+        } else {
+            groupsSortedByCriteria = groupList.stream()
+                    .sorted(Comparator.comparingInt(ObjectiveGroupByYearDto::year).reversed()).toList();
+        }
+
+        return HistoryResponseDto.of(groupsSortedByCriteria, years, categories, criteria);
     }
 
     @Override
