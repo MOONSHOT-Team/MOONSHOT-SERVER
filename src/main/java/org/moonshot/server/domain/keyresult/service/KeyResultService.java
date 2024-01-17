@@ -29,6 +29,7 @@ import org.moonshot.server.domain.task.repository.TaskRepository;
 import org.moonshot.server.domain.task.service.TaskService;
 import org.moonshot.server.domain.user.service.UserService;
 import org.moonshot.server.global.common.model.Period;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -131,6 +132,7 @@ public class KeyResultService implements IndexService {
         if (request.startAt() != null || request.expireAt() != null) {
             LocalDate newStartAt = (request.startAt() != null) ? request.startAt() : keyResult.getPeriod().getStartAt();
             LocalDate newExpireAt = (request.expireAt() != null) ? request.expireAt() : keyResult.getPeriod().getExpireAt();
+            isValidKeyResultPeriod(keyResult, newStartAt, newExpireAt);
             keyResult.modifyPeriod(Period.of(newStartAt, newExpireAt));
         }
         if (request.target() == null || request.logContent() == null){
@@ -202,6 +204,20 @@ public class KeyResultService implements IndexService {
                 logService.getLogResponseDto(logList, keyResult));
     }
 
+    private void isValidKeyResultPeriod(KeyResult keyResult, LocalDate newStartAt, LocalDate newExpireAt) {
+        if (newStartAt.isAfter(newExpireAt)) {
+            throw new KeyResultInvalidPeriodException();
+        }
+        if (newStartAt.isBefore(keyResult.getObjective().getPeriod().getStartAt()) || newStartAt.isAfter(keyResult.getObjective().getPeriod().getExpireAt())) {
+            throw new KeyResultInvalidPeriodException();
+        }
+        if (newExpireAt.isBefore(newStartAt)) {
+            throw new KeyResultInvalidPeriodException();
+        }
+        if (newExpireAt.isBefore(keyResult.getObjective().getPeriod().getStartAt()) || newExpireAt.isAfter(keyResult.getObjective().getPeriod().getExpireAt())) {
+            throw new KeyResultInvalidPeriodException();
+        }
+    }
     private boolean isInvalidIdx(Long keyResultCount, int idx) {
         return (keyResultCount <= idx) || (idx < 0);
     }
