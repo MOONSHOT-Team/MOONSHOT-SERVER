@@ -1,5 +1,6 @@
-package org.moonshot.server.domain.objective.model;
+package org.moonshot.server.domain.objective.model.converter;
 
+import org.moonshot.server.domain.objective.model.Category;
 import org.moonshot.server.global.common.exception.MoonshotException;
 import org.moonshot.server.global.common.response.ErrorType;
 import org.springframework.core.convert.converter.Converter;
@@ -15,7 +16,6 @@ public class CategoryConverter implements Converter<String, Category> {
                 return category;
             }
         }
-
         throw new MoonshotException(ErrorType.INVALID_TYPE);
     }
 
