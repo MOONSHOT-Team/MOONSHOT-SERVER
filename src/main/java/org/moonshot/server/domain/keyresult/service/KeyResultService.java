@@ -132,7 +132,9 @@ public class KeyResultService implements IndexService {
         if (request.startAt() != null || request.expireAt() != null) {
             LocalDate newStartAt = (request.startAt() != null) ? request.startAt() : keyResult.getPeriod().getStartAt();
             LocalDate newExpireAt = (request.expireAt() != null) ? request.expireAt() : keyResult.getPeriod().getExpireAt();
-            isValidKeyResultPeriod(keyResult, newStartAt, newExpireAt);
+            if(!(isValidKeyResultPeriod(keyResult, newStartAt, newExpireAt))) {
+                throw new KeyResultInvalidPeriodException();
+            };
             keyResult.modifyPeriod(Period.of(newStartAt, newExpireAt));
         }
         if (request.target() == null || request.logContent() == null){
@@ -204,19 +206,20 @@ public class KeyResultService implements IndexService {
                 logService.getLogResponseDto(logList, keyResult));
     }
 
-    private void isValidKeyResultPeriod(KeyResult keyResult, LocalDate newStartAt, LocalDate newExpireAt) {
+    private boolean isValidKeyResultPeriod(KeyResult keyResult, LocalDate newStartAt, LocalDate newExpireAt) {
         if (newStartAt.isAfter(newExpireAt)) {
-            throw new KeyResultInvalidPeriodException();
+            return false;
         }
         if (newStartAt.isBefore(keyResult.getObjective().getPeriod().getStartAt()) || newStartAt.isAfter(keyResult.getObjective().getPeriod().getExpireAt())) {
-            throw new KeyResultInvalidPeriodException();
+            return false;
         }
         if (newExpireAt.isBefore(newStartAt)) {
-            throw new KeyResultInvalidPeriodException();
+            return false;
         }
         if (newExpireAt.isBefore(keyResult.getObjective().getPeriod().getStartAt()) || newExpireAt.isAfter(keyResult.getObjective().getPeriod().getExpireAt())) {
-            throw new KeyResultInvalidPeriodException();
+            return false;
         }
+        return true;
     }
     private boolean isInvalidIdx(Long keyResultCount, int idx) {
         return (keyResultCount <= idx) || (idx < 0);
