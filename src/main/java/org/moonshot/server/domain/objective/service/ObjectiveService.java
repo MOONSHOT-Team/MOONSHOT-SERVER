@@ -19,7 +19,6 @@ import org.moonshot.server.domain.objective.exception.InvalidExpiredAtException;
 import org.moonshot.server.domain.objective.exception.ObjectiveInvalidIndexException;
 import org.moonshot.server.domain.objective.exception.ObjectiveNotFoundException;
 import org.moonshot.server.domain.objective.exception.ObjectiveNumberExceededException;
-import org.moonshot.server.domain.objective.exception.UserObjectiveEmptyException;
 import org.moonshot.server.domain.objective.model.Category;
 import org.moonshot.server.domain.objective.model.Criteria;
 import org.moonshot.server.domain.objective.model.IndexService;
