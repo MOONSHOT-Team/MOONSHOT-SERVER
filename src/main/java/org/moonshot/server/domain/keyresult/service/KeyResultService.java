@@ -28,6 +28,7 @@ import org.moonshot.server.domain.objective.model.IndexService;
 import org.moonshot.server.domain.objective.model.Objective;
 import org.moonshot.server.domain.objective.repository.ObjectiveRepository;
 import org.moonshot.server.domain.task.dto.request.TaskCreateRequestDto;
+import org.moonshot.server.domain.task.exception.TaskInvalidIndexException;
 import org.moonshot.server.domain.task.repository.TaskRepository;
 import org.moonshot.server.domain.task.service.TaskService;
 import org.moonshot.server.domain.user.service.UserService;
@@ -51,13 +52,13 @@ public class KeyResultService implements IndexService {
     private final LogRepository logRepository;
 
     public void createInitKRWithObjective(Objective objective, List<KeyResultCreateRequestInfoDto> requests) {
-        for (KeyResultCreateRequestInfoDto dto : requests) {
-            if (dto.startAt().isBefore(objective.getPeriod().getStartAt()) ||
-                    dto.expireAt().isAfter(objective.getPeriod().getExpireAt()) ||
-                    dto.startAt().isAfter(objective.getPeriod().getExpireAt()) ||
-                    dto.startAt().isAfter(dto.expireAt())) {
-                throw new KeyResultInvalidPeriodException();
+        for (int i = 0; i < requests.size(); i++) {
+            KeyResultCreateRequestInfoDto dto = requests.get(i);
+            if (i != dto.idx()) {
+                throw new KeyResultInvalidIndexException();
             }
+            isKRWithInObjective(objective, dto);
+
             KeyResult keyResult = keyResultRepository.save(KeyResult.builder()
                     .title(dto.title())
                     .period(Period.of(dto.startAt(), dto.expireAt()))
@@ -68,9 +69,7 @@ public class KeyResultService implements IndexService {
                     .build());
             logService.createKRLog(dto, keyResult.getId());
             if (dto.taskList() != null) {
-                for (TaskCreateRequestDto taskDto : dto.taskList()) {
-                    taskService.saveTask(keyResult, taskDto);
-                }
+                saveTasks(keyResult, dto.taskList());
             }
         }
     }
@@ -206,6 +205,25 @@ public class KeyResultService implements IndexService {
 
     private boolean isInvalidIdx(Long keyResultCount, int idx) {
         return (keyResultCount <= idx) || (idx < 0);
+    }
+
+    private void isKRWithInObjective(Objective objective, KeyResultCreateRequestInfoDto dto) {
+        if (dto.startAt().isBefore(objective.getPeriod().getStartAt()) ||
+                dto.expireAt().isAfter(objective.getPeriod().getExpireAt()) ||
+                dto.startAt().isAfter(objective.getPeriod().getExpireAt()) ||
+                dto.startAt().isAfter(dto.expireAt())) {
+            throw new KeyResultInvalidPeriodException();
+        }
+    }
+
+    private void saveTasks(KeyResult keyResult, List<TaskCreateRequestDto> taskList) {
+        for (int i = 0; i < taskList.size(); i++) {
+            TaskCreateRequestDto taskDto = taskList.get(i);
+            if (i != taskDto.idx()) {
+                throw new TaskInvalidIndexException();
+            }
+            taskService.saveTask(keyResult, taskDto);
+        }
     }
 
 }
