@@ -67,7 +67,6 @@ public class SecurityConfig {
         config.addAllowedOrigin("https://kapi.kakao.com");
         config.addAllowedOrigin("http://www.googleapis.com");
         config.addAllowedOrigin("https://www.googleapis.com");
-        config.addAllowedOrigin("https://prod.moonshotyou.com");
         config.addAllowedOrigin(serverIp);
         config.addAllowedOrigin(serverDomain);
         config.addAllowedHeader("*");
@@ -77,11 +76,6 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;
-    }
-
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return web -> web.ignoring().requestMatchers(WhiteListConstants.SWAGGER_WHITE_LIST);
     }
 
 }

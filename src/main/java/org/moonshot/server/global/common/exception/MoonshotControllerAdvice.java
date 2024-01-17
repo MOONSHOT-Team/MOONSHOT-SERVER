@@ -51,6 +51,7 @@ public class MoonshotControllerAdvice {
         log.error(e.getMessage(), e);
         return MoonshotResponse.error(ErrorType.INVALID_TYPE);
     }
+
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public MoonshotResponse<?> handlerMethodArgumentTypeMismatchException(final MethodArgumentTypeMismatchException e) {
@@ -131,7 +132,6 @@ public class MoonshotControllerAdvice {
      */
     @ExceptionHandler(MoonshotException.class)
     public MoonshotResponse<?> handleCustomException(MoonshotException e) {
-        log.error(e.getMessage(), e);
         return MoonshotResponse.error(e.getErrorType());
     }
 
