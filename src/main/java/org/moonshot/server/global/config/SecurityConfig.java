@@ -66,6 +66,7 @@ public class SecurityConfig {
         config.addAllowedOrigin("https://kapi.kakao.com");
         config.addAllowedOrigin("http://www.googleapis.com");
         config.addAllowedOrigin("https://www.googleapis.com");
+        config.addAllowedOrigin("https://prod.moonshotyou.com");
         config.addAllowedOrigin(serverIp);
         config.addAllowedOrigin(serverDomain);
         config.addAllowedHeader("*");
