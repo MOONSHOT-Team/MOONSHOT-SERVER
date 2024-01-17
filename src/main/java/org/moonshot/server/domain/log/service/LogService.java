@@ -5,6 +5,7 @@ import org.moonshot.server.domain.keyresult.dto.request.KeyResultCreateRequestDt
 import org.moonshot.server.domain.keyresult.dto.request.KeyResultCreateRequestInfoDto;
 import org.moonshot.server.domain.keyresult.dto.request.KeyResultModifyRequestDto;
 import org.moonshot.server.domain.keyresult.exception.KeyResultNotFoundException;
+import org.moonshot.server.domain.keyresult.exception.KeyResultRequiredException;
 import org.moonshot.server.domain.keyresult.model.KeyResult;
 import org.moonshot.server.domain.keyresult.repository.KeyResultRepository;
 import org.moonshot.server.domain.log.dto.request.LogCreateRequestDto;
@@ -14,6 +15,7 @@ import org.moonshot.server.domain.log.exception.InvalidLogValueException;
 import org.moonshot.server.domain.log.model.Log;
 import org.moonshot.server.domain.log.model.LogState;
 import org.moonshot.server.domain.log.repository.LogRepository;
+import org.moonshot.server.domain.objective.exception.LogRequiredException;
 import org.moonshot.server.domain.objective.model.Objective;
 import org.moonshot.server.global.auth.exception.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -34,6 +36,9 @@ public class LogService {
 
     @Transactional
     public Optional<AchieveResponseDto> createRecordLog(Long userId, LogCreateRequestDto request) {
+        if (request.logNum() == null || request.logContent() == null){
+            throw new LogRequiredException();
+        }
         KeyResult keyResult = keyResultRepository.findKeyResultAndObjective(request.keyResultId())
                 .orElseThrow(KeyResultNotFoundException::new);
         if (!keyResult.getObjective().getUser().getId().equals(userId)) {
