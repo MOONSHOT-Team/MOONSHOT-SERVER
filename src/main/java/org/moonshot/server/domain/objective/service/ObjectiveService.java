@@ -66,7 +66,7 @@ public class ObjectiveService implements IndexService {
         keyResultService.createInitKRWithObjective(newObjective, request.krList());
     }
 
-    public void deleteObjective(Long userId, Long objectiveId) {
+    public DashboardResponseDto deleteObjective(Long userId, Long objectiveId) {
         Objective objective = objectiveRepository.findObjectiveAndUserById(objectiveId)
                 .orElseThrow(ObjectiveNotFoundException::new);
         if (!objective.getUser().getId().equals(userId)) {
@@ -74,6 +74,7 @@ public class ObjectiveService implements IndexService {
         }
         keyResultService.deleteKeyResult(objective);
         objectiveRepository.delete(objective);
+        return getObjectiveInDashboard(userId, null);
     }
 
     public void modifyObjective(Long userId, ModifyObjectiveRequestDto request) {
@@ -95,7 +96,7 @@ public class ObjectiveService implements IndexService {
     public DashboardResponseDto getObjectiveInDashboard(Long userId, Long objectiveId) {
         List<Objective> objList = objectiveRepository.findAllByUserId(userId);
         if (objList.isEmpty()) {
-            throw new UserObjectiveEmptyException();
+            return DashboardResponseDto.ofNull();
         }
         Long treeId = objectiveId == null ? objList.get(0).getId() : objectiveId;
         Objective objective = objectiveRepository.findByIdWithKeyResultsAndTasks(treeId)

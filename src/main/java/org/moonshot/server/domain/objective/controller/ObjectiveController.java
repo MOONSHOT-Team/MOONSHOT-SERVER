@@ -42,9 +42,9 @@ public class ObjectiveController implements ObjectiveApi {
     }
 
     @DeleteMapping("/{objectiveId}")
-    public ResponseEntity<?> deleteObjective(Principal principal, @PathVariable("objectiveId") Long objectiveId) {
-        objectiveService.deleteObjective(JwtTokenProvider.getUserIdFromPrincipal(principal), objectiveId);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<MoonshotResponse<DashboardResponseDto>> deleteObjective(Principal principal, @PathVariable("objectiveId") Long objectiveId) {
+        DashboardResponseDto response = objectiveService.deleteObjective(JwtTokenProvider.getUserIdFromPrincipal(principal), objectiveId);
+        return ResponseEntity.ok(MoonshotResponse.success(SuccessType.DELETE_OBJECTIVE_SUCCESS, response));
     }
 
     @PatchMapping

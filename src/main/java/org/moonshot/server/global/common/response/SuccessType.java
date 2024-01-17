@@ -23,6 +23,7 @@ public enum SuccessType {
     GET_KR_DETAIL_SUCCESS(HttpStatus.OK, "KR 상세 조회에 성공하였습니다."),
     PATCH_KR_ACHIEVE_SUCCESS(HttpStatus.OK, "KeyResult 수정 후 목표를 달성하였습니다."),
     POST_LOG_ACHIEVE_SUCCESS(HttpStatus.OK, "체크인 Log 생성 후 목표를 달성하였습니다."),
+    DELETE_OBJECTIVE_SUCCESS(HttpStatus.OK, "Objective 삭제를 성공하였습니다."),
 
     /**
      * 201 CREATED
@@ -41,7 +42,6 @@ public enum SuccessType {
     PATCH_KEY_RESULT_SUCCESS(HttpStatus.NO_CONTENT, "KeyResult 수정을 성공하였습니다."),
     PATCH_TARGET_INDEX_SUCCESS(HttpStatus.NO_CONTENT, "대상의 순서 수정을 성공하였습니다."),
     DELETE_KEY_RESULT_SUCCESS(HttpStatus.NO_CONTENT, "KeyResult 삭제를 성공하였습니다."),
-    DELETE_OBJECTIVE_SUCCESS(HttpStatus.NO_CONTENT, "Objective 삭제를 성공하였습니다."),
     DELETE_USER_SUCCESS(HttpStatus.NO_CONTENT, "회원 탈퇴에 성공하였습니다.");
 
     private final HttpStatus httpStatus;
