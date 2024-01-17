@@ -27,6 +27,7 @@ public enum ErrorType {
     INVALID_TASK_INDEX(HttpStatus.BAD_REQUEST, "정상적이지 않은 Task 위치입니다."),
     INVALID_LOG_VALUE(HttpStatus.BAD_REQUEST, "Log 입력값은 이전 값과 동일할 수 없습니다."),
     INVALID_EXPIRE_AT(HttpStatus.BAD_REQUEST, "Objective 종료 기간은 오늘보다 이전 날짜일 수 없습니다."),
+    INVALID_KEY_RESULT_PERIOD(HttpStatus.BAD_REQUEST, "KeyResult 기간 설정이 Objective의 기간 내에 이루어지지 않습니다."),
     REQUIRED_EXPIRE_AT(HttpStatus.BAD_REQUEST, "기간 연장시 목표 종료 기간은 필수 입력값입니다."),
 
     /**

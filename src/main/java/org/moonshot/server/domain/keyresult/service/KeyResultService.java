@@ -10,6 +10,7 @@ import org.moonshot.server.domain.keyresult.dto.request.KeyResultCreateRequestIn
 import org.moonshot.server.domain.keyresult.dto.request.KeyResultModifyRequestDto;
 import org.moonshot.server.domain.keyresult.dto.response.KRDetailResponseDto;
 import org.moonshot.server.domain.keyresult.exception.KeyResultInvalidIndexException;
+import org.moonshot.server.domain.keyresult.exception.KeyResultInvalidPeriodException;
 import org.moonshot.server.domain.keyresult.exception.KeyResultNotFoundException;
 import org.moonshot.server.domain.keyresult.exception.KeyResultNumberExceededException;
 import org.moonshot.server.domain.keyresult.model.KeyResult;
@@ -22,6 +23,7 @@ import org.moonshot.server.domain.log.model.LogState;
 import org.moonshot.server.domain.objective.dto.request.ModifyIndexRequestDto;
 import org.moonshot.server.domain.log.repository.LogRepository;
 import org.moonshot.server.domain.log.service.LogService;
+import org.moonshot.server.domain.objective.exception.InvalidExpiredAtException;
 import org.moonshot.server.domain.objective.exception.ObjectiveNotFoundException;
 import org.moonshot.server.domain.objective.model.IndexService;
 import org.moonshot.server.domain.objective.model.Objective;
@@ -51,6 +53,11 @@ public class KeyResultService implements IndexService {
 
     public void createInitKRWithObjective(Objective objective, List<KeyResultCreateRequestInfoDto> requests) {
         for (KeyResultCreateRequestInfoDto dto : requests) {
+            if (dto.startAt().isBefore(objective.getPeriod().getStartAt()) ||
+                    dto.expireAt().isAfter(objective.getPeriod().getExpireAt()) ||
+                    dto.startAt().isAfter(dto.expireAt())) {
+                throw new KeyResultInvalidPeriodException();
+            }
             KeyResult keyResult = keyResultRepository.save(KeyResult.builder()
                     .title(dto.title())
                     .period(Period.of(dto.startAt(), dto.expireAt()))
