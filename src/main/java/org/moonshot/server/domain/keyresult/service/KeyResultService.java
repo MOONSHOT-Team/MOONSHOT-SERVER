@@ -55,6 +55,7 @@ public class KeyResultService implements IndexService {
         for (KeyResultCreateRequestInfoDto dto : requests) {
             if (dto.startAt().isBefore(objective.getPeriod().getStartAt()) ||
                     dto.expireAt().isAfter(objective.getPeriod().getExpireAt()) ||
+                    dto.startAt().isAfter(objective.getPeriod().getExpireAt()) ||
                     dto.startAt().isAfter(dto.expireAt())) {
                 throw new KeyResultInvalidPeriodException();
             }
