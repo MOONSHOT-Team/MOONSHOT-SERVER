@@ -122,10 +122,10 @@ public class ObjectiveService implements IndexService {
                 .map(entry -> ObjectiveGroupByYearDto.of(entry.getKey(), entry.getValue())).toList();
 
         List<ObjectiveGroupByYearDto> groupsSortedByCriteria;
-        if (criteria.equals(Criteria.LATEST)) {
+        if (criteria != null && criteria.equals(Criteria.LATEST)) {
             groupsSortedByCriteria = groupList.stream()
                     .sorted(Comparator.comparingInt(ObjectiveGroupByYearDto::year).reversed()).toList();
-        } else if (criteria.equals(Criteria.OLDEST)) {
+        } else if (criteria != null && criteria.equals(Criteria.OLDEST)) {
             groupsSortedByCriteria = groupList.stream()
                     .sorted(Comparator.comparingInt(ObjectiveGroupByYearDto::year)).toList();
         } else {
