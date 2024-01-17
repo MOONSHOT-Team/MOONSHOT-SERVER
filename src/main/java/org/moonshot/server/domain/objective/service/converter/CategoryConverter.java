@@ -1,4 +1,4 @@
-package org.moonshot.server.domain.objective.model.converter;
+package org.moonshot.server.domain.objective.service.converter;
 
 import org.moonshot.server.domain.objective.model.Category;
 import org.moonshot.server.global.common.exception.MoonshotException;
