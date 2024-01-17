@@ -21,11 +21,13 @@ import org.moonshot.server.global.auth.feign.kakao.KakaoAuthApiClient;
 import org.moonshot.server.global.auth.jwt.JwtTokenProvider;
 import org.moonshot.server.global.auth.jwt.TokenResponse;
 import org.moonshot.server.global.auth.security.UserAuthentication;
+import org.moonshot.server.global.external.discord.DiscordAppender;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -54,6 +56,7 @@ public class UserService {
     private final KakaoAuthApiClient kakaoAuthApiClient;
     private final KakaoApiClient kakaoApiClient;
     private final JwtTokenProvider jwtTokenProvider;
+//    private final DiscordAppender discordAppender;
 
     public SocialLoginResponse login(SocialLoginRequest request) throws IOException {
         switch (request.socialPlatform().getValue()){
@@ -116,6 +119,8 @@ public class UserService {
                             .email(null)
                             .build());
             user = newUser;
+            DiscordAppender discordAppender = new DiscordAppender();
+            discordAppender.signInAppend(newUser.getName(), newUser.getEmail(), newUser.getEmail(), LocalDateTime.now());
         } else {
             user = findUser.get();
             if (user.getSocialPlatform().equals(SocialPlatform.WITHDRAWAL)) {
