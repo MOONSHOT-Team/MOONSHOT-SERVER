@@ -134,7 +134,7 @@ public class KeyResultService implements IndexService {
             if (request.target().equals(updateLog.getKeyResult().getTarget())) {
                 throw new InvalidLogValueException();
             }
-            Log prevLog = logRepository.findLatestLogByKeyResultId(LogState.RECORD, request.keyResultId())
+            Log prevLog = logRepository.findLatestLogByKeyResultId(LogState.UPDATE, request.keyResultId())
                     .orElseThrow(LogNotFoundException::new);
             keyResult.modifyTarget(request.target());
             keyResult.modifyProgress(logService.calculateKRProgressBar(prevLog, keyResult));
