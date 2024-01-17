@@ -1,8 +1,12 @@
 package org.moonshot.server.domain.objective.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.moonshot.server.global.common.exception.MoonshotException;
+import org.moonshot.server.global.common.response.ErrorType;
 
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -13,5 +17,20 @@ public enum Criteria {
     ACCOMPLISH("달성률");
 
     private final String value;
+
+    @JsonValue
+    public String getValue() {
+        return value;
+    }
+
+    @JsonCreator
+    public static Criteria fromValue(String value) {
+        for (Criteria criteria : Criteria.values()) {
+            if (criteria.getValue().equals(value)) {
+                return criteria;
+            }
+        }
+        throw new MoonshotException(ErrorType.INVALID_TYPE);
+    }
 
 }

@@ -28,7 +28,7 @@ interface ObjectiveApi {
 
     @ApiResponses(value =  {
             @ApiResponse(responseCode = "201", description = "O-KR을 생성을 성공하였습니다"),
-            @ApiResponse(responseCode = "400", description = "허용된 Objective 개수를 초과하였습니다", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MoonshotResponse.class))),
+            @ApiResponse(responseCode = "400", description = "허용된 Objective 개수를 초과하였습니다\t\nKeyResult 기간 설정이 Objective의 기간 내에 이루어지지 않습니다", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MoonshotResponse.class))),
             @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자입니다", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MoonshotResponse.class))),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 유저입니다", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MoonshotResponse.class)))
     })
