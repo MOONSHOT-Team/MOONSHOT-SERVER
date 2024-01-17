@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.moonshot.server.domain.keyresult.exception.KeyResultInvalidPeriodException;
 import org.moonshot.server.domain.keyresult.service.KeyResultService;
 import org.moonshot.server.domain.objective.dto.request.ModifyIndexRequestDto;
 import org.moonshot.server.domain.objective.dto.request.ModifyObjectiveRequestDto;
@@ -122,10 +123,10 @@ public class ObjectiveService implements IndexService {
                 .map(entry -> ObjectiveGroupByYearDto.of(entry.getKey(), entry.getValue())).toList();
 
         List<ObjectiveGroupByYearDto> groupsSortedByCriteria;
-        if (criteria.equals(Criteria.LATEST)) {
+        if (criteria != null && criteria.equals(Criteria.LATEST)) {
             groupsSortedByCriteria = groupList.stream()
                     .sorted(Comparator.comparingInt(ObjectiveGroupByYearDto::year).reversed()).toList();
-        } else if (criteria.equals(Criteria.OLDEST)) {
+        } else if (criteria != null && criteria.equals(Criteria.OLDEST)) {
             groupsSortedByCriteria = groupList.stream()
                     .sorted(Comparator.comparingInt(ObjectiveGroupByYearDto::year)).toList();
         } else {
