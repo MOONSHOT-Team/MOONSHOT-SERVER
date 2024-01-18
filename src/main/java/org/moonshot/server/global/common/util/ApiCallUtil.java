@@ -36,8 +36,8 @@ public class ApiCallUtil {
         }
     }
 
-    public static void callDiscordAppenderSignInAPI(JsonObject json) throws IOException {
-        URL url = new URL("https://discord.com/api/webhooks/1197531070241968261/h18e24N_r18WGafR6syjSVX8568oO6grRY6jt21V2_vy-LVuy47jVUmMnB-sTFx3CZ-S");
+    public static void callDiscordAppenderSignInAPI(String signinWebhookUrl, JsonObject json) throws IOException {
+        URL url = new URL(signinWebhookUrl);
         HttpsURLConnection connection = (HttpsURLConnection)url.openConnection();
         connection.addRequestProperty("Content-Type", "application/json");
         connection.addRequestProperty("User-Agent", "Java-DiscordWebhook-BY-Gelox_");

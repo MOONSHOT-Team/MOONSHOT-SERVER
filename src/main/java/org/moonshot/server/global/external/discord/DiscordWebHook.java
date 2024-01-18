@@ -50,13 +50,14 @@ public class DiscordWebHook {
         }
     }
 
-    public void executeSignIn() throws IOException {
+    public void executeSignIn(String signinWebhookUrl) throws IOException {
         if (this.embeds.isEmpty()) {
             throw new RuntimeException("컨텐츠를 설정하거나 하나 이상의 Embed Object를 추가해야 합니다.");
         }
 
         try {
             ApiCallUtil.callDiscordAppenderSignInAPI(
+                    signinWebhookUrl,
                     createDiscordEmbedObject(
                             this.embeds, initializerDiscordSendForJsonObject(new JsonObject())
                     ));

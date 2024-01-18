@@ -132,7 +132,7 @@ public class DiscordAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
         );
 
         try {
-            discordWebhook.executeSignIn();
+            discordWebhook.executeSignIn(signInWebhookUrl);
         } catch (IOException ioException) {
             throw new ErrorLogAppenderException();
         }
