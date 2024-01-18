@@ -13,10 +13,11 @@ public record HistoryKeyResultDto(
     public static HistoryKeyResultDto of(KeyResult keyResult) {
         return new HistoryKeyResultDto(
                 keyResult.getId(),
-                keyResult.getTitle(),
+                keyResult.getTitle() + ": " + keyResult.getTarget() + keyResult.getMetric(),
                 keyResult.getProgress(),
                 keyResult.getIdx(),
                 keyResult.getTaskList().stream().map(HistoryTaskDto::of).toList()
         );
     }
 }
+
