@@ -14,7 +14,7 @@ public record HistoryObjectiveListDto(
         List<HistoryKeyResultDto> krList
 ) {
     public static HistoryObjectiveListDto of(Objective objective) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy.MM.dd");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy. MM. dd");
         String objPeriod = objective.getPeriod().getStartAt().format(formatter) + " - " + objective.getPeriod().getExpireAt()
                 .format(formatter);
         return new HistoryObjectiveListDto(
