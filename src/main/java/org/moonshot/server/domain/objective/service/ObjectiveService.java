@@ -95,7 +95,9 @@ public class ObjectiveService implements IndexService {
     public DashboardResponseDto getObjectiveInDashboard(Long userId, Long objectiveId) {
         List<Objective> objList = objectiveRepository.findAllByUserId(userId);
         if (objList.isEmpty()) {
-            return DashboardResponseDto.ofNull();
+            User user =  userRepository.findById(userId)
+                    .orElseThrow(UserNotFoundException::new);
+            return DashboardResponseDto.ofNull(user.getNickname());
         }
         Long treeId = objectiveId == null ? objList.get(0).getId() : objectiveId;
         Objective objective = objectiveRepository.findByIdWithKeyResultsAndTasks(treeId)
@@ -103,7 +105,7 @@ public class ObjectiveService implements IndexService {
         if (!objective.getUser().getId().equals(userId)) {
             throw new AccessDeniedException();
         }
-        return DashboardResponseDto.of(objective, objList);
+        return DashboardResponseDto.of(objective, objList, objective.getUser().getNickname());
     }
 
     @Transactional(readOnly = true)
