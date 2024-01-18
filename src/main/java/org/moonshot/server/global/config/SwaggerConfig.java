@@ -30,7 +30,7 @@ public class SwaggerConfig {
         localServer.setUrl("http://localhost:8080");
         Server productionServer = new Server();
         productionServer.setDescription("production server");
-        productionServer.setUrl("https://prod.moonshotyou.com");
+        productionServer.setUrl("https://moonshot-server.site");
         return new OpenAPI()
                 .components(components)
                 .info(apiInfo())
