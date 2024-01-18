@@ -2,6 +2,8 @@ package org.moonshot.server.global.external.discord;
 
 import java.awt.Color;
 import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import org.moonshot.server.global.external.discord.exception.ErrorLogAppenderException;
@@ -39,11 +41,29 @@ public class DiscordWebHook {
         }
 
         try {
-            ApiCallUtil.callDiscordAppenderPostAPI(
-                    this.urlString, createDiscordEmbedObject(
+//            ApiCallUtil.callDiscordAppenderPostAPI(
+//                    this.urlString, createDiscordEmbedObject(
+//                            this.embeds, initializerDiscordSendForJsonObject(new JsonObject())
+//                    ));
+            ApiCallUtil.callDiscordAppenderSignInAPI(
+                    createDiscordEmbedObject(
                             this.embeds, initializerDiscordSendForJsonObject(new JsonObject())
                     ));
+        } catch (IOException ioException) {
+            throw ioException;
+        }
+    }
 
+    public void executeSignIn() throws IOException {
+        if (this.embeds.isEmpty()) {
+            throw new RuntimeException("컨텐츠를 설정하거나 하나 이상의 Embed Object를 추가해야 합니다.");
+        }
+
+        try {
+            ApiCallUtil.callDiscordAppenderSignInAPI(
+                    createDiscordEmbedObject(
+                            this.embeds, initializerDiscordSendForJsonObject(new JsonObject())
+                    ));
         } catch (IOException ioException) {
             throw ioException;
         }
