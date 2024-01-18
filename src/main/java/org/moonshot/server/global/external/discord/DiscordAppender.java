@@ -10,16 +10,22 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
+
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.moonshot.server.global.constants.DiscordConstants;
 import org.moonshot.server.global.external.discord.exception.ErrorLogAppenderException;
 import org.moonshot.server.global.external.discord.model.EmbedObject;
 import org.moonshot.server.global.common.util.MDCUtil;
 import org.moonshot.server.global.common.util.StringUtil;
-import org.springframework.stereotype.Component;
+
+import static org.moonshot.server.global.constants.DiscordConstants.*;
+import static org.moonshot.server.global.constants.DiscordConstants.signInWebhookUrl;
 
 @Slf4j
 @Setter
+@RequiredArgsConstructor
 public class DiscordAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 
     private String discordWebhookUrl;
@@ -112,15 +118,14 @@ public class DiscordAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
         }
     }
 
-    public void signInAppend(String name, String email, String socialPlatform, LocalDateTime createdAt) {
-        DiscordWebHook discordWebhook = new DiscordWebHook(discordWebhookUrl, username, avatarUrl, false);
+    public void signInAppend(String name, String email, String socialPlatform, LocalDateTime createdAt){
+        DiscordWebHook discordWebhook = new DiscordWebHook(signInWebhookUrl, username, avatarUrl, false);
 
         discordWebhook.addEmbed(new EmbedObject()
                 .setTitle("[회원 가입] 새로운 유저가 가입하였습니다.")
                 .setColor(Color.CYAN)
                 .setDescription("moonshot에 새로운 유저가 가입하였습니다.")
                 .addField("[이름]", name, false)
-//                        .addField("[프로필 이미지]", )
                 .addField("[이메일]", email, false)
                 .addField("[소셜 플랫폼]", socialPlatform, false)
                 .addField("[가입 일시]", String.valueOf(createdAt), false)
