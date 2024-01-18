@@ -51,6 +51,9 @@ public class KeyResultService implements IndexService {
 
     public void createInitKRWithObjective(Objective objective, List<KeyResultCreateRequestInfoDto> requests) {
         for (int i = 0; i < requests.size(); i++) {
+            if (requests.get(i) == null) {
+                return;
+            }
             KeyResultCreateRequestInfoDto dto = requests.get(i);
             if (i != dto.idx()) {
                 throw new KeyResultInvalidIndexException();
