@@ -41,12 +41,8 @@ public class DiscordWebHook {
         }
 
         try {
-//            ApiCallUtil.callDiscordAppenderPostAPI(
-//                    this.urlString, createDiscordEmbedObject(
-//                            this.embeds, initializerDiscordSendForJsonObject(new JsonObject())
-//                    ));
-            ApiCallUtil.callDiscordAppenderSignInAPI(
-                    createDiscordEmbedObject(
+            ApiCallUtil.callDiscordAppenderPostAPI(
+                    this.urlString, createDiscordEmbedObject(
                             this.embeds, initializerDiscordSendForJsonObject(new JsonObject())
                     ));
         } catch (IOException ioException) {

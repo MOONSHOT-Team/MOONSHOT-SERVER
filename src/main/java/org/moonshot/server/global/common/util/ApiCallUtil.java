@@ -16,13 +16,7 @@ import org.moonshot.server.global.external.discord.model.JsonObject;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ApiCallUtil {
 
-    public static void callDiscordAppenderPostAPI(String urlString, JsonObject json) throws IOException, NoSuchAlgorithmException, KeyManagementException {
-//        SSLContext sc = SSLContext.getInstance("SSL");
-//        sc.init(null, createTrustManagers(), new java.security.SecureRandom());
-//        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-//        HostnameVerifier allHostsValid = (hostname, session) -> true;
-//        HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
-
+    public static void callDiscordAppenderPostAPI(String urlString, JsonObject json) throws IOException {
         URL url = new URL(urlString);
         HttpsURLConnection connection = (HttpsURLConnection)url.openConnection();
         connection.addRequestProperty("Content-Type", "application/json");
@@ -62,16 +56,4 @@ public class ApiCallUtil {
         }
     }
 
-
-
-    /** URL Connection SSL ignore **/
-//    public static TrustManager[] createTrustManagers() {
-//        TrustManager[] trustAllCerts = new TrustManager[]{ new X509TrustManager() {
-//            public void checkClientTrusted(java.security.cert.X509Certificate[] x509Certificates, String s) { }
-//            public void checkServerTrusted(java.security.cert.X509Certificate[] x509Certificates, String s) { }
-//            public java.security.cert.X509Certificate[] getAcceptedIssuers() { return new java.security.cert.X509Certificate[]{}; }
-//        }};
-//
-//        return trustAllCerts;
-//    }
 }
