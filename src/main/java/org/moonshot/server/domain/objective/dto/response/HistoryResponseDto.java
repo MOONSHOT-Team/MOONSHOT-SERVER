@@ -6,14 +6,15 @@ import org.moonshot.server.domain.objective.model.Criteria;
 
 public record HistoryResponseDto(
         List<ObjectiveGroupByYearDto> groups,
-        Map<Integer, Integer> years,
+        List<YearDto> years,
+//        Map<Integer, Integer> years,
         List<String> categories
 ) {
     public static HistoryResponseDto of(List<ObjectiveGroupByYearDto> groups, Map<Integer, Integer> years,
                                         List<String> categories, Criteria criteria) {
         return new HistoryResponseDto(
                 groups,
-                years,
+                YearDto.of(years),
                 categories.stream().distinct().toList()
         );
     }
