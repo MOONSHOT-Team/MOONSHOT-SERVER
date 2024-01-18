@@ -52,6 +52,8 @@ aws:
 logging:
   discord:
     webhook-uri: ${DISCORD_WEBHOOK_URI}
+    signin:
+      webhook-uri: ${DISCORD_SIGNIN_WEBHOOK_URI}
   config: classpath:logback-dev.xml
   level:
     org.springframework.security: DEBUG
