@@ -18,7 +18,7 @@ public record KRDetailResponseDto(
 ) {
 
     public static KRDetailResponseDto of(String title, long target, String metric, short progressBar, String krState, LocalDate startAt, LocalDate expireAt, List<LogResponseDto> logList) {
-        return new KRDetailResponseDto(title + ": ", target, metric, progressBar, krState, startAt.format(DateTimeFormatter.ISO_LOCAL_DATE), expireAt.format(DateTimeFormatter.ISO_LOCAL_DATE), logList);
+        return new KRDetailResponseDto(title + " : ", target, metric, progressBar, krState, startAt.format(DateTimeFormatter.ISO_LOCAL_DATE), expireAt.format(DateTimeFormatter.ISO_LOCAL_DATE), logList);
     }
 
 }
