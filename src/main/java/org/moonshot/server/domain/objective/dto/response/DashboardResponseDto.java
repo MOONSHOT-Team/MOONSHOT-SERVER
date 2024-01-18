@@ -22,7 +22,6 @@ public record DashboardResponseDto(
                 null,
                 null,
                 nickname
-
         );
     }
 }
