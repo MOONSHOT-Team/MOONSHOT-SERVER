@@ -88,7 +88,7 @@ public class UserService {
                             .build());
             user = newUser;
             DiscordAppender discordAppender = new DiscordAppender();
-            discordAppender.signInAppend(newUser.getName(), newUser.getEmail(), newUser.getSocialPlatform().getValue(), LocalDateTime.now());
+            discordAppender.signInAppend(newUser.getName(), newUser.getEmail(), newUser.getSocialPlatform().getValue(), newUser.getProfileImage(), LocalDateTime.now());
         } else {
             user = findUser.get();
             if (user.getSocialPlatform().equals(SocialPlatform.WITHDRAWAL)) {
