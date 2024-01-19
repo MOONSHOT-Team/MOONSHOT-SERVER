@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.moonshot.server.domain.keyresult.service.KeyResultService;
 import org.moonshot.server.domain.objective.dto.request.ModifyIndexRequestDto;
 import org.moonshot.server.domain.objective.dto.request.ModifyObjectiveRequestDto;
@@ -33,6 +34,7 @@ import org.moonshot.server.global.common.model.Period;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -99,6 +101,8 @@ public class ObjectiveService implements IndexService {
                     .orElseThrow(UserNotFoundException::new);
             return DashboardResponseDto.ofNull(user.getNickname());
         }
+        log.info("{}", objList.get(0).getId());
+
         Long treeId = objectiveId == null ? objList.get(0).getId() : objectiveId;
         Objective objective = objectiveRepository.findByIdWithKeyResultsAndTasks(treeId)
                 .orElseThrow(ObjectiveNotFoundException::new);

@@ -14,9 +14,9 @@ public interface ObjectiveJpaRepository extends JpaRepository<Objective, Long> {
     Long countAllByUserAndIsClosed(User user, boolean isClosed);
     @Query("select o from Objective o join fetch o.user where o.id = :objective_id")
     Optional<Objective> findObjectiveAndUserById(@Param("objective_id") Long objectiveId);
-    @Query("select distinct o from Objective o left join fetch o.keyResultList kr left join kr.taskList t where o.id = :objectiveId and o.isClosed = false and kr.id = t.keyResult.id")
+    @Query("select distinct o from Objective o left join fetch o.keyResultList kr left join kr.taskList t where o.id = :objectiveId and o.isClosed = false")
     Optional<Objective> findByIdWithKeyResultsAndTasks(@Param("objectiveId") Long objectiveId);
-    @Query("select distinct o from Objective o where o.user.id = :userId and o.isClosed = false order by o.idx asc")
+    @Query("select distinct o from Objective o join fetch o.user where o.user.id = :userId and o.isClosed = false order by o.idx asc")
     List<Objective> findAllByUserId(@Param("userId") Long userId);
     @Modifying(clearAutomatically = true)
     @Query("UPDATE Objective o SET o.idx = o.idx + 1 WHERE o.user.id = :userId")
