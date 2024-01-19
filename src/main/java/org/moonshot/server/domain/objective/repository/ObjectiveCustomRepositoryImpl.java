@@ -58,6 +58,7 @@ public class ObjectiveCustomRepositoryImpl implements ObjectiveCustomRepository 
                 break;
             case ACCOMPLISH:
                 orderSpecifier = objective.progress.desc();
+                break;
             default:
                 orderSpecifier = objective.period.startAt.desc();
                 break;
