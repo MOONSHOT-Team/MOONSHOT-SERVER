@@ -24,6 +24,7 @@ import org.moonshot.server.global.auth.security.UserAuthentication;
 import org.moonshot.server.global.external.discord.DiscordAppender;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
@@ -87,8 +88,7 @@ public class UserService {
                             .email(userResponse.email())
                             .build());
             user = newUser;
-            DiscordAppender discordAppender = new DiscordAppender();
-            discordAppender.signInAppend(newUser.getName(), newUser.getEmail(), newUser.getSocialPlatform().getValue(), newUser.getProfileImage(), LocalDateTime.now());
+            sendDiscordAlert(newUser);
         } else {
             user = findUser.get();
             if (user.getSocialPlatform().equals(SocialPlatform.WITHDRAWAL)) {
@@ -120,6 +120,7 @@ public class UserService {
                             .email(null)
                             .build());
             user = newUser;
+            sendDiscordAlert(newUser);
         } else {
             user = findUser.get();
             if (user.getSocialPlatform().equals(SocialPlatform.WITHDRAWAL)) {
@@ -172,4 +173,9 @@ public class UserService {
         return UserInfoResponse.of(user);
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void sendDiscordAlert(User user) {
+        DiscordAppender discordAppender = new DiscordAppender();
+        discordAppender.signInAppend(user.getName(), user.getEmail(), user.getSocialPlatform().getValue(), user.getProfileImage(), LocalDateTime.now());
+    }
 }
