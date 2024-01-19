@@ -99,6 +99,7 @@ public class ObjectiveService implements IndexService {
                     .orElseThrow(UserNotFoundException::new);
             return DashboardResponseDto.ofNull(user.getNickname());
         }
+
         Long treeId = objectiveId == null ? objList.get(0).getId() : objectiveId;
         Objective objective = objectiveRepository.findByIdWithKeyResultsAndTasks(treeId)
                 .orElseThrow(ObjectiveNotFoundException::new);
