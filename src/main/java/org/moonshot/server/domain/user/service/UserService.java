@@ -1,6 +1,7 @@
 package org.moonshot.server.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.moonshot.server.domain.user.dto.request.SocialLoginRequest;
 import org.moonshot.server.domain.user.dto.request.UserInfoRequest;
 import org.moonshot.server.domain.user.dto.response.SocialLoginResponse;
@@ -22,6 +23,7 @@ import org.moonshot.server.global.auth.jwt.JwtTokenProvider;
 import org.moonshot.server.global.auth.jwt.TokenResponse;
 import org.moonshot.server.global.auth.security.UserAuthentication;
 import org.moonshot.server.global.external.discord.DiscordAppender;
+import org.moonshot.server.global.external.discord.exception.ErrorLogAppenderException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -31,9 +33,10 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+@Slf4j
 @Service
-@RequiredArgsConstructor
 @Transactional
+@RequiredArgsConstructor
 public class UserService {
 
     @Value("${google.client-id}")
@@ -175,7 +178,11 @@ public class UserService {
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void sendDiscordAlert(User user) {
-        DiscordAppender discordAppender = new DiscordAppender();
-        discordAppender.signInAppend(user.getName(), user.getEmail(), user.getSocialPlatform().getValue(), user.getProfileImage(), LocalDateTime.now());
+        try {
+            DiscordAppender discordAppender = new DiscordAppender();
+            discordAppender.signInAppend(user.getName(), user.getEmail(), user.getSocialPlatform().getValue(), user.getProfileImage(), LocalDateTime.now());
+        } catch (ErrorLogAppenderException e) {
+            log.error("{}", e.getErrorType().getMessage());
+        }
     }
 }
