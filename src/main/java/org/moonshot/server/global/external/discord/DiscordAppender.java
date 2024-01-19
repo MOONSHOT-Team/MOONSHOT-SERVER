@@ -118,14 +118,13 @@ public class DiscordAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
         }
     }
 
-    public void signInAppend(String name, String email, String socialPlatform, String imgUrl, LocalDateTime createdAt){
+    public void signInAppend(String name, String email, String socialPlatform, LocalDateTime createdAt){
         DiscordWebHook discordWebhook = new DiscordWebHook(signInWebhookUrl, username, avatarUrl, false);
 
         discordWebhook.addEmbed(new EmbedObject()
                 .setTitle("🚀[회원 가입] 새로운 유저가 가입하였습니다.🚀")
                 .setColor(Color.CYAN)
                 .setDescription("moonshot에 새로운 유저가 가입하였습니다.")
-                .setThumbnail(imgUrl)
                 .addField("[이름]", name, false)
                 .addField("[이메일]", email, false)
                 .addField("[소셜 플랫폼]", socialPlatform, false)
