@@ -131,13 +131,14 @@ public class KeyResultService implements IndexService {
         if (request.title() != null) {
             keyResult.modifyTitle(request.title());
         }
-        if (request.startAt() != null || request.expireAt() != null) {
+        if (request.state() == null && (request.startAt() != null || request.expireAt() != null)) {
             LocalDate newStartAt = (request.startAt() != null) ? request.startAt() : keyResult.getPeriod().getStartAt();
             LocalDate newExpireAt = (request.expireAt() != null) ? request.expireAt() : keyResult.getPeriod().getExpireAt();
             if(!(isValidKeyResultPeriod(keyResult, newStartAt, newExpireAt))) {
                 throw new KeyResultInvalidPeriodException();
             }
             keyResult.modifyPeriod(Period.of(newStartAt, newExpireAt));
+            return Optional.empty();
         }
         if ((request.state() == null && request.target() == null) || (request.state() == null && request.logContent() == null)){
             throw new KeyResultRequiredException();
