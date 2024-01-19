@@ -17,6 +17,10 @@ spring:
     activate:
       on-profile: dev
 
+  sql:
+    init:
+      mode: always
+
 google:
   client-id: ${GOOGLE_CLIENT_ID}
   redirect-url: ${GOOGLE_URL}

@@ -14,6 +14,11 @@ spring:
         show_sql: true
         auto_quote_keyword: true
         default_batch_fetch_size: 10
+    defer-datasource-initialization: true
+
+  sql:
+    init:
+      mode: always
 
   config:
     import: optional:application-secret.properties
