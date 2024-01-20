@@ -46,7 +46,7 @@ public class ObjectiveCustomRepositoryImpl implements ObjectiveCustomRepository 
         OrderSpecifier<?> orderSpecifier;
 
         if (criteria == null) {
-            return objective.period.startAt.asc();
+            return objective.period.startAt.desc();
         }
 
         switch (criteria) {
