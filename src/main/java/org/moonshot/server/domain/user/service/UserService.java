@@ -180,7 +180,7 @@ public class UserService {
     public void sendDiscordAlert(User user) {
         try {
             DiscordAppender discordAppender = new DiscordAppender();
-            discordAppender.signInAppend(user.getName(), user.getEmail() == null ? "" : user.getEmail(), user.getSocialPlatform().getValue(), LocalDateTime.now());
+            discordAppender.signInAppend(user.getName(), user.getEmail() == null ? "" : user.getEmail(), user.getSocialPlatform().getValue(), LocalDateTime.now(), user.getProfileImage());
         } catch (ErrorLogAppenderException e) {
             log.error("{}", e.getErrorType().getMessage());
         }
