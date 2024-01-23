@@ -62,13 +62,11 @@ public class UserService {
     private final JwtTokenProvider jwtTokenProvider;
 
     public SocialLoginResponse login(final SocialLoginRequest request) throws IOException {
-        switch (request.socialPlatform().getValue()){
-            case "google":
-                return googleLogin(request);
-            case "kakao":
-                return kakaoLogin(request);
-        }
-        return null;
+        return switch (request.socialPlatform().getValue()) {
+            case "google" -> googleLogin(request);
+            case "kakao" -> kakaoLogin(request);
+            default -> null;
+        };
     }
 
     public SocialLoginResponse googleLogin(final SocialLoginRequest request) throws IOException {
@@ -103,7 +101,7 @@ public class UserService {
         return SocialLoginResponse.of(user.getId(), user.getName(), token);
     }
 
-    public SocialLoginResponse kakaoLogin(final SocialLoginRequest request) throws IOException {
+    public SocialLoginResponse kakaoLogin(final SocialLoginRequest request) {
         KakaoTokenResponse tokenResponse = kakaoAuthApiClient.getOAuth2AccessToken(
                 "authorization_code",
                 kakaoClientId,
