@@ -61,7 +61,7 @@ public class UserService {
     private final KakaoApiClient kakaoApiClient;
     private final JwtTokenProvider jwtTokenProvider;
 
-    public SocialLoginResponse login(SocialLoginRequest request) throws IOException {
+    public SocialLoginResponse login(final SocialLoginRequest request) throws IOException {
         switch (request.socialPlatform().getValue()){
             case "google":
                 return googleLogin(request);
@@ -71,7 +71,7 @@ public class UserService {
         return null;
     }
 
-    public SocialLoginResponse googleLogin(SocialLoginRequest request) throws IOException {
+    public SocialLoginResponse googleLogin(final SocialLoginRequest request) throws IOException {
         GoogleTokenResponse tokenResponse = googleAuthApiClient.googleAuth(
                 request.code(),
                 googleClientId,
@@ -103,7 +103,7 @@ public class UserService {
         return SocialLoginResponse.of(user.getId(), user.getName(), token);
     }
 
-    public SocialLoginResponse kakaoLogin(SocialLoginRequest request) throws IOException {
+    public SocialLoginResponse kakaoLogin(final SocialLoginRequest request) throws IOException {
         KakaoTokenResponse tokenResponse = kakaoAuthApiClient.getOAuth2AccessToken(
                 "authorization_code",
                 kakaoClientId,
@@ -135,7 +135,7 @@ public class UserService {
         return SocialLoginResponse.of(user.getId(), user.getName(), token);
     }
 
-    public TokenResponse reissue(String refreshToken) {
+    public TokenResponse reissue(final String refreshToken) {
         String token = refreshToken.substring("Bearer ".length());
         Long userId = jwtTokenProvider.validateRefreshToken(token);
         jwtTokenProvider.deleteRefreshToken(userId);
@@ -143,17 +143,17 @@ public class UserService {
         return jwtTokenProvider.reissuedToken(userAuthentication);
     }
 
-    public void logout(Long userId) {
+    public void logout(final Long userId) {
         jwtTokenProvider.deleteRefreshToken(userId);
     }
 
-    public void withdrawal(Long userId) {
+    public void withdrawal(final Long userId) {
         User user =  userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
         user.modifySocialPlatform(SocialPlatform.WITHDRAWAL);
     }
 
-    public void modifyProfile(Long userId, UserInfoRequest request) {
+    public void modifyProfile(final Long userId, final UserInfoRequest request) {
         User user =  userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
         if (request.nickname() != null) {
@@ -164,20 +164,20 @@ public class UserService {
         }
     }
 
-    public void validateUserAuthorization(User user, Long userId) {
+    public void validateUserAuthorization(final User user, final Long userId) {
         if (!user.getId().equals(userId)) {
             throw new AccessDeniedException();
         }
     }
 
-    public UserInfoResponse getMyProfile(Long userId) {
-        User user =  userRepository.findById(userId)
+    public UserInfoResponse getMyProfile(final Long userId) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
         return UserInfoResponse.of(user);
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void sendDiscordAlert(User user) {
+    public void sendDiscordAlert(final User user) {
         try {
             DiscordAppender discordAppender = new DiscordAppender();
             discordAppender.signInAppend(user.getName(), user.getEmail() == null ? "" : user.getEmail(), user.getSocialPlatform().getValue(), LocalDateTime.now(), user.getProfileImage());

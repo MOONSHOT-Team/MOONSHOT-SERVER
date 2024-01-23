@@ -38,41 +38,41 @@ public class UserController implements UserApi {
     private final UserService userService;
 
     @PostMapping("/login")
-    public ResponseEntity<MoonshotResponse<SocialLoginResponse>> login(@RequestHeader("Authorization") String authorization,
-                                                                       @RequestBody SocialLoginRequest socialLoginRequest) throws IOException {
+    public ResponseEntity<MoonshotResponse<SocialLoginResponse>> login(@RequestHeader("Authorization") final String authorization,
+                                                                       @RequestBody final SocialLoginRequest socialLoginRequest) throws IOException {
         return ResponseEntity.ok(MoonshotResponse.success(SuccessType.POST_LOGIN_SUCCESS, userService.login(SocialLoginRequest.of(socialLoginRequest.socialPlatform(), authorization))));
     }
 
     @PostMapping("/reissue")
-    public ResponseEntity<MoonshotResponse<TokenResponse>> reissue(@RequestHeader("Authorization") String refreshToken) {
+    public ResponseEntity<MoonshotResponse<TokenResponse>> reissue(@RequestHeader("Authorization") final String refreshToken) {
         return ResponseEntity.ok(MoonshotResponse.success(SuccessType.POST_REISSUE_SUCCESS, userService.reissue(refreshToken)));
     }
 
     @PostMapping("/log-out")
-    public ResponseEntity<MoonshotResponse<?>> logout(Principal principal) {
+    public ResponseEntity<MoonshotResponse<?>> logout(final Principal principal) {
         userService.logout(JwtTokenProvider.getUserIdFromPrincipal(principal));
         return ResponseEntity.ok(MoonshotResponse.success(SuccessType.POST_LOGOUT_SUCCESS));
     }
 
     @DeleteMapping("/withdrawal")
-    public ResponseEntity<?> withdrawal(Principal principal) {
+    public ResponseEntity<?> withdrawal(final Principal principal) {
         userService.withdrawal(JwtTokenProvider.getUserIdFromPrincipal(principal));
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/profile")
-    public ResponseEntity<?> modifyProfile(Principal principal, @Valid  @RequestBody UserInfoRequest userInfoRequest) {
+    public ResponseEntity<?> modifyProfile(final Principal principal, @Valid  @RequestBody final UserInfoRequest userInfoRequest) {
         userService.modifyProfile(JwtTokenProvider.getUserIdFromPrincipal(principal), userInfoRequest);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/mypage")
-    public ResponseEntity<MoonshotResponse<UserInfoResponse>> getMyProfile(Principal principal) {
+    public ResponseEntity<MoonshotResponse<UserInfoResponse>> getMyProfile(final Principal principal) {
         return ResponseEntity.ok(MoonshotResponse.success(SuccessType.GET_PROFILE_SUCCESS, userService.getMyProfile(JwtTokenProvider.getUserIdFromPrincipal(principal))));
     }
 
     @GetMapping("/googleLogin")
-    public String authTest(HttpServletRequest request, HttpServletResponse response) {
+    public String authTest(final HttpServletRequest request, final HttpServletResponse response) {
         String redirectURL = "https://accounts.google.com/o/oauth2/v2/auth?client_id=" + googleClientId
                 + "&redirect_uri=" + googleRedirectUrl + "&response_type=code&scope=email profile";
         try {

@@ -24,7 +24,7 @@ public class IndexController implements IndexApi {
     private final IndexTargetProvider indexTargetProvider;
 
     @PatchMapping
-    public ResponseEntity<MoonshotResponse<?>> modifyIdx(Principal principal, @RequestBody @Valid ModifyIndexRequestDto request) {
+    public ResponseEntity<MoonshotResponse<?>> modifyIdx(final Principal principal, @RequestBody @Valid final ModifyIndexRequestDto request) {
         IndexService indexService = indexTargetProvider.getIndexService(request.target());
         indexService.modifyIdx(request, JwtTokenProvider.getUserIdFromPrincipal(principal));
         return ResponseEntity.noContent().build();

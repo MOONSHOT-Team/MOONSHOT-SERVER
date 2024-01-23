@@ -25,7 +25,7 @@ public class TaskController implements TaskApi {
     private final TaskService taskService;
 
     @PostMapping
-    public ResponseEntity<MoonshotResponse<?>> createTask(Principal principal, @RequestBody @Valid TaskSingleCreateRequestDto request) {
+    public ResponseEntity<MoonshotResponse<?>> createTask(final Principal principal, @RequestBody @Valid final TaskSingleCreateRequestDto request) {
         taskService.createTask(request, JwtTokenProvider.getUserIdFromPrincipal(principal));
         return ResponseEntity.status(HttpStatus.CREATED).body(MoonshotResponse.success(POST_TASK_SUCCESS));
     }

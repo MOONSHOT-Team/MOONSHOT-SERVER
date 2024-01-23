@@ -23,7 +23,7 @@ public class LogController implements LogApi {
     private final LogService logService;
 
     @PostMapping
-    public ResponseEntity<MoonshotResponse<?>> create(Principal principal, @RequestBody @Valid LogCreateRequestDto logCreateRequestDto) {
+    public ResponseEntity<MoonshotResponse<?>> create(final Principal principal, @RequestBody @Valid final LogCreateRequestDto logCreateRequestDto) {
         Optional<AchieveResponseDto> response = logService.createRecordLog(JwtTokenProvider.getUserIdFromPrincipal(principal), logCreateRequestDto);
         if (response.isPresent()) {
             return ResponseEntity.status(HttpStatus.CREATED).body(

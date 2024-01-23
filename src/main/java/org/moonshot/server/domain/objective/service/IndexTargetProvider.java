@@ -26,7 +26,7 @@ public class IndexTargetProvider {
         indexServiceMap.put(IndexTarget.OBJECTIVE, objectiveService);
     }
 
-    public IndexService getIndexService(IndexTarget indexTarget) {
+    public IndexService getIndexService(final IndexTarget indexTarget) {
         return indexServiceMap.get(indexTarget);
     }
 

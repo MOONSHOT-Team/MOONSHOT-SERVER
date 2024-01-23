@@ -25,15 +25,14 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 @RequiredArgsConstructor
 public class LogService {
 
     private final KeyResultRepository keyResultRepository;
     private final LogRepository logRepository;
 
-    @Transactional
-    public Optional<AchieveResponseDto> createRecordLog(Long userId, LogCreateRequestDto request) {
+    public Optional<AchieveResponseDto> createRecordLog(final Long userId, final LogCreateRequestDto request) {
         KeyResult keyResult = keyResultRepository.findKeyResultAndObjective(request.keyResultId())
                 .orElseThrow(KeyResultNotFoundException::new);
         if (!keyResult.getObjective().getUser().getId().equals(userId)) {
@@ -41,7 +40,7 @@ public class LogService {
         }
         Optional<Log> prevLog = logRepository.findLatestLogByKeyResultId(LogState.RECORD, request.keyResultId());
         long prevNum = -1;
-        if (!prevLog.isEmpty()) {
+        if (prevLog.isPresent()) {
             prevNum = prevLog.get().getCurrNum();
             if(request.logNum() == prevNum) {
                 throw new InvalidLogValueException();
@@ -63,8 +62,7 @@ public class LogService {
         return Optional.empty();
     }
 
-    @Transactional
-    public Log createUpdateLog(KeyResultModifyRequestDto request, Long keyResultId) {
+    public Log createUpdateLog(final KeyResultModifyRequestDto request, final Long keyResultId) {
         KeyResult keyResult = keyResultRepository.findById(keyResultId)
                 .orElseThrow(KeyResultNotFoundException::new);
         return logRepository.save(Log.builder()
@@ -77,8 +75,7 @@ public class LogService {
                 .build());
     }
 
-    @Transactional
-    public void createKRLog(Object request, Long keyResultId) {
+    public void createKRLog(final Object request, final Long keyResultId) {
         KeyResult keyResult = keyResultRepository.findById(keyResultId)
                 .orElseThrow(KeyResultNotFoundException::new);
 
@@ -104,11 +101,13 @@ public class LogService {
         }
     }
 
-    public List<Log> getLogList(KeyResult keyResult) {
+    @Transactional(readOnly = true)
+    public List<Log> getLogList(final KeyResult keyResult) {
         return logRepository.findAllByKeyResultOrderByIdDesc(keyResult);
     }
 
-    public List<LogResponseDto> getLogResponseDto(List<Log> logList, KeyResult keyResult) {
+    @Transactional(readOnly = true)
+    public List<LogResponseDto> getLogResponseDto(final List<Log> logList, final KeyResult keyResult) {
         return logList.stream()
                 .map(log -> LogResponseDto.of(log.getState().getValue(),
                         log.getDate(),
@@ -117,7 +116,7 @@ public class LogService {
                 .toList();
     }
 
-    public String setTitle(long prevNum, long currNum, Log log, KeyResult keyResult) {
+    private String setTitle(final long prevNum, final long currNum, final Log log, final KeyResult keyResult) {
         if (log.getState() == LogState.CREATE) {
             return keyResult.getTitle() + " : " + keyResult.getTarget() + keyResult.getMetric();
         } else {
@@ -126,19 +125,17 @@ public class LogService {
         }
     }
 
-    public short calculateKRProgressBar(Log log, KeyResult keyResult) {
+    public short calculateKRProgressBar(final Log log, final KeyResult keyResult) {
         return (log != null) ? (short) (Math.round(log.getCurrNum() / (double) keyResult.getTarget() * 100)) : 0;
     }
 
-    public short calculateOProgressBar(Objective objective) {
+    public short calculateOProgressBar(final Objective objective) {
         int totalKRProgress = 0;
         for (int i = 0; i < objective.getKeyResultList().size(); i++) {
             short krProgress = objective.getKeyResultList().get(i).getProgress();
             totalKRProgress += (krProgress >= 70) ? 100 : krProgress;
         }
-        short averageProgress = (short) (totalKRProgress / objective.getKeyResultList().size());
-        System.out.println(averageProgress);
-        return averageProgress;
+        return (short) (totalKRProgress / objective.getKeyResultList().size());
     }
 
 }

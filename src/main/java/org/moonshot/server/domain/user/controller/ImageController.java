@@ -33,7 +33,7 @@ public class ImageController {
     // 해당 API도 username을 @AuthenticationPrincipal(expression = "#this == 'anonymousUser' ? null : username")
     // 등을 이용하여 Annotation화 하여 바로 username을 넘길 수 있도록 변경해야 함.
     @PostMapping("/image")
-    public ResponseEntity<MoonshotResponse<?>> notifyImageSaveSuccess(@RequestBody NotifyImageSaveSuccessRequestDto request) {
+    public ResponseEntity<MoonshotResponse<?>> notifyImageSaveSuccess(@RequestBody final NotifyImageSaveSuccessRequestDto request) {
         s3Service.notifyImageSaveSuccess(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(MoonshotResponse.success(SuccessType.POST_NOTIFY_IMAGE_SAVE_SUCCESS));
     }
