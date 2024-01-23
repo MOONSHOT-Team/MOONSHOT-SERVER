@@ -29,7 +29,7 @@ public class TaskService implements IndexService {
     private final TaskRepository taskRepository;
     private final UserService userService;
 
-    public void createTask(TaskSingleCreateRequestDto request, Long userId) {
+    public void createTask(final TaskSingleCreateRequestDto request, final Long userId) {
         KeyResult keyResult = keyResultRepository.findKeyResultAndObjective(request.keyResultId())
                 .orElseThrow();
         if (!keyResult.getObjective().getUser().getId().equals(userId)) {
@@ -47,11 +47,10 @@ public class TaskService implements IndexService {
         for (int i = request.idx(); i < taskList.size(); i++) {
             taskList.get(i).incrementIdx();
         }
-
         saveTask(keyResult, request);
     }
 
-    public void saveTask(KeyResult keyResult, TaskSingleCreateRequestDto request) {
+    public void saveTask(final KeyResult keyResult, final TaskSingleCreateRequestDto request) {
         taskRepository.save(Task.builder()
                 .title(request.title())
                 .idx(request.idx())
@@ -59,7 +58,7 @@ public class TaskService implements IndexService {
                 .build());
     }
 
-    public void saveTask(KeyResult keyResult, TaskCreateRequestDto request) {
+    public void saveTask(final KeyResult keyResult, final TaskCreateRequestDto request) {
         if (!request.title().isEmpty()) {
             taskRepository.save(Task.builder()
                     .title(request.title())
@@ -70,7 +69,7 @@ public class TaskService implements IndexService {
     }
 
     @Override
-    public void modifyIdx(ModifyIndexRequestDto request, Long userId) {
+    public void modifyIdx(final ModifyIndexRequestDto request, final Long userId) {
         Task task = taskRepository.findTaskWithFetchJoin(request.id())
                 .orElseThrow(TaskNotFoundException::new);
         userService.validateUserAuthorization(task.getKeyResult().getObjective().getUser(), userId);
@@ -91,7 +90,7 @@ public class TaskService implements IndexService {
         }
     }
 
-    private boolean isInvalidIdx(Long taskCount, int idx) {
+    private boolean isInvalidIdx(final Long taskCount, final int idx) {
         return (taskCount <= idx) || (idx < 0);
     }
 

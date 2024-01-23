@@ -33,8 +33,8 @@ interface ObjectiveApi {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 유저입니다", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MoonshotResponse.class)))
     })
     @Operation(summary = "O-KR 데이터 생성")
-    ResponseEntity<MoonshotResponse<?>> createObjective(@Parameter(in = ParameterIn.HEADER, name = "Authorization", description = "Access Token", required = true, schema = @Schema(type = "string")) Principal principal,
-                                                        @RequestBody @Valid OKRCreateRequestDto request);
+    ResponseEntity<MoonshotResponse<?>> createObjective(@Parameter(in = ParameterIn.HEADER, name = "Authorization", description = "Access Token", required = true, schema = @Schema(type = "string")) final Principal principal,
+                                                        @RequestBody @Valid final OKRCreateRequestDto request);
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "O-KR 트리 삭제를 성공하였습니다"),
@@ -43,8 +43,8 @@ interface ObjectiveApi {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 Objective입니다", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MoonshotResponse.class)))
     })
     @Operation(summary = "O-KR 데이터 삭제")
-    ResponseEntity<MoonshotResponse<DashboardResponseDto>> deleteObjective(@Parameter(in = ParameterIn.HEADER, name = "Authorization", description = "Access Token", required = true, schema = @Schema(type = "string")) Principal principal,
-                                      @PathVariable("objectiveId") Long objectiveId);
+    ResponseEntity<MoonshotResponse<DashboardResponseDto>> deleteObjective(@Parameter(in = ParameterIn.HEADER, name = "Authorization", description = "Access Token", required = true, schema = @Schema(type = "string")) final Principal principal,
+                                      @PathVariable("objectiveId") final Long objectiveId);
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Objective 수정에 성공하였습니다"),
@@ -54,8 +54,8 @@ interface ObjectiveApi {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 Objective입니다", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MoonshotResponse.class)))
     })
     @Operation(summary = "Objective 데이터 수정")
-    ResponseEntity<?> modifyObjective(@Parameter(in = ParameterIn.HEADER, name = "Authorization", description = "Access Token", required = true, schema = @Schema(type = "string")) Principal principal,
-                                                        @RequestBody ModifyObjectiveRequestDto request);
+    ResponseEntity<?> modifyObjective(@Parameter(in = ParameterIn.HEADER, name = "Authorization", description = "Access Token", required = true, schema = @Schema(type = "string")) final Principal principal,
+                                                        @RequestBody final ModifyObjectiveRequestDto request);
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "O-KR 목록 조회에 성공하였습니다"),
@@ -64,8 +64,8 @@ interface ObjectiveApi {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 Objective입니다", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MoonshotResponse.class)))
     })
     @Operation(summary = "O-KR 목록 조회")
-    ResponseEntity<MoonshotResponse<DashboardResponseDto>> getObjectiveInDashboard(@Parameter(in = ParameterIn.HEADER, name = "Authorization", description = "Access Token", required = true, schema = @Schema(type = "string")) Principal principal,
-                                                                                   @Nullable @RequestParam("objectiveId") Long objectiveId);
+    ResponseEntity<MoonshotResponse<DashboardResponseDto>> getObjectiveInDashboard(@Parameter(in = ParameterIn.HEADER, name = "Authorization", description = "Access Token", required = true, schema = @Schema(type = "string")) final Principal principal,
+                                                                                   @Nullable @RequestParam("objectiveId") final Long objectiveId);
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "히스토리 조회에 성공하였습니다."),
@@ -73,8 +73,8 @@ interface ObjectiveApi {
             @ApiResponse(responseCode = "403", description = "해당 자원에 접근 권한이 없습니다.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MoonshotResponse.class))),
     })
     @Operation(summary = "히스토리 목록 조회")
-    ResponseEntity<MoonshotResponse<HistoryResponseDto>> getObjectiveHistory(Principal principal, @RequestParam(required = false) Integer year,
-                                                                                    @RequestParam(required = false) Category category,
-                                                                                    @RequestParam(required = false) Criteria criteria);
+    ResponseEntity<MoonshotResponse<HistoryResponseDto>> getObjectiveHistory(final Principal principal, @RequestParam(required = false) final Integer year,
+                                                                                    @RequestParam(required = false) final Category category,
+                                                                                    @RequestParam(required = false) final Criteria criteria);
 
 }

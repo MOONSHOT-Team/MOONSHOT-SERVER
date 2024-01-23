@@ -8,8 +8,6 @@ import org.moonshot.server.domain.objective.model.IndexService;
 import org.moonshot.server.domain.objective.service.IndexTargetProvider;
 import org.moonshot.server.global.auth.jwt.JwtTokenProvider;
 import org.moonshot.server.global.common.response.MoonshotResponse;
-import org.moonshot.server.global.common.response.SuccessType;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,7 +22,7 @@ public class IndexController implements IndexApi {
     private final IndexTargetProvider indexTargetProvider;
 
     @PatchMapping
-    public ResponseEntity<MoonshotResponse<?>> modifyIdx(Principal principal, @RequestBody @Valid ModifyIndexRequestDto request) {
+    public ResponseEntity<MoonshotResponse<?>> modifyIdx(final Principal principal, @RequestBody @Valid final ModifyIndexRequestDto request) {
         IndexService indexService = indexTargetProvider.getIndexService(request.target());
         indexService.modifyIdx(request, JwtTokenProvider.getUserIdFromPrincipal(principal));
         return ResponseEntity.noContent().build();

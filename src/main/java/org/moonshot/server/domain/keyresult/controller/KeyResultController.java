@@ -27,19 +27,19 @@ public class KeyResultController implements KeyResultApi {
     private final KeyResultService keyResultService;
 
     @PostMapping
-    public ResponseEntity<MoonshotResponse<?>> createKeyResult(Principal principal, @RequestBody @Valid KeyResultCreateRequestDto request) {
+    public ResponseEntity<MoonshotResponse<?>> createKeyResult(final Principal principal, @RequestBody @Valid final KeyResultCreateRequestDto request) {
         keyResultService.createKeyResult(request, JwtTokenProvider.getUserIdFromPrincipal(principal));
         return ResponseEntity.status(HttpStatus.CREATED).body(MoonshotResponse.success(POST_KEY_RESULT_SUCCESS));
     }
 
     @DeleteMapping("/{keyResultId}")
-    public ResponseEntity<?> deleteKeyResult(Principal principal, @PathVariable("keyResultId") Long keyResultId) {
+    public ResponseEntity<?> deleteKeyResult(final Principal principal, @PathVariable("keyResultId") final Long keyResultId) {
         keyResultService.deleteKeyResult(keyResultId, JwtTokenProvider.getUserIdFromPrincipal(principal));
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping
-    public ResponseEntity<MoonshotResponse<?>> modifyKeyResult(Principal principal, @RequestBody @Valid KeyResultModifyRequestDto request) {
+    public ResponseEntity<MoonshotResponse<?>> modifyKeyResult(final Principal principal, @RequestBody @Valid final KeyResultModifyRequestDto request) {
         Optional<AchieveResponseDto> response = keyResultService.modifyKeyResult(request, JwtTokenProvider.getUserIdFromPrincipal(principal));
         if (response.isPresent()) {
             return ResponseEntity.ok(MoonshotResponse.success(PATCH_KR_ACHIEVE_SUCCESS, response));
@@ -48,7 +48,7 @@ public class KeyResultController implements KeyResultApi {
     }
 
     @GetMapping("/{keyResultId}")
-    public ResponseEntity<MoonshotResponse<KRDetailResponseDto>> getKRDetails(Principal principal, @PathVariable("keyResultId") Long keyResultId) {
+    public ResponseEntity<MoonshotResponse<KRDetailResponseDto>> getKRDetails(final Principal principal, @PathVariable("keyResultId") final Long keyResultId) {
         return ResponseEntity.ok(MoonshotResponse.success(SuccessType.GET_KR_DETAIL_SUCCESS, keyResultService.getKRDetails(JwtTokenProvider.getUserIdFromPrincipal(principal), keyResultId)));
     }
 

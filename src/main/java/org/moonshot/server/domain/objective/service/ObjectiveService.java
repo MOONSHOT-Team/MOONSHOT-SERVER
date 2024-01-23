@@ -45,7 +45,7 @@ public class ObjectiveService implements IndexService {
     private final UserRepository userRepository;
     private final ObjectiveRepository objectiveRepository;
 
-    public void createObjective(Long userId, OKRCreateRequestDto request) {
+    public void createObjective(final Long userId, final OKRCreateRequestDto request) {
         User user =  userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
@@ -65,7 +65,7 @@ public class ObjectiveService implements IndexService {
         keyResultService.createInitKRWithObjective(newObjective, request.krList());
     }
 
-    public DashboardResponseDto deleteObjective(Long userId, Long objectiveId) {
+    public DashboardResponseDto deleteObjective(final Long userId, final Long objectiveId) {
         Objective objective = objectiveRepository.findObjectiveAndUserById(objectiveId)
                 .orElseThrow(ObjectiveNotFoundException::new);
         if (!objective.getUser().getId().equals(userId)) {
@@ -76,7 +76,7 @@ public class ObjectiveService implements IndexService {
         return getObjectiveInDashboard(userId, null);
     }
 
-    public void modifyObjective(Long userId, ModifyObjectiveRequestDto request) {
+    public void modifyObjective(final Long userId, final ModifyObjectiveRequestDto request) {
         Objective objective = objectiveRepository.findObjectiveAndUserById(request.objectiveId())
                 .orElseThrow(ObjectiveNotFoundException::new);
         userService.validateUserAuthorization(objective.getUser(), userId);
@@ -92,7 +92,7 @@ public class ObjectiveService implements IndexService {
     }
 
     @Transactional(readOnly = true)
-    public DashboardResponseDto getObjectiveInDashboard(Long userId, Long objectiveId) {
+    public DashboardResponseDto getObjectiveInDashboard(final Long userId, final Long objectiveId) {
         List<Objective> objList = objectiveRepository.findAllByUserId(userId);
         if (objList.isEmpty()) {
             User user =  userRepository.findById(userId)
@@ -110,7 +110,7 @@ public class ObjectiveService implements IndexService {
     }
 
     @Transactional(readOnly = true)
-    public HistoryResponseDto getObjectiveHistory(Long userId, Integer year, Category category, Criteria criteria) {
+    public HistoryResponseDto getObjectiveHistory(final Long userId, final Integer year, final Category category, final Criteria criteria) {
         List<Objective> objectives = objectiveRepository.findObjectives(userId, year, category, criteria);
         Map<Integer, List<Objective>> groups = objectives.stream()
                 .collect(Collectors.groupingBy(objective -> objective.getPeriod().getStartAt().getYear()));
@@ -140,7 +140,7 @@ public class ObjectiveService implements IndexService {
     }
 
     @Override
-    public void modifyIdx(ModifyIndexRequestDto request, Long userId) {
+    public void modifyIdx(final ModifyIndexRequestDto request, final Long userId) {
         Long objectiveCount = objectiveRepository.countAllByUserId(userId);
         if (isInvalidIdx(objectiveCount, request.idx())) {
             throw new ObjectiveInvalidIndexException();
@@ -163,11 +163,12 @@ public class ObjectiveService implements IndexService {
         }
     }
 
-    private boolean isInvalidIdx(Long objectiveCount, int idx) {
+    private boolean isInvalidIdx(final Long objectiveCount, final int idx) {
         return (objectiveCount <= idx) || (idx < 0);
     }
 
-    private boolean isIndexIncreased(int prevIdx, int idx) {
+    private boolean isIndexIncreased(final int prevIdx, final int idx) {
         return prevIdx < idx;
     }
+
 }

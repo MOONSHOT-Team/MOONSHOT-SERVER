@@ -30,7 +30,6 @@ import org.moonshot.server.domain.task.repository.TaskRepository;
 import org.moonshot.server.domain.task.service.TaskService;
 import org.moonshot.server.domain.user.service.UserService;
 import org.moonshot.server.global.common.model.Period;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,7 +48,7 @@ public class KeyResultService implements IndexService {
     private final LogService logService;
     private final LogRepository logRepository;
 
-    public void createInitKRWithObjective(Objective objective, List<KeyResultCreateRequestInfoDto> requests) {
+    public void createInitKRWithObjective(final Objective objective, final List<KeyResultCreateRequestInfoDto> requests) {
         for (int i = 0; i < requests.size(); i++) {
             if (requests.get(i) == null) {
                 return;
@@ -75,7 +74,7 @@ public class KeyResultService implements IndexService {
         }
     }
 
-    public void createKeyResult(KeyResultCreateRequestDto request, Long userId) {
+    public void createKeyResult(final KeyResultCreateRequestDto request, final Long userId) {
         Objective objective = objectiveRepository.findObjectiveAndUserById(request.objectiveId())
                 .orElseThrow(ObjectiveNotFoundException::new);
         userService.validateUserAuthorization(objective.getUser(), userId);
@@ -101,7 +100,7 @@ public class KeyResultService implements IndexService {
       logService.createKRLog(request, keyResult.getId());
     }
 
-    public void deleteKeyResult(Long keyResultId, Long userId) {
+    public void deleteKeyResult(final Long keyResultId, final Long userId) {
         KeyResult keyResult = keyResultRepository.findKeyResultAndObjective(keyResultId)
                 .orElseThrow(KeyResultNotFoundException::new);
         userService.validateUserAuthorization(keyResult.getObjective().getUser(), userId);
@@ -111,7 +110,7 @@ public class KeyResultService implements IndexService {
         keyResultRepository.delete(keyResult);
     }
 
-    public void deleteKeyResult(Objective objective) {
+    public void deleteKeyResult(final Objective objective) {
         cascadeDelete(keyResultRepository.findAllByObjective(objective));
     }
 
@@ -123,7 +122,7 @@ public class KeyResultService implements IndexService {
         keyResultRepository.deleteAllInBatch(krList);
     }
 
-    public Optional<AchieveResponseDto> modifyKeyResult(KeyResultModifyRequestDto request, Long userId) {
+    public Optional<AchieveResponseDto> modifyKeyResult(final KeyResultModifyRequestDto request, final Long userId) {
         KeyResult keyResult = keyResultRepository.findKeyResultAndObjective(request.keyResultId())
                 .orElseThrow(KeyResultNotFoundException::new);
         userService.validateUserAuthorization(keyResult.getObjective().getUser(), userId);
@@ -164,7 +163,7 @@ public class KeyResultService implements IndexService {
     }
 
     @Override
-    public void modifyIdx(ModifyIndexRequestDto request, Long userId) {
+    public void modifyIdx(final ModifyIndexRequestDto request, final Long userId) {
         KeyResult keyResult = keyResultRepository.findKeyResultAndObjective(request.id())
                 .orElseThrow(KeyResultNotFoundException::new);
         userService.validateUserAuthorization(keyResult.getObjective().getUser(), userId);
@@ -188,7 +187,7 @@ public class KeyResultService implements IndexService {
     }
 
     @Transactional(readOnly = true)
-    public KRDetailResponseDto getKRDetails(Long userId, Long keyResultId) {
+    public KRDetailResponseDto getKRDetails(final Long userId, final Long keyResultId) {
         KeyResult keyResult = keyResultRepository.findKeyResultAndObjective(keyResultId)
                 .orElseThrow(KeyResultNotFoundException::new);
         userService.validateUserAuthorization(keyResult.getObjective().getUser(), userId);
@@ -210,7 +209,7 @@ public class KeyResultService implements IndexService {
                 logService.getLogResponseDto(logList, keyResult));
     }
 
-    private boolean isValidKeyResultPeriod(KeyResult keyResult, LocalDate newStartAt, LocalDate newExpireAt) {
+    private boolean isValidKeyResultPeriod(final KeyResult keyResult, final LocalDate newStartAt, final LocalDate newExpireAt) {
         if (newStartAt.isAfter(newExpireAt)) {
             return false;
         }
@@ -225,11 +224,11 @@ public class KeyResultService implements IndexService {
         }
         return true;
     }
-    private boolean isInvalidIdx(Long keyResultCount, int idx) {
+    private boolean isInvalidIdx(final Long keyResultCount, final int idx) {
         return (keyResultCount <= idx) || (idx < 0);
     }
 
-    private void isKRWithInObjective(Objective objective, KeyResultCreateRequestInfoDto dto) {
+    private void isKRWithInObjective(final Objective objective, final KeyResultCreateRequestInfoDto dto) {
         if (dto.startAt().isBefore(objective.getPeriod().getStartAt()) ||
                 dto.expireAt().isAfter(objective.getPeriod().getExpireAt()) ||
                 dto.startAt().isAfter(objective.getPeriod().getExpireAt()) ||
@@ -238,7 +237,7 @@ public class KeyResultService implements IndexService {
         }
     }
 
-    private void saveTasks(KeyResult keyResult, List<TaskCreateRequestDto> taskList) {
+    private void saveTasks(final KeyResult keyResult, final List<TaskCreateRequestDto> taskList) {
         for (int i = 0; i < taskList.size(); i++) {
             TaskCreateRequestDto taskDto = taskList.get(i);
             if (i != taskDto.idx()) {
