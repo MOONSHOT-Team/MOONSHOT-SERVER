@@ -30,7 +30,6 @@ import org.moonshot.server.domain.task.repository.TaskRepository;
 import org.moonshot.server.domain.task.service.TaskService;
 import org.moonshot.server.domain.user.service.UserService;
 import org.moonshot.server.global.common.model.Period;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

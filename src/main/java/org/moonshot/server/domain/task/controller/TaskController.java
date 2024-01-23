@@ -9,7 +9,6 @@ import org.moonshot.server.domain.task.dto.request.TaskSingleCreateRequestDto;
 import org.moonshot.server.domain.task.service.TaskService;
 import org.moonshot.server.global.auth.jwt.JwtTokenProvider;
 import org.moonshot.server.global.common.response.MoonshotResponse;
-import org.springframework.data.redis.stream.Task;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
