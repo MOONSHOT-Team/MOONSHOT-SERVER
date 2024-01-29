@@ -172,3 +172,5 @@ data.sql
 # End of https://www.gitignore.io/api/java,macos,gradle,intellij
 
 src/main/generated/
+
+**/src/main/generated/
