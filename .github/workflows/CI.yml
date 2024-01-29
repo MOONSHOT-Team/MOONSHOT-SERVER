@@ -27,5 +27,5 @@ jobs:
     - name: build
       run: |
           chmod +x gradlew
-          ./gradlew build -x test
+          ./gradlew moonshot-api:build -x test
       shell: bash
