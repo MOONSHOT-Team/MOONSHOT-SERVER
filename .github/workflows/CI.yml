@@ -20,7 +20,7 @@ jobs:
 
     - name: application.yaml 작성
       run: |
-          cd src/main/resources
+          cd moonshot-api/src/main/resources
           echo "${{ secrets.APPLICATION }}" > ./application-deploy.yaml
           echo "${{ secrets.DATA }}" > ./data.sql
 
