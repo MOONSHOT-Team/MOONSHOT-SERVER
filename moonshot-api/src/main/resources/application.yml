@@ -15,6 +15,7 @@ spring:
         auto_quote_keyword: true
         default_batch_fetch_size: 10
     defer-datasource-initialization: true
+    open-in-view: false
 
   sql:
     init:
