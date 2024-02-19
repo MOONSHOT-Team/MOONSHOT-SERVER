@@ -95,7 +95,7 @@ public class ObjectiveService implements IndexService {
     public DashboardResponseDto getObjectiveInDashboard(final Long userId, final Long objectiveId) {
         List<Objective> objList = objectiveRepository.findAllByUserId(userId);
         if (objList.isEmpty()) {
-            User user =  userRepository.findById(userId)
+            User user = userRepository.findById(userId)
                     .orElseThrow(UserNotFoundException::new);
             return DashboardResponseDto.ofNull(user.getNickname());
         }

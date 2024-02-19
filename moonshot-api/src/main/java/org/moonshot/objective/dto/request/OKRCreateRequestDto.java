@@ -5,9 +5,11 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.List;
+import lombok.Builder;
 import org.moonshot.keyresult.dto.request.KeyResultCreateRequestInfoDto;
 import org.moonshot.objective.model.Category;
 
+@Builder
 public record OKRCreateRequestDto(
         @Size(min = 1, max = 30, message = "제목은 30자 이하여야 합니다.")
         String objTitle,
