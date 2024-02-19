@@ -2,8 +2,9 @@ package org.moonshot.objective.dto.request;
 
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
-import org.springframework.format.annotation.DateTimeFormat;
+import lombok.Builder;
 
+@Builder
 public record ModifyObjectiveRequestDto(
         @NotNull(message = "대상의 ID를 입력해주세요.")
         long objectiveId,

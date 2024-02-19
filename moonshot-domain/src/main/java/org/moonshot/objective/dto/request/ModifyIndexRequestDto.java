@@ -1,8 +1,10 @@
 package org.moonshot.objective.dto.request;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import org.moonshot.objective.model.IndexTarget;
 
+@Builder
 public record ModifyIndexRequestDto(
         @NotNull(message = "대상의 ID를 입력해주세요.")
         Long id,

@@ -6,6 +6,8 @@ import lombok.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder(builderMethodName = "buildWithId")
 public class User {
 
     @Id
