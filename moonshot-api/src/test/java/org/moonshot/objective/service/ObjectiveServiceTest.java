@@ -82,6 +82,7 @@ class ObjectiveServiceTest {
 
         // when
         objectiveService.createObjective(1L, testDto);
+
         // then
         verify(objectiveRepository, times(1)).save(any(Objective.class));
     }
