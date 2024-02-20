@@ -27,7 +27,7 @@ public class TaskController implements TaskApi {
     }
 
     @DeleteMapping("/{taskId}")
-    public ResponseEntity<?> deleteTask (final Principal principal, @PathVariable("taskId") final long taskId) {
+    public ResponseEntity<?> deleteTask (final Principal principal, @PathVariable("taskId") final Long taskId) {
         taskService.deleteTask(JwtTokenProvider.getUserIdFromPrincipal(principal), taskId);
         return ResponseEntity.noContent().build();
     }

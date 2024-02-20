@@ -94,7 +94,7 @@ public class TaskService implements IndexService {
         return (taskCount <= idx) || (idx < 0);
     }
 
-    public void deleteTask(final Long userId, long taskId) {
+    public void deleteTask(final Long userId, Long taskId) {
         Task task = taskRepository.findTaskWithFetchJoin(taskId)
                         .orElseThrow(TaskNotFoundException::new);
         userService.validateUserAuthorization(task.getKeyResult().getObjective().getUser(), userId);
