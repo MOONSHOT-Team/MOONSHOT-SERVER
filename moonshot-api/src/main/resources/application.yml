@@ -65,7 +65,7 @@ logging:
     org.hibernate.type: TRACE
 
 springdoc:
-  packages-to-scan: org.moonshot.server
+  packages-to-scan: org.moonshot
   default-consumes-media-type: application/json;charset=UTF-8
   default-produces-media-type: application/json;charset=UTF-8
   swagger-ui:
