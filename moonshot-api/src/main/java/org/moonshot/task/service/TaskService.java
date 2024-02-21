@@ -100,4 +100,5 @@ public class TaskService implements IndexService {
         userService.validateUserAuthorization(task.getKeyResult().getObjective().getUser(), userId);
         taskRepository.deleteById(taskId);
     }
+    
 }
