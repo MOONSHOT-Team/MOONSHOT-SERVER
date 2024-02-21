@@ -11,10 +11,7 @@ import org.moonshot.task.dto.request.TaskSingleCreateRequestDto;
 import org.moonshot.task.service.TaskService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,6 +24,12 @@ public class TaskController implements TaskApi {
     public ResponseEntity<MoonshotResponse<?>> createTask(final Principal principal, @RequestBody @Valid final TaskSingleCreateRequestDto request) {
         taskService.createTask(request, JwtTokenProvider.getUserIdFromPrincipal(principal));
         return ResponseEntity.status(HttpStatus.CREATED).body(MoonshotResponse.success(POST_TASK_SUCCESS));
+    }
+
+    @DeleteMapping("/{taskId}")
+    public ResponseEntity<?> deleteTask (final Principal principal, @PathVariable("taskId") final Long taskId) {
+        taskService.deleteTask(JwtTokenProvider.getUserIdFromPrincipal(principal), taskId);
+        return ResponseEntity.noContent().build();
     }
 
 }
