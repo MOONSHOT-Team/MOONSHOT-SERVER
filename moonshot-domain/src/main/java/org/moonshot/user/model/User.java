@@ -34,6 +34,8 @@ public class User {
 
     private String description;
 
+    private boolean isDeleted;
+
     @Builder
     private User(String socialId, SocialPlatform socialPlatform, String name, String profileImage, String email,
                 String nickname, String description) {
