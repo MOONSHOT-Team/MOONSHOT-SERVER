@@ -39,7 +39,7 @@ google:
 
 kakao:
   client-id: ${KAKAO_CLIENT_ID}
-  redirect-url: ${KAKAO_URL}
+  redirect-uri: ${KAKAO_URL}
 
 jwt:
   secret: ${JWT_SECRET}

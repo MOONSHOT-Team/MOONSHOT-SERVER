@@ -1,13 +1,16 @@
 package org.moonshot.user.service;
 
+import static org.moonshot.util.MDCUtil.USER_REQUEST_ORIGIN;
+import static org.moonshot.util.MDCUtil.get;
+
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.moonshot.discord.DiscordAppender;
-import org.moonshot.exception.global.external.discord.ErrorLogAppenderException;
 import org.moonshot.exception.global.auth.AccessDeniedException;
+import org.moonshot.exception.global.external.discord.ErrorLogAppenderException;
 import org.moonshot.exception.user.UserNotFoundException;
 import org.moonshot.jwt.JwtTokenProvider;
 import org.moonshot.jwt.TokenResponse;
@@ -50,8 +53,8 @@ public class UserService {
     @Value("${kakao.client-id}")
     private String kakaoClientId;
 
-    @Value("${kakao.redirect-url}")
-    private String kakaoRedirectUrl;
+    @Value("${kakao.redirect-uri}")
+    private String kakaoRedirectUri;
 
     private final UserRepository userRepository;
     private final GoogleAuthApiClient googleAuthApiClient;
@@ -104,7 +107,7 @@ public class UserService {
         KakaoTokenResponse tokenResponse = kakaoAuthApiClient.getOAuth2AccessToken(
                 "authorization_code",
                 kakaoClientId,
-                kakaoRedirectUrl,
+                (String)get(USER_REQUEST_ORIGIN) + kakaoRedirectUri,
                 request.code()
         );
         KakaoUserResponse userResponse = kakaoApiClient.getUserInformation(
