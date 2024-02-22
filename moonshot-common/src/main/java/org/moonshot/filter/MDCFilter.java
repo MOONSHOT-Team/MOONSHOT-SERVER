@@ -32,6 +32,8 @@ public class MDCFilter extends OncePerRequestFilter {
         MDCUtil.setJsonValue(MDCUtil.PARAMETER_MAP_MDC, HttpRequestUtil.getParamMap(httpReq));
         MDCUtil.setJsonValue(MDCUtil.BODY_MDC, HttpRequestUtil.getBody(httpReq));
 
+        MDCUtil.set(MDCUtil.USER_REQUEST_ORIGIN, HttpRequestUtil.getOrigin(request));
+
         filterChain.doFilter(request, response);
 
     }

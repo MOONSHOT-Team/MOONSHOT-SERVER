@@ -16,11 +16,16 @@ public class MDCUtil {
     public static final String HEADER_MAP_MDC = "HTTP 헤더 정보";
     public static final String PARAMETER_MAP_MDC = "Parameter 정보";
     public static final String BODY_MDC = "HTTP Body 정보";
+    public static final String USER_REQUEST_ORIGIN = "이용자 요청 Origin 정보";
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private static final MDCAdapter mdc = MDC.getMDCAdapter();
 
     public static void set(String key, String value) {
         mdc.put(key, value);
+    }
+
+    public static Object get(String key) {
+        return mdc.get(key);
     }
 
     public static void setJsonValue(String key, Object value) throws JsonProcessingException {

@@ -84,4 +84,9 @@ public class HttpRequestUtil {
     public static Cookie[] getUserCookies(HttpServletRequest httpReq) {
         return httpReq.getCookies();
     }
+
+    public static String getOrigin(HttpServletRequest request) {
+        return request.getHeader("Origin");
+    }
+
 }
