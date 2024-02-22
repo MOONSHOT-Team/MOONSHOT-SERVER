@@ -104,6 +104,8 @@ public class UserService {
     }
 
     public SocialLoginResponse kakaoLogin(final SocialLoginRequest request) {
+        log.info("check KAKAO Login URL = {}", (String)get(USER_REQUEST_ORIGIN) + kakaoRedirectUri);
+
         KakaoTokenResponse tokenResponse = kakaoAuthApiClient.getOAuth2AccessToken(
                 "authorization_code",
                 kakaoClientId,
