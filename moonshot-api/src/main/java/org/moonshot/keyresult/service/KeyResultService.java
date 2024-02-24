@@ -86,7 +86,7 @@ public class KeyResultService implements IndexService {
                 .idx(request.idx())
                 .target(request.target())
                 .metric(request.metric()).build());
-      logService.createKRLog(request,  keyResult.getId());
+      logService.createKRLog(request, keyResult.getId());
     }
 
     public void deleteKeyResult(final Long keyResultId, final Long userId) {
