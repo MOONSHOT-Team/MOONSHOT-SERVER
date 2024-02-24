@@ -53,7 +53,7 @@ public class LogService {
                 .content(request.logContent())
                 .keyResult(keyResult)
                 .build());
-        keyResult.modifyProgress(calculateKRProgressBar(log, keyResult));
+        keyResult.modifyProgress(calculateKRProgressBar(log, keyResult.getTarget()));
         keyResult.getObjective().modifyProgress(calculateOProgressBar(keyResult.getObjective()));
         if (keyResult.getObjective().getProgress() == 100) {
             return Optional.of(AchieveResponseDto.of(keyResult.getObjective().getId(), keyResult.getObjective().getUser().getNickname(), calculateOProgressBar(keyResult.getObjective())));
@@ -124,8 +124,8 @@ public class LogService {
         }
     }
 
-    public short calculateKRProgressBar(final Log log, final KeyResult keyResult) {
-        return (log != null) ? (short) (Math.round(log.getCurrNum() / (double) keyResult.getTarget() * 100)) : 0;
+    public short calculateKRProgressBar(final Log log, final Long keyResultTarget) {
+        return (log != null) ? (short) (Math.round(log.getCurrNum() / (double) keyResultTarget * 100)) : 0;
     }
 
     public short calculateOProgressBar(final Objective objective) {

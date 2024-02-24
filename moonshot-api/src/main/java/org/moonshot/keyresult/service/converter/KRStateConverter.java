@@ -1,4 +1,4 @@
-package org.moonshot.keyresult.service;
+package org.moonshot.keyresult.service.converter;
 
 import org.moonshot.exception.global.common.MoonshotException;
 import org.moonshot.keyresult.model.KRState;
