@@ -1,5 +1,10 @@
 package org.moonshot.objective.service;
 
+import static org.moonshot.objective.service.validator.ObjectiveValidator.isIndexIncreased;
+import static org.moonshot.objective.service.validator.ObjectiveValidator.isSameIndex;
+import static org.moonshot.objective.service.validator.ObjectiveValidator.validateIndexWithInRange;
+import static org.moonshot.objective.service.validator.ObjectiveValidator.validateUserAuthorization;
+
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
@@ -8,12 +13,10 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.moonshot.common.model.Period;
-import org.moonshot.exception.global.auth.AccessDeniedException;
 import org.moonshot.exception.objective.DateInputRequiredException;
 import org.moonshot.exception.objective.InvalidExpiredAtException;
-import org.moonshot.exception.objective.ObjectiveInvalidIndexException;
-import org.moonshot.exception.objective.ObjectiveNumberExceededException;
 import org.moonshot.exception.objective.ObjectiveNotFoundException;
+import org.moonshot.exception.objective.ObjectiveNumberExceededException;
 import org.moonshot.exception.user.UserNotFoundException;
 import org.moonshot.keyresult.service.KeyResultService;
 import org.moonshot.objective.dto.request.ModifyIndexRequestDto;
@@ -29,7 +32,6 @@ import org.moonshot.objective.model.Objective;
 import org.moonshot.objective.repository.ObjectiveRepository;
 import org.moonshot.user.model.User;
 import org.moonshot.user.repository.UserRepository;
-import org.moonshot.user.service.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,7 +42,6 @@ public class ObjectiveService implements IndexService {
 
     private static final int ACTIVE_OBJECTIVE_NUMBER = 10;
 
-    private final UserService userService;
     private final KeyResultService keyResultService;
     private final UserRepository userRepository;
     private final ObjectiveRepository objectiveRepository;
@@ -68,9 +69,8 @@ public class ObjectiveService implements IndexService {
     public DashboardResponseDto deleteObjective(final Long userId, final Long objectiveId) {
         Objective objective = objectiveRepository.findObjectiveAndUserById(objectiveId)
                 .orElseThrow(ObjectiveNotFoundException::new);
-        if (!objective.getUser().getId().equals(userId)) {
-            throw new AccessDeniedException();
-        }
+        validateUserAuthorization(objective.getUser().getId(), userId);
+
         keyResultService.deleteKeyResult(objective);
         objectiveRepository.delete(objective);
         return getObjectiveInDashboard(userId, null);
@@ -79,7 +79,8 @@ public class ObjectiveService implements IndexService {
     public void modifyObjective(final Long userId, final ModifyObjectiveRequestDto request) {
         Objective objective = objectiveRepository.findObjectiveAndUserById(request.objectiveId())
                 .orElseThrow(ObjectiveNotFoundException::new);
-        userService.validateUserAuthorization(objective.getUser(), userId);
+        validateUserAuthorization(objective.getUser().getId(), userId);
+
         objective.modifyClosed(request.isClosed());
         if (!request.isClosed()) {
             if (request.expireAt() == null) {
@@ -103,9 +104,8 @@ public class ObjectiveService implements IndexService {
         Long treeId = objectiveId == null ? objList.get(0).getId() : objectiveId;
         Objective objective = objectiveRepository.findByIdWithKeyResultsAndTasks(treeId)
                 .orElseThrow(ObjectiveNotFoundException::new);
-        if (!objective.getUser().getId().equals(userId)) {
-            throw new AccessDeniedException();
-        }
+        validateUserAuthorization(objective.getUser().getId(), userId);
+
         return DashboardResponseDto.of(objective, objList, objective.getUser().getNickname());
     }
 
@@ -142,16 +142,14 @@ public class ObjectiveService implements IndexService {
     @Override
     public void modifyIdx(final ModifyIndexRequestDto request, final Long userId) {
         Long objectiveCount = objectiveRepository.countAllByUserId(userId);
-        if (isInvalidIdx(objectiveCount, request.idx())) {
-            throw new ObjectiveInvalidIndexException();
-        }
+        validateIndexWithInRange(objectiveCount, request.idx());
+
         Objective objective = objectiveRepository.findObjectiveAndUserById(request.id())
                 .orElseThrow(ObjectiveNotFoundException::new);
+        validateUserAuthorization(objective.getUser().getId(), userId);
 
-        userService.validateUserAuthorization(objective.getUser(), userId);
-
-        Integer prevIdx = objective.getIdx();
-        if (prevIdx.equals(request.idx())) {
+        int prevIdx = objective.getIdx();
+        if (isSameIndex(prevIdx, request.idx())) {
             return;
         }
 
@@ -161,14 +159,6 @@ public class ObjectiveService implements IndexService {
         } else {
             objectiveRepository.bulkUpdateIdxIncrease(request.idx(), prevIdx, userId, objective.getId());
         }
-    }
-
-    private boolean isInvalidIdx(final Long objectiveCount, final int idx) {
-        return (objectiveCount <= idx) || (idx < 0);
-    }
-
-    private boolean isIndexIncreased(final int prevIdx, final int idx) {
-        return prevIdx < idx;
     }
 
 }
