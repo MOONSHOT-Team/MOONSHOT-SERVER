@@ -1,17 +1,6 @@
 package org.moonshot.keyresult.service;
 
-import static org.moonshot.keyresult.service.validator.KeyResultValidator.hasKeyResultTask;
-import static org.moonshot.keyresult.service.validator.KeyResultValidator.hasChange;
-import static org.moonshot.keyresult.service.validator.KeyResultValidator.hasDateChange;
-import static org.moonshot.keyresult.service.validator.KeyResultValidator.isKeyResultAchieved;
-import static org.moonshot.keyresult.service.validator.KeyResultValidator.validateActiveKRSizeExceeded;
-import static org.moonshot.keyresult.service.validator.KeyResultValidator.validateIndex;
-import static org.moonshot.keyresult.service.validator.KeyResultValidator.validateIndexUnderMaximum;
-import static org.moonshot.keyresult.service.validator.KeyResultValidator.validateKRPeriodWithInObjPeriod;
-import static org.moonshot.keyresult.service.validator.KeyResultValidator.validateKeyResultIndex;
-import static org.moonshot.keyresult.service.validator.KeyResultValidator.validateKeyResultPeriod;
-import static org.moonshot.keyresult.service.validator.KeyResultValidator.validateLogValue;
-import static org.moonshot.keyresult.service.validator.KeyResultValidator.validateUserAuthorization;
+import static org.moonshot.keyresult.service.validator.KeyResultValidator.*;
 
 import java.time.LocalDate;
 import java.util.List;

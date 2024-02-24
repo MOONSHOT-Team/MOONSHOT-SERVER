@@ -1,9 +1,6 @@
 package org.moonshot.objective.service;
 
-import static org.moonshot.objective.service.validator.ObjectiveValidator.isIndexIncreased;
-import static org.moonshot.objective.service.validator.ObjectiveValidator.isSameIndex;
-import static org.moonshot.objective.service.validator.ObjectiveValidator.validateIndexWithInRange;
-import static org.moonshot.objective.service.validator.ObjectiveValidator.validateUserAuthorization;
+import static org.moonshot.objective.service.validator.ObjectiveValidator.*;
 
 import java.time.LocalDate;
 import java.util.Comparator;
