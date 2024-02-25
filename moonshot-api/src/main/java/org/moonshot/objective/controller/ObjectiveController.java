@@ -6,6 +6,7 @@ import java.security.Principal;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.moonshot.jwt.JwtTokenProvider;
+import org.moonshot.model.Logging;
 import org.moonshot.objective.dto.request.ModifyObjectiveRequestDto;
 import org.moonshot.objective.dto.request.OKRCreateRequestDto;
 import org.moonshot.objective.dto.response.DashboardResponseDto;
@@ -36,30 +37,35 @@ public class ObjectiveController implements ObjectiveApi {
     private final ObjectiveService objectiveService;
 
     @PostMapping
+    @Logging(item = "Objective", action = "Post")
     public ResponseEntity<MoonshotResponse<?>> createObjective(final Principal principal, @RequestBody @Valid final OKRCreateRequestDto request) {
         objectiveService.createObjective(JwtTokenProvider.getUserIdFromPrincipal(principal), request);
         return ResponseEntity.status(HttpStatus.CREATED).body(MoonshotResponse.success(SuccessType.POST_OKR_SUCCESS));
     }
 
     @DeleteMapping("/{objectiveId}")
+    @Logging(item = "Objective", action = "Delete")
     public ResponseEntity<MoonshotResponse<DashboardResponseDto>> deleteObjective(final Principal principal, @PathVariable("objectiveId") final Long objectiveId) {
         DashboardResponseDto response = objectiveService.deleteObjective(JwtTokenProvider.getUserIdFromPrincipal(principal), objectiveId);
         return ResponseEntity.ok(MoonshotResponse.success(SuccessType.DELETE_OBJECTIVE_SUCCESS, response));
     }
 
     @PatchMapping
+    @Logging(item = "Objective", action = "Patch")
     public ResponseEntity<?> modifyObjective(final Principal principal, @RequestBody final ModifyObjectiveRequestDto request) {
         objectiveService.modifyObjective(JwtTokenProvider.getUserIdFromPrincipal(principal), request);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping
+    @Logging(item = "Objective", action = "Get")
     public ResponseEntity<MoonshotResponse<DashboardResponseDto>> getObjectiveInDashboard(final Principal principal, @Nullable @RequestParam("objectiveId") final Long objectiveId) {
         DashboardResponseDto response = objectiveService.getObjectiveInDashboard(JwtTokenProvider.getUserIdFromPrincipal(principal), objectiveId);
         return ResponseEntity.ok(MoonshotResponse.success(SuccessType.GET_OKR_LIST_SUCCESS, response));
     }
 
     @GetMapping("/history")
+    @Logging(item = "Objective", action = "Get")
     public ResponseEntity<MoonshotResponse<HistoryResponseDto>> getObjectiveHistory(final Principal principal, @RequestParam(required = false) final Integer year,
                                                                                     @RequestParam(required = false) final Category category,
                                                                                     @RequestParam(required = false) final Criteria criteria) {
