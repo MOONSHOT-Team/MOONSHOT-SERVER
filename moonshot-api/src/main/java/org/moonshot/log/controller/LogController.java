@@ -8,6 +8,7 @@ import org.moonshot.jwt.JwtTokenProvider;
 import org.moonshot.log.dto.request.LogCreateRequestDto;
 import org.moonshot.log.dto.response.AchieveResponseDto;
 import org.moonshot.log.service.LogService;
+import org.moonshot.model.Logging;
 import org.moonshot.response.MoonshotResponse;
 import org.moonshot.response.SuccessType;
 import org.springframework.http.HttpStatus;
@@ -25,6 +26,7 @@ public class LogController implements LogApi {
     private final LogService logService;
 
     @PostMapping
+    @Logging(item = "Log", action = "Post")
     public ResponseEntity<MoonshotResponse<?>> create(final Principal principal, @RequestBody @Valid final LogCreateRequestDto logCreateRequestDto) {
         Optional<AchieveResponseDto> response = logService.createRecordLog(JwtTokenProvider.getUserIdFromPrincipal(principal), logCreateRequestDto);
         if (response.isPresent()) {
