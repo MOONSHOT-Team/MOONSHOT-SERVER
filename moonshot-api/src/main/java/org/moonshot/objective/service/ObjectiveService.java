@@ -22,10 +22,7 @@ import org.moonshot.objective.dto.request.OKRCreateRequestDto;
 import org.moonshot.objective.dto.response.DashboardResponseDto;
 import org.moonshot.objective.dto.response.HistoryResponseDto;
 import org.moonshot.objective.dto.response.ObjectiveGroupByYearDto;
-import org.moonshot.objective.model.Category;
-import org.moonshot.objective.model.Criteria;
-import org.moonshot.objective.model.IndexService;
-import org.moonshot.objective.model.Objective;
+import org.moonshot.objective.model.*;
 import org.moonshot.objective.repository.ObjectiveRepository;
 import org.moonshot.user.model.User;
 import org.moonshot.user.repository.UserRepository;
@@ -71,6 +68,12 @@ public class ObjectiveService implements IndexService {
         keyResultService.deleteKeyResult(objective);
         objectiveRepository.delete(objective);
         return getObjectiveInDashboard(userId, null);
+    }
+
+    public void deleteAllObjective(final List<User> userList) {
+        List<Objective> objectiveList = objectiveRepository.findAllByUserIn(userList);
+        keyResultService.deleteAllKeyResult(objectiveList);
+        objectiveRepository.deleteAllInBatch(objectiveList);
     }
 
     public void modifyObjective(final Long userId, final ModifyObjectiveRequestDto request) {

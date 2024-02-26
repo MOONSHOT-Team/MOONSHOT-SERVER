@@ -26,5 +26,6 @@ public interface KeyResultRepository extends JpaRepository<KeyResult, Long> {
     @Modifying(clearAutomatically = true)
     @Query("UPDATE KeyResult kr SET kr.idx = kr.idx - 1 WHERE kr.idx >= :lBound AND kr.idx <= :uBound AND kr.objective.id = :objectiveId AND kr.id != :targetId")
     void bulkUpdateIdxDecrease(@Param("lBound") int lowerBound, @Param("uBound") int upperBound, @Param("objectiveId") Long objectiveId, @Param("targetId") Long targetId);
+    List<KeyResult> findAllByObjectiveIn(List<Objective> objectiveList);
 
 }

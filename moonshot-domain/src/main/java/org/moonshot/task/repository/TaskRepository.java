@@ -3,6 +3,7 @@ package org.moonshot.task.repository;
 import java.util.List;
 import java.util.Optional;
 import org.moonshot.keyresult.model.KeyResult;
+import org.moonshot.log.model.Log;
 import org.moonshot.task.model.Task;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -23,5 +24,6 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     @Modifying(clearAutomatically = true)
     @Query(value = "UPDATE Task t SET t.idx = t.idx - 1 WHERE t.idx >= :lBound AND t.idx <= :uBound AND t.keyResult.id = :keyResultId AND t.id != :targetId")
     void bulkUpdateTaskIdxDecrease(@Param("lBound") int lowerBound, @Param("uBound") int upperBound, @Param("keyResultId") Long keyResultId, @Param("targetId") Long targetId);
+    List<Task> findAllByKeyResultIn(List<KeyResult> keyResultList);
 
 }

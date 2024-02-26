@@ -3,12 +3,18 @@ package org.moonshot.user.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder(builderMethodName = "buildWithId")
 public class User {
+
+    // TODO 기획 측 약관 확정 이후 수정 필요
+    private static final Long USER_RETENTION_PERIOD = 14L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,7 +40,7 @@ public class User {
 
     private String description;
 
-    private boolean isDeleted;
+    private LocalDateTime deleteAt;
 
     @Builder
     private User(String socialId, SocialPlatform socialPlatform, String name, String profileImage, String email,
@@ -59,12 +65,15 @@ public class User {
                 .build();
     }
 
-    public void modifySocialPlatform(SocialPlatform socialPlatform) {
-        this.socialPlatform = socialPlatform;
-    }
-
     public void modifyNickname(String nickname) { this.nickname = nickname; }
 
     public void modifyDescription(String description) { this.description = description; }
+
+    public void resetDeleteAt() {
+        this.deleteAt = null;
+    }
+    public void setDeleteAt(){
+        this.deleteAt = LocalDateTime.now().plusDays(USER_RETENTION_PERIOD);
+    }
 
 }

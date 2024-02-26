@@ -9,8 +9,7 @@ import lombok.Getter;
 public enum SocialPlatform {
 
     KAKAO("kakao"),
-    GOOGLE("google"),
-    WITHDRAWAL("withdrawal");
+    GOOGLE("google");
 
     private final String value;
 

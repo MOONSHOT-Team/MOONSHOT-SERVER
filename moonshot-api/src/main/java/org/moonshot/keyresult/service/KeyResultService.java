@@ -111,6 +111,14 @@ public class KeyResultService implements IndexService {
         keyResultRepository.deleteAllInBatch(krList);
     }
 
+
+    public void deleteAllKeyResult(List<Objective> objectiveList) {
+        List<KeyResult> keyResultList = keyResultRepository.findAllByObjectiveIn(objectiveList);
+        logRepository.deleteAllInBatch(logRepository.findAllByKeyResultIn(keyResultList));
+        taskRepository.deleteAllInBatch(taskRepository.findAllByKeyResultIn(keyResultList));
+        keyResultRepository.deleteAllInBatch(keyResultList);
+    }
+
     public Optional<AchieveResponseDto> modifyKeyResult(final KeyResultModifyRequestDto request, final Long userId) {
         KeyResult keyResult = keyResultRepository.findKeyResultAndObjective(request.keyResultId())
                 .orElseThrow(KeyResultNotFoundException::new);
