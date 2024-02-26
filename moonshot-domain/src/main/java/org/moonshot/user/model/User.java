@@ -3,6 +3,9 @@ package org.moonshot.user.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -34,7 +37,7 @@ public class User {
 
     private String description;
 
-    private boolean isDeleted;
+    private LocalDateTime deleteAt;
 
     @Builder
     private User(String socialId, SocialPlatform socialPlatform, String name, String profileImage, String email,
@@ -49,7 +52,7 @@ public class User {
     }
 
     @Builder(builderMethodName = "builderWithSignIn")
-    public static User of(String socialId, SocialPlatform socialPlatform, String name, String profileImage, String email) {
+    public static User of(String socialId, SocialPlatform socialPlatform, String name, String profileImage, String email, Boolean isDeleted) {
         return builder()
                 .socialId(socialId)
                 .socialPlatform(socialPlatform)
@@ -59,12 +62,15 @@ public class User {
                 .build();
     }
 
-    public void modifySocialPlatform(SocialPlatform socialPlatform) {
-        this.socialPlatform = socialPlatform;
-    }
-
     public void modifyNickname(String nickname) { this.nickname = nickname; }
 
     public void modifyDescription(String description) { this.description = description; }
+
+    public void resetDeleteAt() {
+        this.deleteAt = null;
+    }
+    public void setDeleteAt(){
+        this.deleteAt = LocalDateTime.now().plusMinutes(3);
+    }
 
 }
