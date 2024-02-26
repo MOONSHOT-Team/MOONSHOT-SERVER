@@ -27,7 +27,7 @@ public class TaskService implements IndexService {
 
     private final KeyResultRepository keyResultRepository;
     private final TaskRepository taskRepository;
-    private final UserService userService;
+//    private final UserService userService;
 
     public void createTask(final TaskSingleCreateRequestDto request, final Long userId) {
         KeyResult keyResult = keyResultRepository.findKeyResultAndObjective(request.keyResultId())
@@ -72,7 +72,9 @@ public class TaskService implements IndexService {
     public void modifyIdx(final ModifyIndexRequestDto request, final Long userId) {
         Task task = taskRepository.findTaskWithFetchJoin(request.id())
                 .orElseThrow(TaskNotFoundException::new);
-        userService.validateUserAuthorization(task.getKeyResult().getObjective().getUser(), userId);
+        if (task.getKeyResult().getObjective().getUser().getId().equals(userId)) {
+            throw new AccessDeniedException();
+        }
         Long taskCount = taskRepository.countAllByKeyResultId(task.getKeyResult().getId());
         if (isInvalidIdx(taskCount, request.idx())) {
             throw new KeyResultInvalidIndexException();
@@ -97,7 +99,9 @@ public class TaskService implements IndexService {
     public void deleteTask(final Long userId, Long taskId) {
         Task task = taskRepository.findTaskWithFetchJoin(taskId)
                         .orElseThrow(TaskNotFoundException::new);
-        userService.validateUserAuthorization(task.getKeyResult().getObjective().getUser(), userId);
+        if (task.getKeyResult().getObjective().getUser().getId().equals(userId)) {
+            throw new AccessDeniedException();
+        }
         taskRepository.deleteById(taskId);
     }
     

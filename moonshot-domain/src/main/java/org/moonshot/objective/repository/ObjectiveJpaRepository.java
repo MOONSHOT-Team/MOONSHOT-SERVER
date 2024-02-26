@@ -18,6 +18,8 @@ public interface ObjectiveJpaRepository extends JpaRepository<Objective, Long> {
     Optional<Objective> findByIdWithKeyResultsAndTasks(@Param("objectiveId") Long objectiveId);
     @Query("select distinct o from Objective o join fetch o.user where o.user.id = :userId and o.isClosed = false order by o.idx asc")
     List<Objective> findAllByUserId(@Param("userId") Long userId);
+    @Query("select distinct o from Objective o join fetch o.user where o.user.id = :userId")
+    List<Objective> findAllByUser(@Param("userId") Long userId);
     @Modifying(clearAutomatically = true)
     @Query("UPDATE Objective o SET o.idx = o.idx + 1 WHERE o.user.id = :userId")
     void bulkUpdateIdxIncrease(@Param("userId") Long userId);

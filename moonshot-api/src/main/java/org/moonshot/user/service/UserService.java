@@ -5,6 +5,7 @@ import static org.moonshot.util.MDCUtil.get;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,10 @@ import org.moonshot.exception.global.external.discord.ErrorLogAppenderException;
 import org.moonshot.exception.user.UserNotFoundException;
 import org.moonshot.jwt.JwtTokenProvider;
 import org.moonshot.jwt.TokenResponse;
+import org.moonshot.keyresult.model.KeyResult;
+import org.moonshot.objective.model.Objective;
+import org.moonshot.objective.repository.ObjectiveRepository;
+import org.moonshot.objective.service.ObjectiveService;
 import org.moonshot.openfeign.dto.response.google.GoogleInfoResponse;
 import org.moonshot.openfeign.dto.response.google.GoogleTokenResponse;
 import org.moonshot.openfeign.dto.response.kakao.KakaoTokenResponse;
@@ -31,6 +36,7 @@ import org.moonshot.user.model.SocialPlatform;
 import org.moonshot.user.model.User;
 import org.moonshot.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,6 +63,8 @@ public class UserService {
     private String kakaoRedirectUri;
 
     private final UserRepository userRepository;
+    private final ObjectiveService objectiveService;
+
     private final GoogleAuthApiClient googleAuthApiClient;
     private final GoogleApiClient googleApiClient;
     private final KakaoAuthApiClient kakaoAuthApiClient;
@@ -94,9 +102,7 @@ public class UserService {
             sendDiscordAlert(newUser);
         } else {
             user = findUser.get();
-            if (user.getSocialPlatform().equals(SocialPlatform.WITHDRAWAL)) {
-                user.modifySocialPlatform(SocialPlatform.GOOGLE);
-            }
+            user.resetDeleteAt();
         }
         UserAuthentication userAuthentication = new UserAuthentication(user.getId(), null, null);
         TokenResponse token = new TokenResponse(jwtTokenProvider.generateAccessToken(userAuthentication), jwtTokenProvider.generateRefreshToken(userAuthentication));
@@ -126,9 +132,7 @@ public class UserService {
             sendDiscordAlert(newUser);
         } else {
             user = findUser.get();
-            if (user.getSocialPlatform().equals(SocialPlatform.WITHDRAWAL)) {
-                user.modifySocialPlatform(SocialPlatform.KAKAO);
-            }
+            user.resetDeleteAt();
         }
         UserAuthentication userAuthentication = new UserAuthentication(user.getId(), null, null);
         TokenResponse token = new TokenResponse(jwtTokenProvider.generateAccessToken(userAuthentication), jwtTokenProvider.generateRefreshToken(userAuthentication));
@@ -150,7 +154,8 @@ public class UserService {
     public void withdrawal(final Long userId) {
         User user =  userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
-        user.modifySocialPlatform(SocialPlatform.WITHDRAWAL);
+        user.setDeleteAt();
+//        softDeleteUser();
     }
 
     public void modifyProfile(final Long userId, final UserInfoRequest request) {
@@ -185,4 +190,17 @@ public class UserService {
             log.error("{}", e.getErrorType().getMessage());
         }
     }
+
+    public void softDeleteUser(LocalDateTime currentDate) {
+        List<User> expiredUserList = userRepository.findIdByDeletedAtBefore(currentDate);
+        cascadeDelete(expiredUserList);
+        userRepository.deleteAll(expiredUserList);
+    }
+
+    private void cascadeDelete(final List<User> expiredUserList) {
+        expiredUserList.forEach((user) -> {
+            objectiveService.deleteAllObjective(user.getId());
+        });
+    }
+
 }
