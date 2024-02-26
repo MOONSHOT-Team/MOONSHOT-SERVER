@@ -70,14 +70,10 @@ public class ObjectiveService implements IndexService {
         return getObjectiveInDashboard(userId, null);
     }
 
-    public void deleteAllObjective(final Long userId) {
-        List<Objective> objectiveList = objectiveRepository.findAllByUser(userId);
-        objectiveList.forEach((objective) -> {
-            validateUserAuthorization(objective.getUser().getId(), userId);
-
-            keyResultService.deleteKeyResult(objective);
-            objectiveRepository.delete(objective);
-        });
+    public void deleteAllObjective(final List<User> userList) {
+        List<Objective> objectiveList = objectiveRepository.findAllByUserIn(userList);
+        keyResultService.deleteAllKeyResult(objectiveList);
+        objectiveRepository.deleteAllInBatch(objectiveList);
     }
 
     public void modifyObjective(final Long userId, final ModifyObjectiveRequestDto request) {

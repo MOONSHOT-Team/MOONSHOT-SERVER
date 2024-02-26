@@ -2,6 +2,8 @@ package org.moonshot.objective.repository;
 
 import java.util.List;
 import java.util.Optional;
+
+import org.moonshot.keyresult.model.KeyResult;
 import org.moonshot.objective.model.Objective;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -18,8 +20,6 @@ public interface ObjectiveJpaRepository extends JpaRepository<Objective, Long> {
     Optional<Objective> findByIdWithKeyResultsAndTasks(@Param("objectiveId") Long objectiveId);
     @Query("select distinct o from Objective o join fetch o.user where o.user.id = :userId and o.isClosed = false order by o.idx asc")
     List<Objective> findAllByUserId(@Param("userId") Long userId);
-    @Query("select distinct o from Objective o join fetch o.user where o.user.id = :userId")
-    List<Objective> findAllByUser(@Param("userId") Long userId);
     @Modifying(clearAutomatically = true)
     @Query("UPDATE Objective o SET o.idx = o.idx + 1 WHERE o.user.id = :userId")
     void bulkUpdateIdxIncrease(@Param("userId") Long userId);
@@ -30,5 +30,6 @@ public interface ObjectiveJpaRepository extends JpaRepository<Objective, Long> {
     @Modifying(clearAutomatically = true)
     @Query("UPDATE Objective o SET o.idx = o.idx - 1 WHERE o.idx >= :lBound AND o.idx <= :uBound AND o.user.id = :userId AND o.id != :targetId")
     void bulkUpdateIdxDecrease(@Param("lBound") int lowerBound, @Param("uBound") int upperBound, @Param("userId") Long userId, @Param("targetId") Long targetId);
+    List<Objective> findAllByUserIn(List<User> userList);
 
 }

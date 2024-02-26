@@ -155,7 +155,6 @@ public class UserService {
         User user =  userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
         user.setDeleteAt();
-//        softDeleteUser();
     }
 
     public void modifyProfile(final Long userId, final UserInfoRequest request) {
@@ -193,14 +192,10 @@ public class UserService {
 
     public void softDeleteUser(LocalDateTime currentDate) {
         List<User> expiredUserList = userRepository.findIdByDeletedAtBefore(currentDate);
-        cascadeDelete(expiredUserList);
-        userRepository.deleteAll(expiredUserList);
-    }
-
-    private void cascadeDelete(final List<User> expiredUserList) {
-        expiredUserList.forEach((user) -> {
-            objectiveService.deleteAllObjective(user.getId());
-        });
+        if(!expiredUserList.isEmpty()) {
+            objectiveService.deleteAllObjective(expiredUserList);
+            userRepository.deleteAllInBatch(expiredUserList);
+        }
     }
 
 }
