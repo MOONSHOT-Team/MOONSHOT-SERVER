@@ -55,7 +55,7 @@ public class User {
     }
 
     @Builder(builderMethodName = "builderWithSignIn")
-    public static User of(String socialId, SocialPlatform socialPlatform, String name, String profileImage, String email, Boolean isDeleted) {
+    public static User of(String socialId, SocialPlatform socialPlatform, String name, String profileImage, String email) {
         return builder()
                 .socialId(socialId)
                 .socialPlatform(socialPlatform)
