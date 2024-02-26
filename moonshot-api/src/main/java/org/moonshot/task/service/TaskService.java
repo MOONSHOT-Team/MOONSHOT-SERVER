@@ -27,7 +27,6 @@ public class TaskService implements IndexService {
 
     private final KeyResultRepository keyResultRepository;
     private final TaskRepository taskRepository;
-//    private final UserService userService;
 
     public void createTask(final TaskSingleCreateRequestDto request, final Long userId) {
         KeyResult keyResult = keyResultRepository.findKeyResultAndObjective(request.keyResultId())
