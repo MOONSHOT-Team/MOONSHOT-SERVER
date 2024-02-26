@@ -1,0 +1,2 @@
+ALTER TABLE user DROP COLUMN is_deleted;
+ALTER TABLE user ADD COLUMN delete_at DATETIME(6);
