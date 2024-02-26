@@ -13,6 +13,9 @@ import java.util.List;
 @Builder(builderMethodName = "buildWithId")
 public class User {
 
+    // TODO 기획 측 약관 확정 이후 수정 필요
+    private static final Long USER_RETENTION_PERIOD = 14L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
@@ -70,7 +73,7 @@ public class User {
         this.deleteAt = null;
     }
     public void setDeleteAt(){
-        this.deleteAt = LocalDateTime.now().plusMinutes(3);
+        this.deleteAt = LocalDateTime.now().plusDays(USER_RETENTION_PERIOD);
     }
 
 }
