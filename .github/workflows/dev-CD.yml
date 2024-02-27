@@ -18,7 +18,7 @@ jobs:
           distribution: 'corretto'
           java-version: '17'
 
-      - name: application.yaml 생성 및 data.sql 생성
+      - name: application.yml 생성 및 data.sql 생성
         run: |
           cd moonshot-api/src/main/resources
           echo "${{ secrets.DEV_APPLICATION }}" > ./application-dev.yml
