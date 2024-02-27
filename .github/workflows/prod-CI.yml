@@ -5,7 +5,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  prod-build-TEST:
     runs-on: ubuntu-22.04
 
     steps:
