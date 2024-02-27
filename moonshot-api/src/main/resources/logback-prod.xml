@@ -2,7 +2,7 @@
     <property name="LOG_PATTERN"
               value="[%d{yyyy-MM-dd HH:mm:ss}:%-4relative] %green([%thread]) %highlight(%-5level) %boldWhite([%C.%M:%yellow(%L)]) - %msg%n"/>
     <springProperty name="DISCORD_WEBHOOK_URI" source="logging.discord.webhook-uri"/>
-    <springProfile name="deploy">
+    <springProfile name="prod">
         <include resource="console-appender.xml"/>
         <include resource="discord-appender.xml"/>
         <root level="INFO">
