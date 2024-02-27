@@ -18,7 +18,7 @@ jobs:
           distribution: 'corretto'
           java-version: '17'
 
-      - name: application.yaml 생성 및 data.sql 생성
+      - name: application.yml 생성 및 data.sql 생성
         run: |
           cd moonshot-api/src/main/resources
           echo "${{ secrets.APPLICATION }}" > ./application-deploy.yaml
@@ -45,7 +45,7 @@ jobs:
           docker push teammoonshot/server
 
   prod-cd:
-    needs: deploy-ci
+    needs: prod-ci
     runs-on: ubuntu-22.04
 
     steps:
