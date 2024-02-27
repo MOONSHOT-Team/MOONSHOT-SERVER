@@ -21,7 +21,7 @@ jobs:
       - name: application.yaml 생성 및 data.sql 생성
         run: |
           cd moonshot-api/src/main/resources
-          echo "${{ secrets.DEV-APPLICATION }}" > ./application-dev.yml
+          echo "${{ secrets.DEV_APPLICATION }}" > ./application-dev.yml
           echo "${{ secrets.DATA }}" > ./data.sql
 
       - name: build
