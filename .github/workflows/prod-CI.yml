@@ -21,7 +21,7 @@ jobs:
     - name: application.yml 작성
       run: |
           cd moonshot-api/src/main/resources
-          echo "${{ secrets.APPLICATION }}" > ./application-deploy.yml
+          echo "${{ secrets.APPLICATION }}" > ./application-prod.yml
           echo "${{ secrets.DATA }}" > ./data.sql
 
     - name: build
