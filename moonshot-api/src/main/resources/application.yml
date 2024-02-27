@@ -1,0 +1,85 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DATABASE_ENDPOINT_URL}:3306/${DATABASE_NAME}?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: ${DATABASE_USER}
+    password: ${DATABASE_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+        auto_quote_keyword: true
+        default_batch_fetch_size: 10
+    defer-datasource-initialization: false
+    open-in-view: false
+
+  sql:
+    init:
+      mode: never
+
+  config:
+    import: optional:application-secret.properties
+    activate:
+      on-profile: local
+
+  flyway:
+    baseline-on-migrate: true
+    baseline-version: 0
+    enabled: false
+
+google:
+  client-id: ${GOOGLE_CLIENT_ID}
+  redirect-url: ${GOOGLE_URL}
+  client-secret: ${GOOGLE_CLIENT_SECRET}
+  scope: email, profile
+
+kakao:
+  client-id: ${KAKAO_CLIENT_ID}
+  redirect-uri: ${KAKAO_URL}
+
+jwt:
+  secret: ${JWT_SECRET}
+
+redis:
+  host: localhost
+  port: 6379
+
+server:
+  ip: ${SERVER_IP}
+  domain: ${SERVER_DOMAIN}
+
+client:
+  domain:
+    a: ${CLIENT_A_DOMAIN}
+    b: ${CLIENT_B_DOMAIN}
+
+aws:
+  access-key: ${AWS_ACCESS_KEY}
+  secret-key: ${AWS_SECRET_KEY}
+  region: ${AWS_REGION}
+  s3-bucket-name: ${AWS_S3_BUCKET_NAME}
+
+logging:
+  config: classpath:logback-local.xml
+
+springdoc:
+  packages-to-scan: org.moonshot
+  default-consumes-media-type: application/json;charset=UTF-8
+  default-produces-media-type: application/json;charset=UTF-8
+  swagger-ui:
+    tags-sorter: alpha
+    operations-sorter: alpha
+  api-docs:
+    path: /api-docs/json
+    groups:
+      enabled: true
+    cache:
+      disabled: true
+  show-login-endpoint: true
+
+mybatis:
+  mapper-locations: mappers/*.xml

@@ -1,0 +1,31 @@
+name: prod-CI
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  prod-build-TEST:
+    runs-on: ubuntu-22.04
+
+    steps:
+    - name: checkout
+      uses: actions/checkout@v3
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'corretto'
+        java-version: '17'
+
+    - name: application.yaml 작성
+      run: |
+          cd moonshot-api/src/main/resources
+          echo "${{ secrets.APPLICATION }}" > ./application-deploy.yml
+          echo "${{ secrets.DATA }}" > ./data.sql
+
+    - name: build
+      run: |
+          chmod +x gradlew
+          ./gradlew moonshot-api:build -x test
+      shell: bash

@@ -1,0 +1,6 @@
+rootProject.name = 'server'
+include 'moonshot-api'
+include 'moonshot-auth'
+include 'moonshot-domain'
+include 'moonshot-common'
+include 'moonshot-external'

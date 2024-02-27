@@ -1,0 +1,11 @@
+<configuration>
+    <property name="LOG_PATTERN"
+              value="[%d{yyyy-MM-dd}] [%d{HH:mm:ss.SSS}] [%p] ${PID:-} [%F] %M (%L\) : %m%n"/>
+    <springProperty name="DISCORD_WEBHOOK_URI" source="logging.discord.webhook-uri"/>
+    <springProfile name="local">
+        <include resource="console-appender.xml"/>
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+</configuration>
