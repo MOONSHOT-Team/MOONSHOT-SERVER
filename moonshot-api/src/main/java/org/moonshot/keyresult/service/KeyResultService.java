@@ -213,8 +213,9 @@ public class KeyResultService implements IndexService {
     }
 
     private void saveTasks(final KeyResult keyResult, final List<TaskCreateRequestDto> taskList) {
-        for (int i = 0; i < taskList.size(); i++) {
-            TaskCreateRequestDto taskDto = taskList.get(i);
+        List<TaskCreateRequestDto> nonNullTaskList = taskList.stream().filter(Objects::nonNull).toList();
+        for (int i = 0; i < nonNullTaskList.size(); i++) {
+            TaskCreateRequestDto taskDto = nonNullTaskList.get(i);
             if (i != taskDto.idx()) {
                 throw new TaskInvalidIndexException();
             }

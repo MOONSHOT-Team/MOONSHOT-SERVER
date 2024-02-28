@@ -2,10 +2,10 @@ package org.moonshot.task.service;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.moonshot.exception.keyresult.KeyResultInvalidIndexException;
-import org.moonshot.exception.task.TaskNumberExceededException;
 import org.moonshot.exception.global.auth.AccessDeniedException;
+import org.moonshot.exception.keyresult.KeyResultInvalidIndexException;
 import org.moonshot.exception.task.TaskNotFoundException;
+import org.moonshot.exception.task.TaskNumberExceededException;
 import org.moonshot.keyresult.model.KeyResult;
 import org.moonshot.keyresult.repository.KeyResultRepository;
 import org.moonshot.objective.dto.request.ModifyIndexRequestDto;
@@ -14,7 +14,6 @@ import org.moonshot.task.dto.request.TaskCreateRequestDto;
 import org.moonshot.task.dto.request.TaskSingleCreateRequestDto;
 import org.moonshot.task.model.Task;
 import org.moonshot.task.repository.TaskRepository;
-import org.moonshot.user.service.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +26,6 @@ public class TaskService implements IndexService {
 
     private final KeyResultRepository keyResultRepository;
     private final TaskRepository taskRepository;
-
     public void createTask(final TaskSingleCreateRequestDto request, final Long userId) {
         KeyResult keyResult = keyResultRepository.findKeyResultAndObjective(request.keyResultId())
                 .orElseThrow();
