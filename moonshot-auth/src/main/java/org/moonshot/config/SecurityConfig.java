@@ -2,6 +2,9 @@ package org.moonshot.config;
 
 import lombok.RequiredArgsConstructor;
 import org.moonshot.constants.WhiteListConstants;
+import org.moonshot.filter.MoonshotExceptionHandler;
+import org.moonshot.security.JwtAuthenticationFilter;
+import org.moonshot.security.JwtExceptionFilter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,9 +23,9 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final org.moonshot.server.global.auth.security.JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final org.moonshot.server.global.auth.filter.MoonshotExceptionHandler moonshotExceptionHandler;
-    private final org.moonshot.server.global.auth.security.JwtExceptionFilter jwtExceptionFilter;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final MoonshotExceptionHandler moonshotExceptionHandler;
+    private final JwtExceptionFilter jwtExceptionFilter;
 
     @Value("${server.ip}")
     private String serverIp;
@@ -55,7 +58,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
                         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class))
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
-                        http.addFilterBefore(jwtExceptionFilter, org.moonshot.server.global.auth.security.JwtAuthenticationFilter.class))
+                        http.addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter.class))
                 .build();
     }
 

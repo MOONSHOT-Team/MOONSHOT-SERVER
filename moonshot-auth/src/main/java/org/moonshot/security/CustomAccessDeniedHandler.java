@@ -1,4 +1,4 @@
-package org.moonshot.server.global.auth.security;
+package org.moonshot.security;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

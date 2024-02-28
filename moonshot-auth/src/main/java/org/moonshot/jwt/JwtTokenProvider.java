@@ -94,10 +94,10 @@ public class JwtTokenProvider {
         return Keys.hmacShaKeyFor(encodedKey.getBytes());
     }
 
-    public org.moonshot.server.global.auth.jwt.JwtValidationType validateAccessToken(String token) {
+    public JwtValidationType validateAccessToken(String token) {
         try {
             final Claims claims = getBody(token);
-            return org.moonshot.server.global.auth.jwt.JwtValidationType.VALID_JWT;
+            return JwtValidationType.VALID_JWT;
         } catch (MalformedJwtException e) {
             throw new MoonshotException(ErrorType.WRONG_TYPE_TOKEN_ERROR);
         } catch (ExpiredJwtException e) {
