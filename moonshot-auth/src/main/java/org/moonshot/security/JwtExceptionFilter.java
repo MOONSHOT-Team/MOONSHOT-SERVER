@@ -1,4 +1,4 @@
-package org.moonshot.server.global.auth.security;
+package org.moonshot.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
