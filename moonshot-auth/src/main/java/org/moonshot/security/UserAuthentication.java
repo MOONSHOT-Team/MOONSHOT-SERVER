@@ -1,4 +1,4 @@
-package org.moonshot.server.global.auth.security;
+package org.moonshot.security;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;

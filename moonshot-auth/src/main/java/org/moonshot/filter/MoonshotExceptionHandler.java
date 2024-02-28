@@ -1,4 +1,4 @@
-package org.moonshot.server.global.auth.filter;
+package org.moonshot.filter;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

@@ -1,4 +1,4 @@
-package org.moonshot.server.global.auth.security;
+package org.moonshot.security;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.moonshot.constants.WhiteListConstants;
 import org.moonshot.jwt.JwtTokenProvider;
-import org.moonshot.server.global.auth.jwt.JwtValidationType;
+import org.moonshot.jwt.JwtValidationType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
@@ -35,7 +35,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String token = getJwtFromRequest(request);
         if (jwtTokenProvider.validateAccessToken(token) == JwtValidationType.VALID_JWT) {
             Long userId = jwtTokenProvider.getUserFromJwt(token);
-            org.moonshot.server.global.auth.security.UserAuthentication authentication = new org.moonshot.server.global.auth.security.UserAuthentication(userId, null, null);
+            UserAuthentication authentication = new UserAuthentication(userId, null, null);
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }

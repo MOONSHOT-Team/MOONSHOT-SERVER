@@ -1,4 +1,4 @@
-package org.moonshot.server.global.auth.jwt;
+package org.moonshot.jwt;
 
 public enum JwtValidationType {
     VALID_JWT,
