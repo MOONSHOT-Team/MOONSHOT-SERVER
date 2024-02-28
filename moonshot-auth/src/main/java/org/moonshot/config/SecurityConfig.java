@@ -32,6 +32,8 @@ public class SecurityConfig {
     private String clientDomainA;
     @Value("${client.domain.b}")
     private String clientDomainB;
+    @Value("${client.domain.c}")
+    private String clientDomainC;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -71,6 +73,7 @@ public class SecurityConfig {
         config.addAllowedOrigin(serverDomain);
         config.addAllowedOrigin(clientDomainA);
         config.addAllowedOrigin(clientDomainB);
+        config.addAllowedOrigin(clientDomainC);
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         config.addExposedHeader("Authorization");
