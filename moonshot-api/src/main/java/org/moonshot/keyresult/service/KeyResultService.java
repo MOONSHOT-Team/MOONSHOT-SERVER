@@ -4,6 +4,7 @@ import static org.moonshot.keyresult.service.validator.KeyResultValidator.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.moonshot.common.model.Period;
@@ -46,8 +47,9 @@ public class KeyResultService implements IndexService {
     private final LogRepository logRepository;
 
     public void createInitKRWithObjective(final Objective objective, final List<KeyResultCreateRequestInfoDto> requests) {
-        for (int i = 0; i < requests.size(); i++) {
-            KeyResultCreateRequestInfoDto dto = requests.get(i);
+        List<KeyResultCreateRequestInfoDto> nonNullRequests = requests.stream().filter(Objects::nonNull).toList();
+        for (int i = 0; i < nonNullRequests.size(); i++) {
+            KeyResultCreateRequestInfoDto dto = nonNullRequests.get(i);
             validateKeyResultIndex(i, dto.idx());
             validateKRPeriodWithInObjPeriod(objective.getPeriod(), dto.startAt(), dto.expireAt());
 
