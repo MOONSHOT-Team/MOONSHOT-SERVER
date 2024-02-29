@@ -2,6 +2,7 @@ package org.moonshot.keyresult.service;
 
 import static org.moonshot.keyresult.service.validator.KeyResultValidator.*;
 import static org.moonshot.log.service.validator.LogValidator.validateLogNum;
+import static org.moonshot.task.service.validator.TaskValidator.validateTaskIndex;
 import static org.moonshot.user.service.validator.UserValidator.validateUserAuthorization;
 
 import java.time.LocalDate;
@@ -14,7 +15,6 @@ import org.moonshot.exception.keyresult.KeyResultNotFoundException;
 import org.moonshot.exception.keyresult.KeyResultRequiredException;
 import org.moonshot.exception.log.LogNotFoundException;
 import org.moonshot.exception.objective.ObjectiveNotFoundException;
-import org.moonshot.exception.task.TaskInvalidIndexException;
 import org.moonshot.keyresult.dto.request.KeyResultCreateRequestDto;
 import org.moonshot.keyresult.dto.request.KeyResultCreateRequestInfoDto;
 import org.moonshot.keyresult.dto.request.KeyResultModifyRequestDto;
@@ -218,9 +218,7 @@ public class KeyResultService implements IndexService {
         List<TaskCreateRequestDto> nonNullTaskList = taskList.stream().filter(Objects::nonNull).toList();
         for (int i = 0; i < nonNullTaskList.size(); i++) {
             TaskCreateRequestDto taskDto = nonNullTaskList.get(i);
-            if (i != taskDto.idx()) {
-                throw new TaskInvalidIndexException();
-            }
+            validateTaskIndex(i, taskDto.idx());
             taskService.saveTask(keyResult, taskDto);
         }
     }
