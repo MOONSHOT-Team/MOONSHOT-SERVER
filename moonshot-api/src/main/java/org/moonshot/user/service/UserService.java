@@ -11,7 +11,6 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.moonshot.discord.DiscordAppender;
-import org.moonshot.exception.global.auth.AccessDeniedException;
 import org.moonshot.exception.global.external.discord.ErrorLogAppenderException;
 import org.moonshot.exception.user.UserNotFoundException;
 import org.moonshot.jwt.JwtTokenProvider;
@@ -147,6 +146,7 @@ public class UserService {
         User user =  userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
         validateUserAuthorization(user.getId(), userId);
+
         jwtTokenProvider.deleteRefreshToken(userId);
     }
 
@@ -154,6 +154,7 @@ public class UserService {
         User user =  userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
         validateUserAuthorization(user.getId(), userId);
+
         user.setDeleteAt();
     }
 
@@ -161,6 +162,7 @@ public class UserService {
         User user =  userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
         validateUserAuthorization(user.getId(), userId);
+
         if (request.nickname() != null) {
             user.modifyNickname(request.nickname());
         }
