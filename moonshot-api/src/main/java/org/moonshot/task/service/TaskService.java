@@ -2,10 +2,7 @@ package org.moonshot.task.service;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.moonshot.exception.global.auth.AccessDeniedException;
-import org.moonshot.exception.keyresult.KeyResultInvalidIndexException;
 import org.moonshot.exception.task.TaskNotFoundException;
-import org.moonshot.exception.task.TaskNumberExceededException;
 import org.moonshot.keyresult.model.KeyResult;
 import org.moonshot.keyresult.repository.KeyResultRepository;
 import org.moonshot.objective.dto.request.ModifyIndexRequestDto;
@@ -17,29 +14,26 @@ import org.moonshot.task.repository.TaskRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.moonshot.task.service.validator.TaskValidator.*;
+import static org.moonshot.user.service.validator.UserValidator.validateUserAuthorization;
+import static org.moonshot.validator.IndexValidator.isIndexIncreased;
+import static org.moonshot.validator.IndexValidator.isSameIndex;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class TaskService implements IndexService {
-
-    private static final int ACTIVE_TASK_NUMBER = 3;
 
     private final KeyResultRepository keyResultRepository;
     private final TaskRepository taskRepository;
     public void createTask(final TaskSingleCreateRequestDto request, final Long userId) {
         KeyResult keyResult = keyResultRepository.findKeyResultAndObjective(request.keyResultId())
                 .orElseThrow();
-        if (!keyResult.getObjective().getUser().getId().equals(userId)) {
-            throw new AccessDeniedException();
-        }
-        List<Task> taskList = taskRepository.findAllByKeyResultOrderByIdx(keyResult);
+        validateUserAuthorization(keyResult.getObjective().getUser().getId(), userId);
 
-        if (taskList.size() >= ACTIVE_TASK_NUMBER) {
-            throw new TaskNumberExceededException();
-        }
-        if (request.idx() > taskList.size()) {
-            throw new KeyResultInvalidIndexException();
-        }
+        List<Task> taskList = taskRepository.findAllByKeyResultOrderByIdx(keyResult);
+        validateActiveTaskSizeExceeded(taskList.size());
+        validateIndexUnderMaximum(request.idx(), taskList.size());
 
         for (int i = request.idx(); i < taskList.size(); i++) {
             taskList.get(i).incrementIdx();
@@ -69,36 +63,28 @@ public class TaskService implements IndexService {
     public void modifyIdx(final ModifyIndexRequestDto request, final Long userId) {
         Task task = taskRepository.findTaskWithFetchJoin(request.id())
                 .orElseThrow(TaskNotFoundException::new);
-        if (task.getKeyResult().getObjective().getUser().getId().equals(userId)) {
-            throw new AccessDeniedException();
-        }
+        validateUserAuthorization(task.getKeyResult().getObjective().getUser().getId(), userId);
+
         Long taskCount = taskRepository.countAllByKeyResultId(task.getKeyResult().getId());
-        if (isInvalidIdx(taskCount, request.idx())) {
-            throw new KeyResultInvalidIndexException();
-        }
+        validateIndex(taskCount, request.idx());
         Integer prevIdx = task.getIdx();
-        if (prevIdx.equals(request.idx())) {
+        if (isSameIndex(prevIdx, request.idx())) {
             return;
         }
 
         task.modifyIdx(request.idx());
-        if (prevIdx < request.idx()) {
+        if (isIndexIncreased(prevIdx, request.idx())) {
             taskRepository.bulkUpdateTaskIdxDecrease(prevIdx + 1, request.idx(), task.getKeyResult().getId(), task.getId());
         } else {
             taskRepository.bulkUpdateTaskIdxIncrease(request.idx(), prevIdx, task.getKeyResult().getId(), task.getId());
         }
     }
 
-    private boolean isInvalidIdx(final Long taskCount, final int idx) {
-        return (taskCount <= idx) || (idx < 0);
-    }
-
     public void deleteTask(final Long userId, Long taskId) {
         Task task = taskRepository.findTaskWithFetchJoin(taskId)
                         .orElseThrow(TaskNotFoundException::new);
-        if (task.getKeyResult().getObjective().getUser().getId().equals(userId)) {
-            throw new AccessDeniedException();
-        }
+        validateUserAuthorization(task.getKeyResult().getObjective().getUser().getId(), userId);
+
         taskRepository.deleteById(taskId);
     }
     

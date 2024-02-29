@@ -1,6 +1,9 @@
 package org.moonshot.objective.service;
 
 import static org.moonshot.objective.service.validator.ObjectiveValidator.*;
+import static org.moonshot.user.service.validator.UserValidator.*;
+import static org.moonshot.validator.IndexValidator.isIndexIncreased;
+import static org.moonshot.validator.IndexValidator.isSameIndex;
 
 import java.time.LocalDate;
 import java.util.Comparator;
@@ -13,7 +16,6 @@ import org.moonshot.common.model.Period;
 import org.moonshot.exception.objective.DateInputRequiredException;
 import org.moonshot.exception.objective.InvalidExpiredAtException;
 import org.moonshot.exception.objective.ObjectiveNotFoundException;
-import org.moonshot.exception.objective.ObjectiveNumberExceededException;
 import org.moonshot.exception.user.UserNotFoundException;
 import org.moonshot.keyresult.service.KeyResultService;
 import org.moonshot.objective.dto.request.ModifyIndexRequestDto;
@@ -34,8 +36,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ObjectiveService implements IndexService {
 
-    private static final int ACTIVE_OBJECTIVE_NUMBER = 10;
-
     private final KeyResultService keyResultService;
     private final UserRepository userRepository;
     private final ObjectiveRepository objectiveRepository;
@@ -45,9 +45,7 @@ public class ObjectiveService implements IndexService {
                 .orElseThrow(UserNotFoundException::new);
 
         List<Objective> objectives = objectiveRepository.findAllByUserId(userId);
-        if (objectives.size() >= ACTIVE_OBJECTIVE_NUMBER) {
-            throw new ObjectiveNumberExceededException();
-        }
+        validateActiveObjectiveSizeExceeded(objectives.size());
         objectiveRepository.bulkUpdateIdxIncrease(userId);
 
         Objective newObjective = objectiveRepository.save(Objective.builder()

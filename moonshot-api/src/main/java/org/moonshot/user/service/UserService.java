@@ -1,5 +1,6 @@
 package org.moonshot.user.service;
 
+import static org.moonshot.user.service.validator.UserValidator.*;
 import static org.moonshot.util.MDCUtil.USER_REQUEST_ORIGIN;
 import static org.moonshot.util.MDCUtil.get;
 
@@ -10,7 +11,6 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.moonshot.discord.DiscordAppender;
-import org.moonshot.exception.global.auth.AccessDeniedException;
 import org.moonshot.exception.global.external.discord.ErrorLogAppenderException;
 import org.moonshot.exception.user.UserNotFoundException;
 import org.moonshot.jwt.JwtTokenProvider;
@@ -85,7 +85,7 @@ public class UserService {
         GoogleInfoResponse userResponse = googleApiClient.googleInfo("Bearer " + tokenResponse.accessToken());
         Optional<User> findUser = userRepository.findUserBySocialId(userResponse.sub());
         User user;
-        if (findUser.isEmpty()) {
+        if (isNewUser(findUser)) {
             User newUser = userRepository.save(User.builderWithSignIn()
                             .socialId(userResponse.sub())
                             .socialPlatform(request.socialPlatform())
@@ -115,7 +115,7 @@ public class UserService {
                 "Bearer " + tokenResponse.accessToken());
         Optional<User> findUser = userRepository.findUserBySocialId(userResponse.id());
         User user;
-        if (findUser.isEmpty()) {
+        if (isNewUser(findUser)) {
             User newUser = userRepository.save(User.builderWithSignIn()
                             .socialId(userResponse.id())
                             .socialPlatform(request.socialPlatform())
@@ -143,29 +143,31 @@ public class UserService {
     }
 
     public void logout(final Long userId) {
+        User user =  userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+        validateUserAuthorization(user.getId(), userId);
+
         jwtTokenProvider.deleteRefreshToken(userId);
     }
 
     public void withdrawal(final Long userId) {
         User user =  userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
+        validateUserAuthorization(user.getId(), userId);
+
         user.setDeleteAt();
     }
 
     public void modifyProfile(final Long userId, final UserInfoRequest request) {
         User user =  userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
-        if (request.nickname() != null) {
+        validateUserAuthorization(user.getId(), userId);
+
+        if (hasChange(request.nickname())) {
             user.modifyNickname(request.nickname());
         }
-        if (request.description() != null) {
+        if (hasChange(request.description())) {
             user.modifyDescription(request.description());
-        }
-    }
-
-    public void validateUserAuthorization(final User user, final Long userId) {
-        if (!user.getId().equals(userId)) {
-            throw new AccessDeniedException();
         }
     }
 

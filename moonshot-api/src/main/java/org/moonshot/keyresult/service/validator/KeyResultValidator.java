@@ -3,21 +3,13 @@ package org.moonshot.keyresult.service.validator;
 import java.time.LocalDate;
 import java.util.List;
 import org.moonshot.common.model.Period;
-import org.moonshot.exception.global.auth.AccessDeniedException;
 import org.moonshot.exception.keyresult.KeyResultInvalidIndexException;
 import org.moonshot.exception.keyresult.KeyResultInvalidPeriodException;
 import org.moonshot.exception.keyresult.KeyResultNumberExceededException;
-import org.moonshot.exception.log.InvalidLogValueException;
 
 public class KeyResultValidator {
 
     private static final int ACTIVE_KEY_RESULT_NUMBER = 3;
-
-    public static void validateUserAuthorization(final Long userEntityId, final Long userId) {
-        if (!userEntityId.equals(userId)) {
-            throw new AccessDeniedException();
-        }
-    }
 
     public static void validateKeyResultIndex(final int index, final int requestIndex) {
         if (index != requestIndex) {
@@ -44,14 +36,8 @@ public class KeyResultValidator {
         }
     }
 
-    public static void validateLogValue(Long requestTarget, Long originTarget) {
-        if (requestTarget.equals(originTarget)) {
-            throw new InvalidLogValueException();
-        }
-    }
-
     public static void validateKeyResultPeriod(final Period objPeriod, final LocalDate start, final LocalDate end) {
-        if (start.isAfter(end) || start.isBefore(objPeriod.getStartAt()) || start.isAfter(objPeriod.getStartAt())
+        if (start.isAfter(end) || start.isBefore(objPeriod.getStartAt()) || start.isAfter(objPeriod.getExpireAt())
             || end.isBefore(start) || end.isBefore(objPeriod.getStartAt()) || end.isAfter(objPeriod.getExpireAt())) {
             throw new KeyResultInvalidPeriodException();
         }
