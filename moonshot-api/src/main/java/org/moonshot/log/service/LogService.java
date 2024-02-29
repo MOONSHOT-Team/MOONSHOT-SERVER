@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.moonshot.exception.keyresult.KeyResultNotFoundException;
+import org.moonshot.exception.log.InvalidLogValueException;
 import org.moonshot.keyresult.dto.request.KeyResultCreateRequestDto;
 import org.moonshot.keyresult.dto.request.KeyResultCreateRequestInfoDto;
 import org.moonshot.keyresult.dto.request.KeyResultModifyRequestDto;
@@ -41,7 +42,10 @@ public class LogService {
         validateUserAuthorization(keyResult.getObjective().getUser().getId(), userId);
         Optional<Log> prevLog = logRepository.findLatestLogByKeyResultId(LogState.RECORD, request.keyResultId());
         long prevNum = -1;
-        prevLog.ifPresent(log -> validateLogNum(request.logNum(), log.getCurrNum()));
+        if (prevLog.isPresent()) {
+            prevNum = prevLog.get().getCurrNum();
+            validateLogNum(request.logNum(), prevNum);
+        }
         Log log = logRepository.save(Log.builder()
                 .date(LocalDateTime.now())
                 .state(LogState.RECORD)
