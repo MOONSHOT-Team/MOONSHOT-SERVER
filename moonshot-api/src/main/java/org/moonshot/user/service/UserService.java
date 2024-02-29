@@ -1,5 +1,6 @@
 package org.moonshot.user.service;
 
+import static org.moonshot.user.service.validator.UserValidator.validateUserAuthorization;
 import static org.moonshot.util.MDCUtil.USER_REQUEST_ORIGIN;
 import static org.moonshot.util.MDCUtil.get;
 
@@ -143,29 +144,28 @@ public class UserService {
     }
 
     public void logout(final Long userId) {
+        User user =  userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+        validateUserAuthorization(user.getId(), userId);
         jwtTokenProvider.deleteRefreshToken(userId);
     }
 
     public void withdrawal(final Long userId) {
         User user =  userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
+        validateUserAuthorization(user.getId(), userId);
         user.setDeleteAt();
     }
 
     public void modifyProfile(final Long userId, final UserInfoRequest request) {
         User user =  userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
+        validateUserAuthorization(user.getId(), userId);
         if (request.nickname() != null) {
             user.modifyNickname(request.nickname());
         }
         if (request.description() != null) {
             user.modifyDescription(request.description());
-        }
-    }
-
-    public void validateUserAuthorization(final User user, final Long userId) {
-        if (!user.getId().equals(userId)) {
-            throw new AccessDeniedException();
         }
     }
 
