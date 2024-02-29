@@ -1,6 +1,7 @@
 package org.moonshot.keyresult.service;
 
 import static org.moonshot.keyresult.service.validator.KeyResultValidator.*;
+import static org.moonshot.log.service.validator.LogValidator.validateLogNum;
 import static org.moonshot.user.service.validator.UserValidator.validateUserAuthorization;
 
 import java.time.LocalDate;
@@ -150,7 +151,7 @@ public class KeyResultService implements IndexService {
         }
 
         Log updateLog = logService.createUpdateLog(request, keyResult.getId());
-        validateLogValue(request.target(), updateLog.getKeyResult().getTarget());
+        validateLogNum(request.target(), updateLog.getKeyResult().getTarget());
 
         Log prevLog = logRepository.findLatestLogByKeyResultId(LogState.RECORD, request.keyResultId())
                 .orElseThrow(LogNotFoundException::new);

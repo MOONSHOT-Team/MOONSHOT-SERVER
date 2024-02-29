@@ -3,11 +3,9 @@ package org.moonshot.keyresult.service.validator;
 import java.time.LocalDate;
 import java.util.List;
 import org.moonshot.common.model.Period;
-import org.moonshot.exception.global.auth.AccessDeniedException;
 import org.moonshot.exception.keyresult.KeyResultInvalidIndexException;
 import org.moonshot.exception.keyresult.KeyResultInvalidPeriodException;
 import org.moonshot.exception.keyresult.KeyResultNumberExceededException;
-import org.moonshot.exception.log.InvalidLogValueException;
 
 public class KeyResultValidator {
 
@@ -35,12 +33,6 @@ public class KeyResultValidator {
     public static void validateIndexUnderMaximum(final int requestIndex, final int totalKRListSize) {
         if (requestIndex > totalKRListSize) {
             throw new KeyResultInvalidIndexException();
-        }
-    }
-
-    public static void validateLogValue(Long requestTarget, Long originTarget) {
-        if (requestTarget.equals(originTarget)) {
-            throw new InvalidLogValueException();
         }
     }
 
