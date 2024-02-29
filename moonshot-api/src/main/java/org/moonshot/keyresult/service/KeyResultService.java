@@ -1,6 +1,11 @@
 package org.moonshot.keyresult.service;
 
 import static org.moonshot.keyresult.service.validator.KeyResultValidator.*;
+import static org.moonshot.log.service.validator.LogValidator.validateLogNum;
+import static org.moonshot.task.service.validator.TaskValidator.validateTaskIndex;
+import static org.moonshot.user.service.validator.UserValidator.validateUserAuthorization;
+import static org.moonshot.validator.IndexValidator.isIndexIncreased;
+import static org.moonshot.validator.IndexValidator.isSameIndex;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -12,7 +17,6 @@ import org.moonshot.exception.keyresult.KeyResultNotFoundException;
 import org.moonshot.exception.keyresult.KeyResultRequiredException;
 import org.moonshot.exception.log.LogNotFoundException;
 import org.moonshot.exception.objective.ObjectiveNotFoundException;
-import org.moonshot.exception.task.TaskInvalidIndexException;
 import org.moonshot.keyresult.dto.request.KeyResultCreateRequestDto;
 import org.moonshot.keyresult.dto.request.KeyResultCreateRequestInfoDto;
 import org.moonshot.keyresult.dto.request.KeyResultModifyRequestDto;
@@ -149,13 +153,13 @@ public class KeyResultService implements IndexService {
         }
 
         Log updateLog = logService.createUpdateLog(request, keyResult.getId());
-        validateLogValue(request.target(), updateLog.getKeyResult().getTarget());
+        validateLogNum(request.target(), updateLog.getKeyResult().getTarget());
 
-        Log prevLog = logRepository.findLatestLogByKeyResultId(LogState.RECORD, request.keyResultId())
-                .orElseThrow(LogNotFoundException::new);
+        Optional<Log> prevLog = logRepository.findLatestLogByKeyResultId(LogState.RECORD, request.keyResultId());
         keyResult.modifyTarget(request.target());
-        keyResult.modifyProgress(logService.calculateKRProgressBar(prevLog, keyResult.getTarget()));
-
+        if(prevLog.isPresent()) {
+            keyResult.modifyProgress(logService.calculateKRProgressBar(prevLog.get(), keyResult.getTarget()));
+        }
         short progress = logService.calculateOProgressBar(keyResult.getObjective());
         keyResult.getObjective().modifyProgress(progress);
 
@@ -176,12 +180,12 @@ public class KeyResultService implements IndexService {
         validateIndex(krCount, request.idx());
 
         Integer prevIdx = keyResult.getIdx();
-        if (prevIdx.equals(request.idx())) {
+        if (isSameIndex(prevIdx, request.idx())) {
             return;
         }
 
         keyResult.modifyIdx(request.idx());
-        if (prevIdx < request.idx()) {
+        if (isIndexIncreased(prevIdx, request.idx())) {
             keyResultRepository.bulkUpdateIdxDecrease(prevIdx + 1, request.idx(), keyResult.getObjective().getId(), keyResult.getId());
         } else {
             keyResultRepository.bulkUpdateIdxIncrease(request.idx(), prevIdx, keyResult.getObjective().getId(), keyResult.getId());
@@ -216,9 +220,7 @@ public class KeyResultService implements IndexService {
         List<TaskCreateRequestDto> nonNullTaskList = taskList.stream().filter(Objects::nonNull).toList();
         for (int i = 0; i < nonNullTaskList.size(); i++) {
             TaskCreateRequestDto taskDto = nonNullTaskList.get(i);
-            if (i != taskDto.idx()) {
-                throw new TaskInvalidIndexException();
-            }
+            validateTaskIndex(i, taskDto.idx());
             taskService.saveTask(keyResult, taskDto);
         }
     }

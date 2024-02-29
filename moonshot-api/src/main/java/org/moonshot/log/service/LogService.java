@@ -5,9 +5,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.moonshot.exception.log.InvalidLogValueException;
-import org.moonshot.exception.global.auth.AccessDeniedException;
 import org.moonshot.exception.keyresult.KeyResultNotFoundException;
+import org.moonshot.exception.log.InvalidLogValueException;
 import org.moonshot.keyresult.dto.request.KeyResultCreateRequestDto;
 import org.moonshot.keyresult.dto.request.KeyResultCreateRequestInfoDto;
 import org.moonshot.keyresult.dto.request.KeyResultModifyRequestDto;
@@ -23,6 +22,12 @@ import org.moonshot.objective.model.Objective;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.moonshot.keyresult.service.validator.KeyResultValidator.isKeyResultAchieved;
+import static org.moonshot.log.service.validator.LogValidator.isCreateLog;
+import static org.moonshot.log.service.validator.LogValidator.validateLogNum;
+import static org.moonshot.user.service.validator.UserValidator.validateUserAuthorization;
+
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -34,16 +39,12 @@ public class LogService {
     public Optional<AchieveResponseDto> createRecordLog(final Long userId, final LogCreateRequestDto request) {
         KeyResult keyResult = keyResultRepository.findKeyResultAndObjective(request.keyResultId())
                 .orElseThrow(KeyResultNotFoundException::new);
-        if (!keyResult.getObjective().getUser().getId().equals(userId)) {
-            throw new AccessDeniedException();
-        }
+        validateUserAuthorization(keyResult.getObjective().getUser().getId(), userId);
         Optional<Log> prevLog = logRepository.findLatestLogByKeyResultId(LogState.RECORD, request.keyResultId());
         long prevNum = -1;
         if (prevLog.isPresent()) {
             prevNum = prevLog.get().getCurrNum();
-            if(request.logNum() == prevNum) {
-                throw new InvalidLogValueException();
-            }
+            validateLogNum(request.logNum(), prevNum);
         }
         Log log = logRepository.save(Log.builder()
                 .date(LocalDateTime.now())
@@ -55,7 +56,7 @@ public class LogService {
                 .build());
         keyResult.modifyProgress(calculateKRProgressBar(log, keyResult.getTarget()));
         keyResult.getObjective().modifyProgress(calculateOProgressBar(keyResult.getObjective()));
-        if (keyResult.getObjective().getProgress() == 100) {
+        if (isKeyResultAchieved(keyResult.getObjective().getProgress())) {
             return Optional.of(AchieveResponseDto.of(keyResult.getObjective().getId(), keyResult.getObjective().getUser().getNickname(), calculateOProgressBar(keyResult.getObjective())));
         }
         return Optional.empty();
@@ -116,7 +117,7 @@ public class LogService {
     }
 
     private String setTitle(final long prevNum, final long currNum, final Log log, final KeyResult keyResult) {
-        if (log.getState() == LogState.CREATE) {
+        if (isCreateLog(log.getState())) {
             return keyResult.getTitle() + " : " + keyResult.getTarget() + keyResult.getMetric();
         } else {
             return (prevNum == -1 ? "0" : NumberFormat.getNumberInstance().format(prevNum)) + keyResult.getMetric()
