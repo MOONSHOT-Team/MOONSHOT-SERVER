@@ -4,6 +4,8 @@ import static org.moonshot.keyresult.service.validator.KeyResultValidator.*;
 import static org.moonshot.log.service.validator.LogValidator.validateLogNum;
 import static org.moonshot.task.service.validator.TaskValidator.validateTaskIndex;
 import static org.moonshot.user.service.validator.UserValidator.validateUserAuthorization;
+import static org.moonshot.validator.IndexValidator.isIndexIncreased;
+import static org.moonshot.validator.IndexValidator.isSameIndex;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -178,12 +180,12 @@ public class KeyResultService implements IndexService {
         validateIndex(krCount, request.idx());
 
         Integer prevIdx = keyResult.getIdx();
-        if (prevIdx.equals(request.idx())) {
+        if (isSameIndex(prevIdx, request.idx())) {
             return;
         }
 
         keyResult.modifyIdx(request.idx());
-        if (prevIdx < request.idx()) {
+        if (isIndexIncreased(prevIdx, request.idx())) {
             keyResultRepository.bulkUpdateIdxDecrease(prevIdx + 1, request.idx(), keyResult.getObjective().getId(), keyResult.getId());
         } else {
             keyResultRepository.bulkUpdateIdxIncrease(request.idx(), prevIdx, keyResult.getObjective().getId(), keyResult.getId());
