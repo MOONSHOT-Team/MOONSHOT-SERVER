@@ -155,11 +155,11 @@ public class KeyResultService implements IndexService {
         Log updateLog = logService.createUpdateLog(request, keyResult.getId());
         validateLogNum(request.target(), updateLog.getKeyResult().getTarget());
 
-        Log prevLog = logRepository.findLatestLogByKeyResultId(LogState.RECORD, request.keyResultId())
-                .orElseThrow(LogNotFoundException::new);
+        Optional<Log> prevLog = logRepository.findLatestLogByKeyResultId(LogState.RECORD, request.keyResultId());
         keyResult.modifyTarget(request.target());
-        keyResult.modifyProgress(logService.calculateKRProgressBar(prevLog, keyResult.getTarget()));
-
+        if(prevLog.isPresent()) {
+            keyResult.modifyProgress(logService.calculateKRProgressBar(prevLog.get(), keyResult.getTarget()));
+        }
         short progress = logService.calculateOProgressBar(keyResult.getObjective());
         keyResult.getObjective().modifyProgress(progress);
 

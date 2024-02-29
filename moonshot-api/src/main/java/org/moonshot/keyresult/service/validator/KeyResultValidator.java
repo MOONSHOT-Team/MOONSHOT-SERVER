@@ -37,7 +37,7 @@ public class KeyResultValidator {
     }
 
     public static void validateKeyResultPeriod(final Period objPeriod, final LocalDate start, final LocalDate end) {
-        if (start.isAfter(end) || start.isBefore(objPeriod.getStartAt()) || start.isAfter(objPeriod.getStartAt())
+        if (start.isAfter(end) || start.isBefore(objPeriod.getStartAt()) || start.isAfter(objPeriod.getExpireAt())
             || end.isBefore(start) || end.isBefore(objPeriod.getStartAt()) || end.isAfter(objPeriod.getExpireAt())) {
             throw new KeyResultInvalidPeriodException();
         }
