@@ -1,6 +1,7 @@
 package org.moonshot.keyresult.service;
 
 import static org.moonshot.keyresult.service.validator.KeyResultValidator.*;
+import static org.moonshot.user.service.validator.UserValidator.validateUserAuthorization;
 
 import java.time.LocalDate;
 import java.util.List;

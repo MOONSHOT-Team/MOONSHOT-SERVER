@@ -1,6 +1,7 @@
 package org.moonshot.objective.service;
 
 import static org.moonshot.objective.service.validator.ObjectiveValidator.*;
+import static org.moonshot.user.service.validator.UserValidator.*;
 
 import java.time.LocalDate;
 import java.util.Comparator;

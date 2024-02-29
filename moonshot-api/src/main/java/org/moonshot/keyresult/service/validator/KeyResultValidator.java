@@ -13,12 +13,6 @@ public class KeyResultValidator {
 
     private static final int ACTIVE_KEY_RESULT_NUMBER = 3;
 
-    public static void validateUserAuthorization(final Long userEntityId, final Long userId) {
-        if (!userEntityId.equals(userId)) {
-            throw new AccessDeniedException();
-        }
-    }
-
     public static void validateKeyResultIndex(final int index, final int requestIndex) {
         if (index != requestIndex) {
             throw new KeyResultInvalidIndexException();

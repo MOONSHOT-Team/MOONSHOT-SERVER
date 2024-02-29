@@ -5,12 +5,6 @@ import org.moonshot.exception.objective.ObjectiveInvalidIndexException;
 
 public class ObjectiveValidator {
 
-    public static void validateUserAuthorization(Long userEntityId, Long userId) {
-        if (!userEntityId.equals(userId)) {
-            throw new AccessDeniedException();
-        }
-    }
-
     public static void validateIndexWithInRange(final Long objectiveCount, final int idx) {
         if ((objectiveCount <= idx) || (idx < 0)) {
             throw new ObjectiveInvalidIndexException();
