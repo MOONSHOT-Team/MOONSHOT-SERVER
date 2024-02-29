@@ -2,7 +2,6 @@ package org.moonshot.task.service;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.moonshot.exception.task.TaskInvalidIndexException;
 import org.moonshot.exception.task.TaskNotFoundException;
 import org.moonshot.keyresult.model.KeyResult;
 import org.moonshot.keyresult.repository.KeyResultRepository;
@@ -15,9 +14,10 @@ import org.moonshot.task.repository.TaskRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.moonshot.task.service.validator.TaskValidator.validateActiveTaskSizeExceeded;
-import static org.moonshot.task.service.validator.TaskValidator.validateIndexUnderMaximum;
+import static org.moonshot.task.service.validator.TaskValidator.*;
 import static org.moonshot.user.service.validator.UserValidator.validateUserAuthorization;
+import static org.moonshot.validator.IndexValidator.isIndexIncreased;
+import static org.moonshot.validator.IndexValidator.isSameIndex;
 
 @Service
 @Transactional
@@ -66,24 +66,18 @@ public class TaskService implements IndexService {
         validateUserAuthorization(task.getKeyResult().getObjective().getUser().getId(), userId);
 
         Long taskCount = taskRepository.countAllByKeyResultId(task.getKeyResult().getId());
-        if (isInvalidIdx(taskCount, request.idx())) {
-            throw new TaskInvalidIndexException();
-        }
+        validateIndex(taskCount, request.idx());
         Integer prevIdx = task.getIdx();
-        if (prevIdx.equals(request.idx())) {
+        if (isSameIndex(prevIdx, request.idx())) {
             return;
         }
 
         task.modifyIdx(request.idx());
-        if (prevIdx < request.idx()) {
+        if (isIndexIncreased(prevIdx, request.idx())) {
             taskRepository.bulkUpdateTaskIdxDecrease(prevIdx + 1, request.idx(), task.getKeyResult().getId(), task.getId());
         } else {
             taskRepository.bulkUpdateTaskIdxIncrease(request.idx(), prevIdx, task.getKeyResult().getId(), task.getId());
         }
-    }
-
-    private boolean isInvalidIdx(final Long taskCount, final int idx) {
-        return (taskCount <= idx) || (idx < 0);
     }
 
     public void deleteTask(final Long userId, Long taskId) {

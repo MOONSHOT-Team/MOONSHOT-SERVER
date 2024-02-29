@@ -21,6 +21,8 @@ import org.moonshot.objective.model.Objective;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.moonshot.keyresult.service.validator.KeyResultValidator.isKeyResultAchieved;
+import static org.moonshot.log.service.validator.LogValidator.isCreateLog;
 import static org.moonshot.log.service.validator.LogValidator.validateLogNum;
 import static org.moonshot.user.service.validator.UserValidator.validateUserAuthorization;
 
@@ -50,7 +52,7 @@ public class LogService {
                 .build());
         keyResult.modifyProgress(calculateKRProgressBar(log, keyResult.getTarget()));
         keyResult.getObjective().modifyProgress(calculateOProgressBar(keyResult.getObjective()));
-        if (keyResult.getObjective().getProgress() == 100) {
+        if (isKeyResultAchieved(keyResult.getObjective().getProgress())) {
             return Optional.of(AchieveResponseDto.of(keyResult.getObjective().getId(), keyResult.getObjective().getUser().getNickname(), calculateOProgressBar(keyResult.getObjective())));
         }
         return Optional.empty();
@@ -111,7 +113,7 @@ public class LogService {
     }
 
     private String setTitle(final long prevNum, final long currNum, final Log log, final KeyResult keyResult) {
-        if (log.getState() == LogState.CREATE) {
+        if (isCreateLog(log.getState())) {
             return keyResult.getTitle() + " : " + keyResult.getTarget() + keyResult.getMetric();
         } else {
             return (prevNum == -1 ? "0" : NumberFormat.getNumberInstance().format(prevNum)) + keyResult.getMetric()

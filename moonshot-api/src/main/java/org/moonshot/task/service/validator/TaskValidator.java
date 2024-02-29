@@ -1,6 +1,5 @@
 package org.moonshot.task.service.validator;
 
-import org.moonshot.exception.keyresult.KeyResultInvalidIndexException;
 import org.moonshot.exception.task.TaskInvalidIndexException;
 import org.moonshot.exception.task.TaskNumberExceededException;
 
@@ -22,6 +21,12 @@ public class TaskValidator {
 
     public static void validateIndexUnderMaximum(final int requestIndex, final int totalTaskListSize) {
         if (requestIndex > totalTaskListSize) {
+            throw new TaskInvalidIndexException();
+        }
+    }
+
+    public static void validateIndex(final Long taskCount, final Integer requestIndex) {
+        if (taskCount <= requestIndex || requestIndex < 0) {
             throw new TaskInvalidIndexException();
         }
     }

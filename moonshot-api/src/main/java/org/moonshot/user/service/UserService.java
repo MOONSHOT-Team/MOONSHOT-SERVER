@@ -1,6 +1,6 @@
 package org.moonshot.user.service;
 
-import static org.moonshot.user.service.validator.UserValidator.validateUserAuthorization;
+import static org.moonshot.user.service.validator.UserValidator.*;
 import static org.moonshot.util.MDCUtil.USER_REQUEST_ORIGIN;
 import static org.moonshot.util.MDCUtil.get;
 
@@ -85,7 +85,7 @@ public class UserService {
         GoogleInfoResponse userResponse = googleApiClient.googleInfo("Bearer " + tokenResponse.accessToken());
         Optional<User> findUser = userRepository.findUserBySocialId(userResponse.sub());
         User user;
-        if (findUser.isEmpty()) {
+        if (isNewUser(findUser)) {
             User newUser = userRepository.save(User.builderWithSignIn()
                             .socialId(userResponse.sub())
                             .socialPlatform(request.socialPlatform())
@@ -115,7 +115,7 @@ public class UserService {
                 "Bearer " + tokenResponse.accessToken());
         Optional<User> findUser = userRepository.findUserBySocialId(userResponse.id());
         User user;
-        if (findUser.isEmpty()) {
+        if (isNewUser(findUser)) {
             User newUser = userRepository.save(User.builderWithSignIn()
                             .socialId(userResponse.id())
                             .socialPlatform(request.socialPlatform())
@@ -163,10 +163,10 @@ public class UserService {
                 .orElseThrow(UserNotFoundException::new);
         validateUserAuthorization(user.getId(), userId);
 
-        if (request.nickname() != null) {
+        if (hasChange(request.nickname())) {
             user.modifyNickname(request.nickname());
         }
-        if (request.description() != null) {
+        if (hasChange(request.description())) {
             user.modifyDescription(request.description());
         }
     }
