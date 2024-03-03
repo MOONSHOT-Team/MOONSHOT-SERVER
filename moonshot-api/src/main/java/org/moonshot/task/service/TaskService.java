@@ -1,7 +1,15 @@
 package org.moonshot.task.service;
 
+import static org.moonshot.task.service.validator.TaskValidator.validateActiveTaskSizeExceeded;
+import static org.moonshot.task.service.validator.TaskValidator.validateIndex;
+import static org.moonshot.task.service.validator.TaskValidator.validateIndexUnderMaximum;
+import static org.moonshot.user.service.validator.UserValidator.validateUserAuthorization;
+import static org.moonshot.validator.IndexValidator.isIndexIncreased;
+import static org.moonshot.validator.IndexValidator.isSameIndex;
+
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.moonshot.exception.keyresult.KeyResultNotFoundException;
 import org.moonshot.exception.task.TaskNotFoundException;
 import org.moonshot.keyresult.model.KeyResult;
 import org.moonshot.keyresult.repository.KeyResultRepository;
@@ -14,11 +22,6 @@ import org.moonshot.task.repository.TaskRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.moonshot.task.service.validator.TaskValidator.*;
-import static org.moonshot.user.service.validator.UserValidator.validateUserAuthorization;
-import static org.moonshot.validator.IndexValidator.isIndexIncreased;
-import static org.moonshot.validator.IndexValidator.isSameIndex;
-
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -28,7 +31,7 @@ public class TaskService implements IndexService {
     private final TaskRepository taskRepository;
     public void createTask(final TaskSingleCreateRequestDto request, final Long userId) {
         KeyResult keyResult = keyResultRepository.findKeyResultAndObjective(request.keyResultId())
-                .orElseThrow();
+                .orElseThrow(KeyResultNotFoundException::new);
         validateUserAuthorization(keyResult.getObjective().getUser().getId(), userId);
 
         List<Task> taskList = taskRepository.findAllByKeyResultOrderByIdx(keyResult);

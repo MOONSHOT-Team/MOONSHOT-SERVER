@@ -1,6 +1,8 @@
 package org.moonshot.user.service;
 
-import static org.moonshot.user.service.validator.UserValidator.*;
+import static org.moonshot.user.service.validator.UserValidator.hasChange;
+import static org.moonshot.user.service.validator.UserValidator.isNewUser;
+import static org.moonshot.user.service.validator.UserValidator.validateUserAuthorization;
 import static org.moonshot.util.MDCUtil.USER_REQUEST_ORIGIN;
 import static org.moonshot.util.MDCUtil.get;
 
@@ -24,7 +26,6 @@ import org.moonshot.openfeign.google.GoogleApiClient;
 import org.moonshot.openfeign.google.GoogleAuthApiClient;
 import org.moonshot.openfeign.kakao.KakaoApiClient;
 import org.moonshot.openfeign.kakao.KakaoAuthApiClient;
-import org.moonshot.security.UserAuthentication;
 import org.moonshot.user.dto.request.SocialLoginRequest;
 import org.moonshot.user.dto.request.UserInfoRequest;
 import org.moonshot.user.dto.response.SocialLoginResponse;
@@ -99,8 +100,7 @@ public class UserService {
             user = findUser.get();
             user.resetDeleteAt();
         }
-        UserAuthentication userAuthentication = new UserAuthentication(user.getId(), null, null);
-        TokenResponse token = new TokenResponse(jwtTokenProvider.generateAccessToken(userAuthentication), jwtTokenProvider.generateRefreshToken(userAuthentication));
+        TokenResponse token = new TokenResponse(jwtTokenProvider.generateAccessToken(user.getId()), jwtTokenProvider.generateRefreshToken(user.getId()));
         return SocialLoginResponse.of(user.getId(), user.getName(), token);
     }
 
@@ -129,8 +129,7 @@ public class UserService {
             user = findUser.get();
             user.resetDeleteAt();
         }
-        UserAuthentication userAuthentication = new UserAuthentication(user.getId(), null, null);
-        TokenResponse token = new TokenResponse(jwtTokenProvider.generateAccessToken(userAuthentication), jwtTokenProvider.generateRefreshToken(userAuthentication));
+        TokenResponse token = new TokenResponse(jwtTokenProvider.generateAccessToken(user.getId()), jwtTokenProvider.generateRefreshToken(user.getId()));
         return SocialLoginResponse.of(user.getId(), user.getName(), token);
     }
 
@@ -138,8 +137,7 @@ public class UserService {
         String token = refreshToken.substring("Bearer ".length());
         Long userId = jwtTokenProvider.validateRefreshToken(token);
         jwtTokenProvider.deleteRefreshToken(userId);
-        UserAuthentication userAuthentication = new UserAuthentication(userId, null, null);
-        return jwtTokenProvider.reissuedToken(userAuthentication);
+        return jwtTokenProvider.reissuedToken(userId);
     }
 
     public void logout(final Long userId) {

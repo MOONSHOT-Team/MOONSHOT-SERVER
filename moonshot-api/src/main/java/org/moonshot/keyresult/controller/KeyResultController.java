@@ -6,10 +6,8 @@ import static org.moonshot.response.SuccessType.PATCH_KR_ACHIEVE_SUCCESS;
 import static org.moonshot.response.SuccessType.POST_KEY_RESULT_SUCCESS;
 
 import jakarta.validation.Valid;
-import java.security.Principal;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.moonshot.jwt.JwtTokenProvider;
 import org.moonshot.keyresult.dto.request.KeyResultCreateRequestDto;
 import org.moonshot.keyresult.dto.request.KeyResultModifyRequestDto;
 import org.moonshot.keyresult.dto.response.KRDetailResponseDto;
@@ -18,6 +16,7 @@ import org.moonshot.log.dto.response.AchieveResponseDto;
 import org.moonshot.model.Logging;
 import org.moonshot.response.MoonshotResponse;
 import org.moonshot.response.SuccessType;
+import org.moonshot.user.model.LoginUser;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -38,22 +37,22 @@ public class KeyResultController implements KeyResultApi {
 
     @PostMapping
     @Logging(item = "KeyResult", action = "Post")
-    public ResponseEntity<MoonshotResponse<?>> createKeyResult(final Principal principal, @RequestBody @Valid final KeyResultCreateRequestDto request) {
-        keyResultService.createKeyResult(request, JwtTokenProvider.getUserIdFromPrincipal(principal));
+    public ResponseEntity<MoonshotResponse<?>> createKeyResult(@LoginUser Long userId, @RequestBody @Valid final KeyResultCreateRequestDto request) {
+        keyResultService.createKeyResult(request, userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(MoonshotResponse.success(POST_KEY_RESULT_SUCCESS));
     }
 
     @DeleteMapping("/{keyResultId}")
     @Logging(item = "KeyResult", action = "Delete")
-    public ResponseEntity<?> deleteKeyResult(final Principal principal, @PathVariable("keyResultId") final Long keyResultId) {
-        keyResultService.deleteKeyResult(keyResultId, JwtTokenProvider.getUserIdFromPrincipal(principal));
+    public ResponseEntity<?> deleteKeyResult(@LoginUser Long userId, @PathVariable("keyResultId") final Long keyResultId) {
+        keyResultService.deleteKeyResult(keyResultId, userId);
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping
     @Logging(item = "KeyResult", action = "Patch")
-    public ResponseEntity<MoonshotResponse<?>> modifyKeyResult(final Principal principal, @RequestBody @Valid final KeyResultModifyRequestDto request) {
-        Optional<AchieveResponseDto> response = keyResultService.modifyKeyResult(request, JwtTokenProvider.getUserIdFromPrincipal(principal));
+    public ResponseEntity<MoonshotResponse<?>> modifyKeyResult(@LoginUser Long userId, @RequestBody @Valid final KeyResultModifyRequestDto request) {
+        Optional<AchieveResponseDto> response = keyResultService.modifyKeyResult(request, userId);
         if (response.isPresent()) {
             return ResponseEntity.ok(MoonshotResponse.success(PATCH_KR_ACHIEVE_SUCCESS, response));
         }
@@ -62,9 +61,8 @@ public class KeyResultController implements KeyResultApi {
 
     @GetMapping("/{keyResultId}")
     @Logging(item = "KeyResult", action = "Get")
-    public ResponseEntity<MoonshotResponse<KRDetailResponseDto>> getKRDetails(final Principal principal, @PathVariable("keyResultId") final Long keyResultId) {
-        return ResponseEntity.ok(MoonshotResponse.success(SuccessType.GET_KR_DETAIL_SUCCESS, keyResultService.getKRDetails(
-                JwtTokenProvider.getUserIdFromPrincipal(principal), keyResultId)));
+    public ResponseEntity<MoonshotResponse<KRDetailResponseDto>> getKRDetails(@LoginUser Long userId, @PathVariable("keyResultId") final Long keyResultId) {
+        return ResponseEntity.ok(MoonshotResponse.success(SuccessType.GET_KR_DETAIL_SUCCESS, keyResultService.getKRDetails(userId, keyResultId)));
     }
 
 }

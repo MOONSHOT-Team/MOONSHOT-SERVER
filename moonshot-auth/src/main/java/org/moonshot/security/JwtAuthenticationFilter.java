@@ -11,8 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.moonshot.constants.WhiteListConstants;
 import org.moonshot.jwt.JwtTokenProvider;
 import org.moonshot.jwt.JwtValidationType;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -35,8 +35,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String token = getJwtFromRequest(request);
         if (jwtTokenProvider.validateAccessToken(token) == JwtValidationType.VALID_JWT) {
             Long userId = jwtTokenProvider.getUserFromJwt(token);
-            UserAuthentication authentication = new UserAuthentication(userId, null, null);
-            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            Authentication authentication = jwtTokenProvider.getAuthentication(userId);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
         filterChain.doFilter(request, response);

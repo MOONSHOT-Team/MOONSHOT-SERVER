@@ -4,10 +4,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import java.io.IOException;
-import java.security.Principal;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.moonshot.jwt.JwtTokenProvider;
 import org.moonshot.jwt.TokenResponse;
 import org.moonshot.model.Logging;
 import org.moonshot.response.MoonshotResponse;
@@ -16,6 +14,7 @@ import org.moonshot.user.dto.request.SocialLoginRequest;
 import org.moonshot.user.dto.request.UserInfoRequest;
 import org.moonshot.user.dto.response.SocialLoginResponse;
 import org.moonshot.user.dto.response.UserInfoResponse;
+import org.moonshot.user.model.LoginUser;
 import org.moonshot.user.service.UserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/v1/user")
 public class UserController implements UserApi {
+
     @Value("${google.client-id}")
     private String googleClientId;
 
@@ -59,29 +59,29 @@ public class UserController implements UserApi {
 
     @PostMapping("/log-out")
     @Logging(item = "User", action = "Post")
-    public ResponseEntity<MoonshotResponse<?>> logout(final Principal principal) {
-        userService.logout(JwtTokenProvider.getUserIdFromPrincipal(principal));
+    public ResponseEntity<MoonshotResponse<?>> logout(@LoginUser Long userId) {
+        userService.logout(userId);
         return ResponseEntity.ok(MoonshotResponse.success(SuccessType.POST_LOGOUT_SUCCESS));
     }
 
     @DeleteMapping("/withdrawal")
     @Logging(item = "User", action = "Delete")
-    public ResponseEntity<?> withdrawal(final Principal principal) {
-        userService.withdrawal(JwtTokenProvider.getUserIdFromPrincipal(principal));
+    public ResponseEntity<?> withdrawal(@LoginUser Long userId) {
+        userService.withdrawal(userId);
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/profile")
     @Logging(item = "User", action = "Patch")
-    public ResponseEntity<?> modifyProfile(final Principal principal, @Valid  @RequestBody final UserInfoRequest userInfoRequest) {
-        userService.modifyProfile(JwtTokenProvider.getUserIdFromPrincipal(principal), userInfoRequest);
+    public ResponseEntity<?> modifyProfile(@LoginUser Long userId, @Valid @RequestBody final UserInfoRequest userInfoRequest) {
+        userService.modifyProfile(userId, userInfoRequest);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/mypage")
     @Logging(item = "User", action = "Get")
-    public ResponseEntity<MoonshotResponse<UserInfoResponse>> getMyProfile(final Principal principal) {
-        return ResponseEntity.ok(MoonshotResponse.success(SuccessType.GET_PROFILE_SUCCESS, userService.getMyProfile(JwtTokenProvider.getUserIdFromPrincipal(principal))));
+    public ResponseEntity<MoonshotResponse<UserInfoResponse>> getMyProfile(@LoginUser Long userId) {
+        return ResponseEntity.ok(MoonshotResponse.success(SuccessType.GET_PROFILE_SUCCESS, userService.getMyProfile(userId)));
     }
 
     @GetMapping("/googleLogin")
@@ -97,13 +97,5 @@ public class UserController implements UserApi {
 
         return "SUCCESS";
     }
-
-//    @GetMapping("/login/oauth2/code/kakao")
-//    public String kakaoSuccess(@RequestParam String code) {
-//        return code;
-//    }
-//
-//    @GetMapping("/login/oauth2/code/google")
-//    public String googleSuccess(@RequestParam String code, @RequestParam String scope, @RequestParam String prompt) { return code; }
 
 }
