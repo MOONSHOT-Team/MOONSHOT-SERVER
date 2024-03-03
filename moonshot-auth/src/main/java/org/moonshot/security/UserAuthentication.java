@@ -1,14 +1,26 @@
 package org.moonshot.security;
 
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
 
-import java.util.Collection;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 
-public class UserAuthentication extends UsernamePasswordAuthenticationToken {
+public class UserAuthentication extends AbstractAuthenticationToken {
 
-    public UserAuthentication(Object principal, Object credentials, Collection<? extends GrantedAuthority> authorities) {
-        super(principal, credentials, authorities);
+    private final UserDetails userPrincipal;
+
+    public UserAuthentication(UserDetails userPrincipal) {
+        super(userPrincipal.getAuthorities());
+        super.setAuthenticated(true);
+        this.userPrincipal = userPrincipal;
     }
 
+    @Override
+    public Object getCredentials() {
+        return null;
+    }
+
+    @Override
+    public Object getPrincipal() {
+        return userPrincipal;
+    }
 }

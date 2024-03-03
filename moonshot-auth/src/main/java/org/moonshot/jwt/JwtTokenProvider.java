@@ -23,6 +23,9 @@ import org.moonshot.exception.global.auth.InvalidAuthException;
 import org.moonshot.exception.global.auth.InvalidRefreshTokenException;
 import org.moonshot.exception.global.common.MoonshotException;
 import org.moonshot.response.ErrorType;
+import org.moonshot.security.UserAuthentication;
+import org.moonshot.security.service.UserPrincipalDetailsService;
+import org.moonshot.user.model.UserPrincipal;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -36,6 +39,7 @@ import org.springframework.stereotype.Component;
 public class JwtTokenProvider {
 
     private final RedisTemplate<String, String> redisTemplate;
+    private final UserPrincipalDetailsService userPrincipalDetailsService;
 
     @Value("${jwt.secret}")
     private String JWT_SECRET;
@@ -45,19 +49,19 @@ public class JwtTokenProvider {
         JWT_SECRET = Base64.getEncoder().encodeToString(JWT_SECRET.getBytes(StandardCharsets.UTF_8));
     }
 
-    public TokenResponse reissuedToken(Authentication authentication) {
+    public TokenResponse reissuedToken(Long userId) {
         return TokenResponse.of(
-                generateAccessToken(authentication),
-                generateRefreshToken(authentication));
+                generateAccessToken(userId),
+                generateRefreshToken(userId));
     }
 
-    public String generateAccessToken(Authentication authentication) {
+    public String generateAccessToken(Long userId) {
         final Date now = new Date();
         final Claims claims = Jwts.claims()
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + JWTConstants.ACCESS_TOKEN_EXPIRATION_TIME));
 
-        claims.put(JWTConstants.USER_ID, authentication.getPrincipal());
+        claims.put(JWTConstants.USER_ID, userId);
 
         return Jwts.builder()
                 .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
@@ -66,13 +70,13 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public String generateRefreshToken(Authentication authentication) {
+    public String generateRefreshToken(Long userId) {
         final Date now = new Date();
         final Claims claims = Jwts.claims()
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + JWTConstants.REFRESH_TOKEN_EXPIRATION_TIME));
 
-        claims.put(JWTConstants.USER_ID, authentication.getPrincipal());
+        claims.put(JWTConstants.USER_ID, userId);
 
         String refreshToken = Jwts.builder()
                 .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
@@ -81,7 +85,7 @@ public class JwtTokenProvider {
                 .compact();
 
         redisTemplate.opsForValue().set(
-                authentication.getName(),
+                String.valueOf(userId),
                 refreshToken,
                 JWTConstants.REFRESH_TOKEN_EXPIRATION_TIME,
                 TimeUnit.MILLISECONDS
@@ -156,6 +160,11 @@ public class JwtTokenProvider {
             throw new InvalidAuthException();
         }
         return Long.valueOf(principal.getName());
+    }
+
+    public Authentication getAuthentication(Long userId) {
+        UserPrincipal userDetails = (UserPrincipal) userPrincipalDetailsService.loadUserByUsername(String.valueOf(userId));
+        return new UserAuthentication(userDetails);
     }
 
 }

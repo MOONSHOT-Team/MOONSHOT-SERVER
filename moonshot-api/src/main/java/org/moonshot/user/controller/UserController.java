@@ -73,7 +73,7 @@ public class UserController implements UserApi {
 
     @PatchMapping("/profile")
     @Logging(item = "User", action = "Patch")
-    public ResponseEntity<?> modifyProfile(final Principal principal, @Valid  @RequestBody final UserInfoRequest userInfoRequest) {
+    public ResponseEntity<?> modifyProfile(final Principal principal, @Valid @RequestBody final UserInfoRequest userInfoRequest) {
         userService.modifyProfile(JwtTokenProvider.getUserIdFromPrincipal(principal), userInfoRequest);
         return ResponseEntity.noContent().build();
     }
