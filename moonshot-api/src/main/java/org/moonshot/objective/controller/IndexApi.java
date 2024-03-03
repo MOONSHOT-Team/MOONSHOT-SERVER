@@ -7,9 +7,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import java.security.Principal;
 import org.moonshot.objective.dto.request.ModifyIndexRequestDto;
 import org.moonshot.response.MoonshotResponse;
+import org.moonshot.user.model.LoginUser;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -24,6 +24,6 @@ public interface IndexApi {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 Objective입니다\t\n존재하지 않는 KeyResult입니다\t\n존재하지 않는 Task입니다", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MoonshotResponse.class)))
     })
     @Operation(summary = "Objective, KeyResult, Task Index 변경")
-    public ResponseEntity<MoonshotResponse<?>> modifyIdx(Principal principal, @RequestBody @Valid ModifyIndexRequestDto request);
+    public ResponseEntity<MoonshotResponse<?>> modifyIdx(@LoginUser Long userId, @RequestBody @Valid ModifyIndexRequestDto request);
 
 }
