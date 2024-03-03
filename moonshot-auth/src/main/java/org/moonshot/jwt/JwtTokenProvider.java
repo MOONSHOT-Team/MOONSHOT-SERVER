@@ -10,16 +10,13 @@ import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.annotation.PostConstruct;
 import java.nio.charset.StandardCharsets;
-import java.security.Principal;
 import java.util.Base64;
 import java.util.Date;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import javax.crypto.SecretKey;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.moonshot.constants.JWTConstants;
-import org.moonshot.exception.global.auth.InvalidAuthException;
 import org.moonshot.exception.global.auth.InvalidRefreshTokenException;
 import org.moonshot.exception.global.common.MoonshotException;
 import org.moonshot.response.ErrorType;
@@ -153,13 +150,6 @@ public class JwtTokenProvider {
     public Long getUserFromJwt(String token) {
         Claims claims = getBody(token);
         return Long.parseLong(claims.get(JWTConstants.USER_ID).toString());
-    }
-
-    public static Long getUserIdFromPrincipal(Principal principal) {
-        if (Objects.isNull(principal)) {
-            throw new InvalidAuthException();
-        }
-        return Long.valueOf(principal.getName());
     }
 
     public Authentication getAuthentication(Long userId) {
