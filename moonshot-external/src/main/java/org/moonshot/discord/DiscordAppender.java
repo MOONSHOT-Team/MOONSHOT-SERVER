@@ -18,9 +18,11 @@ import org.moonshot.discord.model.EmbedObject;
 import org.moonshot.exception.global.external.discord.ErrorLogAppenderException;
 import org.moonshot.util.MDCUtil;
 import org.moonshot.util.StringUtil;
+import org.springframework.stereotype.Component;
 
 @Slf4j
 @Setter
+@Component
 @RequiredArgsConstructor
 public class DiscordAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 

@@ -1,6 +1,15 @@
 package org.moonshot.keyresult.service;
 
-import static org.moonshot.keyresult.service.validator.KeyResultValidator.*;
+import static org.moonshot.keyresult.service.validator.KeyResultValidator.hasChange;
+import static org.moonshot.keyresult.service.validator.KeyResultValidator.hasDateChange;
+import static org.moonshot.keyresult.service.validator.KeyResultValidator.hasKeyResultTask;
+import static org.moonshot.keyresult.service.validator.KeyResultValidator.isKeyResultAchieved;
+import static org.moonshot.keyresult.service.validator.KeyResultValidator.validateActiveKRSizeExceeded;
+import static org.moonshot.keyresult.service.validator.KeyResultValidator.validateIndex;
+import static org.moonshot.keyresult.service.validator.KeyResultValidator.validateIndexUnderMaximum;
+import static org.moonshot.keyresult.service.validator.KeyResultValidator.validateKRPeriodWithInObjPeriod;
+import static org.moonshot.keyresult.service.validator.KeyResultValidator.validateKeyResultIndex;
+import static org.moonshot.keyresult.service.validator.KeyResultValidator.validateKeyResultPeriod;
 import static org.moonshot.log.service.validator.LogValidator.validateLogNum;
 import static org.moonshot.task.service.validator.TaskValidator.validateTaskIndex;
 import static org.moonshot.user.service.validator.UserValidator.validateUserAuthorization;
@@ -15,7 +24,6 @@ import lombok.RequiredArgsConstructor;
 import org.moonshot.common.model.Period;
 import org.moonshot.exception.keyresult.KeyResultNotFoundException;
 import org.moonshot.exception.keyresult.KeyResultRequiredException;
-import org.moonshot.exception.log.LogNotFoundException;
 import org.moonshot.exception.objective.ObjectiveNotFoundException;
 import org.moonshot.keyresult.dto.request.KeyResultCreateRequestDto;
 import org.moonshot.keyresult.dto.request.KeyResultCreateRequestInfoDto;
@@ -92,7 +100,7 @@ public class KeyResultService implements IndexService {
                 .idx(request.idx())
                 .target(request.target())
                 .metric(request.metric()).build());
-      logService.createKRLog(request, keyResult.getId());
+        logService.createKRLog(request, keyResult.getId());
     }
 
     public void deleteKeyResult(final Long keyResultId, final Long userId) {
