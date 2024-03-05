@@ -59,6 +59,7 @@ public class JwtTokenProvider {
                 .setExpiration(new Date(now.getTime() + JWTConstants.ACCESS_TOKEN_EXPIRATION_TIME));
 
         claims.put(JWTConstants.USER_ID, userId);
+        claims.put(JWTConstants.TOKEN_TYPE, JWTConstants.ACCESS_TOKEN);
 
         return Jwts.builder()
                 .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
@@ -74,6 +75,7 @@ public class JwtTokenProvider {
                 .setExpiration(new Date(now.getTime() + JWTConstants.REFRESH_TOKEN_EXPIRATION_TIME));
 
         claims.put(JWTConstants.USER_ID, userId);
+        claims.put(JWTConstants.TOKEN_TYPE, JWTConstants.REFRESH_TOKEN);
 
         String refreshToken = Jwts.builder()
                 .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
@@ -95,10 +97,25 @@ public class JwtTokenProvider {
         return Keys.hmacShaKeyFor(encodedKey.getBytes());
     }
 
-    public JwtValidationType validateAccessToken(String token) {
+    public Long validateRefreshToken(String refreshToken) {
+        validateToken(refreshToken);
+        Long userId = getUserFromJwt(refreshToken);
+        if (redisTemplate.hasKey(String.valueOf(userId))) {
+            return userId;
+        } else {
+            throw new InvalidRefreshTokenException();
+        }
+    }
+
+    public JwtValidationType validateToken(String token) {
         try {
             final Claims claims = getBody(token);
-            return JwtValidationType.VALID_JWT;
+            if (claims.get(JWTConstants.TOKEN_TYPE).toString().equals(JWTConstants.ACCESS_TOKEN)) {
+                return JwtValidationType.VALID_ACCESS;
+            } else if (claims.get(JWTConstants.TOKEN_TYPE).toString().equals(JWTConstants.REFRESH_TOKEN)) {
+                return JwtValidationType.VALID_REFRESH;
+            }
+            throw new MoonshotException(ErrorType.WRONG_TYPE_TOKEN_ERROR);
         } catch (MalformedJwtException e) {
             throw new MoonshotException(ErrorType.WRONG_TYPE_TOKEN_ERROR);
         } catch (ExpiredJwtException e) {
@@ -112,15 +129,6 @@ public class JwtTokenProvider {
         }
     }
 
-    public Long validateRefreshToken(String refreshToken) {
-        Long userId = getUserFromJwt(refreshToken);
-        if (redisTemplate.hasKey(String.valueOf(userId))) {
-            return userId;
-        } else {
-            throw new InvalidRefreshTokenException();
-        }
-    }
-
     public void deleteRefreshToken(Long userId) {
         if (redisTemplate.hasKey(String.valueOf(userId))) {
             ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
@@ -130,15 +138,6 @@ public class JwtTokenProvider {
             throw new InvalidRefreshTokenException();
         }
     }
-
-    private Claims parseClaims(String accessToken) {
-        try {
-            return Jwts.parserBuilder().setSigningKey(JWT_SECRET).build().parseClaimsJws(accessToken).getBody();
-        } catch (ExpiredJwtException e) {
-            return e.getClaims();
-        }
-    }
-
     private Claims getBody(final String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
