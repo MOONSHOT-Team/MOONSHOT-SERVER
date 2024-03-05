@@ -1,10 +1,12 @@
 package org.moonshot.discord;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 @Component
+@Profile("prod")
 @RequiredArgsConstructor
 public class SignUpEventListener {
 
