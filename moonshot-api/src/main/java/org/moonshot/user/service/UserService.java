@@ -12,8 +12,7 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.moonshot.discord.DiscordAppender;
-import org.moonshot.exception.global.external.discord.ErrorLogAppenderException;
+import org.moonshot.discord.SignUpEvent;
 import org.moonshot.exception.user.UserNotFoundException;
 import org.moonshot.jwt.JwtTokenProvider;
 import org.moonshot.jwt.TokenResponse;
@@ -33,6 +32,7 @@ import org.moonshot.user.dto.response.UserInfoResponse;
 import org.moonshot.user.model.User;
 import org.moonshot.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,6 +60,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final ObjectiveService objectiveService;
+    private final ApplicationEventPublisher eventPublisher;
 
     private final GoogleAuthApiClient googleAuthApiClient;
     private final GoogleApiClient googleApiClient;
@@ -95,7 +96,7 @@ public class UserService {
                             .email(userResponse.email())
                             .build());
             user = newUser;
-            sendDiscordAlert(newUser);
+            publishSignUpEvent(newUser);
         } else {
             user = findUser.get();
             user.resetDeleteAt();
@@ -124,7 +125,7 @@ public class UserService {
                             .email(null)
                             .build());
             user = newUser;
-            sendDiscordAlert(newUser);
+            publishSignUpEvent(newUser);
         } else {
             user = findUser.get();
             user.resetDeleteAt();
@@ -176,13 +177,14 @@ public class UserService {
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void sendDiscordAlert(final User user) {
-        try {
-            DiscordAppender discordAppender = new DiscordAppender();
-            discordAppender.signInAppend(user.getName(), user.getEmail() == null ? "" : user.getEmail(), user.getSocialPlatform().getValue(), LocalDateTime.now(), user.getProfileImage());
-        } catch (ErrorLogAppenderException e) {
-            log.error("{}", e.getErrorType().getMessage());
-        }
+    public void publishSignUpEvent(final User user) {
+        eventPublisher.publishEvent(SignUpEvent.of(
+                user.getName(),
+                user.getEmail() == null ? "" : user.getEmail(),
+                user.getSocialPlatform().toString(),
+                LocalDateTime.now(),
+                user.getProfileImage()
+        ));
     }
 
     public void softDeleteUser(LocalDateTime currentDate) {
