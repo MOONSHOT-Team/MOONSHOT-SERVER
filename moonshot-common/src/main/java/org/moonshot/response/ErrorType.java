@@ -38,7 +38,7 @@ public enum ErrorType {
     INVALID_AUTHORIZATION_ERROR(HttpStatus.UNAUTHORIZED, "유효하지 않은 인증 코드입니다."),
     UNSUPPORTED_TOKEN_ERROR(HttpStatus.UNAUTHORIZED,"지원하지 않는 토큰 방식입니다."),
     INVALID_ACCESS_TOKEN_ERROR(HttpStatus.UNAUTHORIZED, "유효하지 않은 AccessToken입니다."),
-    INVALID_REFRESHTOKEN_ERROR(HttpStatus.UNAUTHORIZED, "유효하지 않은 RefreshToken입니다."),
+    INVALID_REFRESH_TOKEN_ERROR(HttpStatus.UNAUTHORIZED, "유효하지 않은 RefreshToken입니다."),
     INVALID_AUTH_ERROR(HttpStatus.UNAUTHORIZED, "인증되지 않은 사용자입니다."),
     EXPIRED_TOKEN_ERROR(HttpStatus.UNAUTHORIZED, "만료된 Token입니다."),
     WRONG_TYPE_TOKEN_ERROR(HttpStatus.UNAUTHORIZED, "잘못된 형식의 Token입니다"),
