@@ -76,7 +76,7 @@ public class UserService {
         };
     }
 
-    public SocialLoginResponse googleLogin(final SocialLoginRequest request) throws IOException {
+    public SocialLoginResponse googleLogin(final SocialLoginRequest request) {
         GoogleTokenResponse tokenResponse = googleAuthApiClient.googleAuth(
                 request.code(),
                 googleClientId,

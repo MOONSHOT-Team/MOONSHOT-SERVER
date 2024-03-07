@@ -1,7 +1,8 @@
 package org.moonshot.jwt;
 
 public enum JwtValidationType {
-    VALID_JWT,
+    VALID_ACCESS,
+    VALID_REFRESH,
     INVALID_JWT_SIGNATURE,
     INVALID_JWT_TOKEN,
     EXPIRED_JWT_TOKEN,

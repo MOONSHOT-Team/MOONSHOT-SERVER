@@ -33,15 +33,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/v1/user")
 public class UserController implements UserApi {
 
-    @Value("${google.client-id}")
-    private String googleClientId;
-
-    @Value("${google.client-secret}")
-    private String googleClientSecret;
-
-    @Value("${google.redirect-url}")
-    private String googleRedirectUrl;
-
     private final UserService userService;
 
     @PostMapping("/login")
@@ -82,20 +73,6 @@ public class UserController implements UserApi {
     @Logging(item = "User", action = "Get")
     public ResponseEntity<MoonshotResponse<UserInfoResponse>> getMyProfile(@LoginUser Long userId) {
         return ResponseEntity.ok(MoonshotResponse.success(SuccessType.GET_PROFILE_SUCCESS, userService.getMyProfile(userId)));
-    }
-
-    @GetMapping("/googleLogin")
-    @Logging(item = "User", action = "Get")
-    public String authTest(final HttpServletRequest request, final HttpServletResponse response) {
-        String redirectURL = "https://accounts.google.com/o/oauth2/v2/auth?client_id=" + googleClientId
-                + "&redirect_uri=" + googleRedirectUrl + "&response_type=code&scope=email profile";
-        try {
-            response.sendRedirect(redirectURL);
-        } catch (Exception e) {
-            log.info("authTest = {}", e);
-        }
-
-        return "SUCCESS";
     }
 
 }

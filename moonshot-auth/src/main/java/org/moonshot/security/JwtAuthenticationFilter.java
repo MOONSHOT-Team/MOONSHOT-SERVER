@@ -8,6 +8,7 @@ import java.io.IOException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.moonshot.constants.JWTConstants;
 import org.moonshot.constants.WhiteListConstants;
 import org.moonshot.jwt.JwtTokenProvider;
 import org.moonshot.jwt.JwtValidationType;
@@ -33,11 +34,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         }
         final String token = getJwtFromRequest(request);
-        if (jwtTokenProvider.validateAccessToken(token) == JwtValidationType.VALID_JWT) {
-            Long userId = jwtTokenProvider.getUserFromJwt(token);
-            Authentication authentication = jwtTokenProvider.getAuthentication(userId);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-        }
+        jwtTokenProvider.validateToken(token);
+
+        Long userId = jwtTokenProvider.getUserFromJwt(token);
+        Authentication authentication = jwtTokenProvider.getAuthentication(userId);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
         filterChain.doFilter(request, response);
     }
 
