@@ -66,8 +66,4 @@ public interface UserApi {
     @Operation(summary = "프로필 조회")
     public ResponseEntity<MoonshotResponse<UserInfoResponse>> getMyProfile(@LoginUser Long userId);
 
-    @ApiResponse(responseCode = "200", description = "구글 로그인에 성공하였습니다.")
-    @Operation(summary = "구글 로그인")
-    public String authTest(HttpServletRequest request, HttpServletResponse response);
-
 }
