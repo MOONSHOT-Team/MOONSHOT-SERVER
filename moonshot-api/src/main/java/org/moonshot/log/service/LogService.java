@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.moonshot.exception.keyresult.KeyResultNotFoundException;
-import org.moonshot.exception.log.InvalidLogValueException;
 import org.moonshot.keyresult.dto.request.KeyResultCreateRequestDto;
 import org.moonshot.keyresult.dto.request.KeyResultCreateRequestInfoDto;
 import org.moonshot.keyresult.dto.request.KeyResultModifyRequestDto;
@@ -84,7 +83,7 @@ public class LogService {
             logRepository.save(Log.builder()
                     .date(LocalDateTime.now())
                     .state(LogState.CREATE)
-                    .currNum(dto.target())
+                    .currNum(dto.krTarget())
                     .content("")
                     .keyResult(keyResult)
                     .build());

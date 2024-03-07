@@ -5,9 +5,9 @@ import org.moonshot.keyresult.model.KeyResult;
 import org.moonshot.task.dto.response.TaskResponseDto;
 
 public record KeyResultResponseDto(
-        Long keyResultId,
-        String keyResultTitle,
-        Integer idx,
+        Long krId,
+        String krTitle,
+        Integer krIdx,
         List<TaskResponseDto> taskList
 ) {
     public static List<KeyResultResponseDto> of(List<KeyResult> krList) {
