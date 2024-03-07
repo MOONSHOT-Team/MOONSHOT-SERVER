@@ -65,9 +65,9 @@ public class ObjectiveController implements ObjectiveApi {
 
     @GetMapping("/history")
     @Logging(item = "Objective", action = "Get")
-    public ResponseEntity<MoonshotResponse<HistoryResponseDto>> getObjectiveHistory(@LoginUser Long userId, @RequestParam(required = false) final Integer year,
-                                                                                    @RequestParam(required = false) final Category category,
-                                                                                    @RequestParam(required = false) final Criteria criteria) {
+    public ResponseEntity<MoonshotResponse<HistoryResponseDto>> getObjectiveHistory(@LoginUser Long userId, @RequestParam(required = false, name = "year") final Integer year,
+                                                                                    @RequestParam(required = false, name = "category") final Category category,
+                                                                                    @RequestParam(required = false, name = "criteria") final Criteria criteria) {
         HistoryResponseDto response = objectiveService.getObjectiveHistory(userId, year, category, criteria);
         return ResponseEntity.ok(MoonshotResponse.success(SuccessType.OK, response));
     }

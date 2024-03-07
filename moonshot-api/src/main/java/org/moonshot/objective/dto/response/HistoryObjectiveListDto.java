@@ -6,9 +6,9 @@ import org.moonshot.objective.model.Objective;
 
 public record HistoryObjectiveListDto(
         Long objId,
-        String title,
+        String objTitle,
         String objCategory,
-        int progress,
+        int objProgress,
         String objPeriod,
         int objIdx,
         List<HistoryKeyResultDto> krList
