@@ -62,15 +62,15 @@ public class KeyResultService implements IndexService {
         List<KeyResultCreateRequestInfoDto> nonNullRequests = requests.stream().filter(Objects::nonNull).toList();
         for (int i = 0; i < nonNullRequests.size(); i++) {
             KeyResultCreateRequestInfoDto dto = nonNullRequests.get(i);
-            validateKeyResultIndex(i, dto.idx());
-            validateKRPeriodWithInObjPeriod(objective.getPeriod(), dto.startAt(), dto.expireAt());
+            validateKeyResultIndex(i, dto.krIdx());
+            validateKRPeriodWithInObjPeriod(objective.getPeriod(), dto.krStartAt(), dto.krExpireAt());
 
             KeyResult keyResult = keyResultRepository.save(KeyResult.builder()
-                    .title(dto.title())
-                    .period(Period.of(dto.startAt(), dto.expireAt()))
-                    .idx(dto.idx())
-                    .target(dto.target())
-                    .metric(dto.metric())
+                    .title(dto.krTitle())
+                    .period(Period.of(dto.krStartAt(), dto.krExpireAt()))
+                    .idx(dto.krIdx())
+                    .target(dto.krTarget())
+                    .metric(dto.krMetric())
                     .objective(objective)
                     .build());
             logService.createKRLog(dto, keyResult.getId());
@@ -228,7 +228,7 @@ public class KeyResultService implements IndexService {
         List<TaskCreateRequestDto> nonNullTaskList = taskList.stream().filter(Objects::nonNull).toList();
         for (int i = 0; i < nonNullTaskList.size(); i++) {
             TaskCreateRequestDto taskDto = nonNullTaskList.get(i);
-            validateTaskIndex(i, taskDto.idx());
+            validateTaskIndex(i, taskDto.taskIdx());
             taskService.saveTask(keyResult, taskDto);
         }
     }
