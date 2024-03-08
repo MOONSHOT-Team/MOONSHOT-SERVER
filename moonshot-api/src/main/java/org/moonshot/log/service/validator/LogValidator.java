@@ -1,13 +1,14 @@
 package org.moonshot.log.service.validator;
 
-import org.moonshot.exception.log.InvalidLogValueException;
+import org.moonshot.exception.BadRequestException;
 import org.moonshot.log.model.LogState;
+import org.moonshot.response.ErrorType;
 
 public class LogValidator {
 
     public static void validateLogNum(Long requestNum, Long originNum) {
         if (requestNum.equals(originNum)) {
-            throw new InvalidLogValueException();
+            throw new BadRequestException(ErrorType.INVALID_LOG_VALUE);
         }
     }
 
