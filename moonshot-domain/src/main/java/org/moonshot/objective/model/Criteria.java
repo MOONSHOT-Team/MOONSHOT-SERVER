@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.moonshot.exception.global.common.MoonshotException;
+import org.moonshot.exception.MoonshotException;
 import org.moonshot.response.ErrorType;
 
 @Getter
