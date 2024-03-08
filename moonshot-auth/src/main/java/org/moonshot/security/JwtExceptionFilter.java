@@ -9,7 +9,7 @@ import java.io.IOException;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.moonshot.exception.global.common.MoonshotException;
+import org.moonshot.exception.MoonshotException;
 import org.moonshot.response.ErrorType;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -28,16 +28,16 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
         try {
             filterChain.doFilter(request, response);
         } catch (MoonshotException e) {
-            if(e.getErrorType().equals(ErrorType.UNKNOWN_TOKEN_ERROR)) {
-                setErrorResponse(response, ErrorType.UNKNOWN_TOKEN_ERROR);
-            } else if(e.getErrorType().equals(ErrorType.WRONG_TYPE_TOKEN_ERROR)) {
-                setErrorResponse(response, ErrorType.WRONG_TYPE_TOKEN_ERROR);
-            } else if(e.getErrorType().equals(ErrorType.EXPIRED_TOKEN_ERROR)) {
-                setErrorResponse(response, ErrorType.EXPIRED_TOKEN_ERROR);
-            } else if(e.getErrorType().equals(ErrorType.UNSUPPORTED_TOKEN_ERROR)) {
-                setErrorResponse(response, ErrorType.UNSUPPORTED_TOKEN_ERROR);
-            } else if(e.getErrorType().equals(ErrorType.WRONG_SIGNATURE_TOKEN_ERROR)) {
-                setErrorResponse(response, ErrorType.WRONG_SIGNATURE_TOKEN_ERROR);
+            if(e.getErrorType().equals(ErrorType.UNKNOWN_TOKEN)) {
+                setErrorResponse(response, ErrorType.UNKNOWN_TOKEN);
+            } else if(e.getErrorType().equals(ErrorType.WRONG_TYPE_TOKEN)) {
+                setErrorResponse(response, ErrorType.WRONG_TYPE_TOKEN);
+            } else if(e.getErrorType().equals(ErrorType.EXPIRED_TOKEN)) {
+                setErrorResponse(response, ErrorType.EXPIRED_TOKEN);
+            } else if(e.getErrorType().equals(ErrorType.UNSUPPORTED_TOKEN)) {
+                setErrorResponse(response, ErrorType.UNSUPPORTED_TOKEN);
+            } else if(e.getErrorType().equals(ErrorType.WRONG_SIGNATURE_TOKEN)) {
+                setErrorResponse(response, ErrorType.WRONG_SIGNATURE_TOKEN);
             }
         }
     }

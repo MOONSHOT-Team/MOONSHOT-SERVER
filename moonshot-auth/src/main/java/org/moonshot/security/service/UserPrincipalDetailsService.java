@@ -1,7 +1,7 @@
 package org.moonshot.security.service;
 
 import lombok.RequiredArgsConstructor;
-import org.moonshot.exception.user.UnauthorizedException;
+import org.moonshot.exception.UnauthorizedException;
 import org.moonshot.user.model.UserPrincipal;
 import org.moonshot.user.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;

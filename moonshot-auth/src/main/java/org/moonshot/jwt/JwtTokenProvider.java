@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.moonshot.constants.JWTConstants;
 import org.moonshot.exception.global.auth.InvalidRefreshTokenException;
-import org.moonshot.exception.global.common.MoonshotException;
+import org.moonshot.exception.MoonshotException;
 import org.moonshot.response.ErrorType;
 import org.moonshot.security.UserAuthentication;
 import org.moonshot.security.service.UserPrincipalDetailsService;
@@ -115,17 +115,17 @@ public class JwtTokenProvider {
             } else if (claims.get(JWTConstants.TOKEN_TYPE).toString().equals(JWTConstants.REFRESH_TOKEN)) {
                 return JwtValidationType.VALID_REFRESH;
             }
-            throw new MoonshotException(ErrorType.WRONG_TYPE_TOKEN_ERROR);
+            throw new MoonshotException(ErrorType.WRONG_TYPE_TOKEN);
         } catch (MalformedJwtException e) {
-            throw new MoonshotException(ErrorType.WRONG_TYPE_TOKEN_ERROR);
+            throw new MoonshotException(ErrorType.WRONG_TYPE_TOKEN);
         } catch (ExpiredJwtException e) {
-            throw new MoonshotException(ErrorType.EXPIRED_TOKEN_ERROR);
+            throw new MoonshotException(ErrorType.EXPIRED_TOKEN);
         } catch (IllegalArgumentException e) {
-            throw new MoonshotException(ErrorType.UNKNOWN_TOKEN_ERROR);
+            throw new MoonshotException(ErrorType.UNKNOWN_TOKEN);
         } catch (UnsupportedJwtException e) {
-            throw new MoonshotException(ErrorType.UNSUPPORTED_TOKEN_ERROR);
+            throw new MoonshotException(ErrorType.UNSUPPORTED_TOKEN);
         } catch (SignatureException e) {
-            throw new MoonshotException(ErrorType.WRONG_SIGNATURE_TOKEN_ERROR);
+            throw new MoonshotException(ErrorType.WRONG_SIGNATURE_TOKEN);
         }
     }
 

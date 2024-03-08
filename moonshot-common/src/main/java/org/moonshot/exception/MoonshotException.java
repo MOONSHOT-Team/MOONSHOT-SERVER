@@ -1,4 +1,4 @@
-package org.moonshot.exception.global.common;
+package org.moonshot.exception;
 
 import lombok.Getter;
 import org.moonshot.response.ErrorType;
