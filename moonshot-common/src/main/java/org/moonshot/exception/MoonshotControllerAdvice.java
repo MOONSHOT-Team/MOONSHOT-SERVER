@@ -1,4 +1,4 @@
-package org.moonshot.exception.global.common;
+package org.moonshot.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintDefinitionException;
@@ -40,7 +40,7 @@ public class MoonshotControllerAdvice {
             validateDetails.put(validKeyName, error.getDefaultMessage());
         }
         log.error(e.getMessage(), e);
-        return new ResponseEntity<>(MoonshotResponse.error(ErrorType.REQUEST_VALIDATION_EXCEPTION, validateDetails), e.getStatusCode());
+        return new ResponseEntity<>(MoonshotResponse.error(ErrorType.REQUEST_VALIDATION, validateDetails), e.getStatusCode());
     }
 
     @ExceptionHandler(UnexpectedTypeException.class)
@@ -70,7 +70,7 @@ public class MoonshotControllerAdvice {
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<MoonshotResponse<?>> handlerHttpRequestMethodNotSupportedException(final HttpRequestMethodNotSupportedException e) {
         log.error(e.getMessage(), e);
-        return new ResponseEntity<>(MoonshotResponse.error(ErrorType.INVALID_HTTP_METHOD), e.getStatusCode());
+        return new ResponseEntity<>(MoonshotResponse.error(ErrorType.METHOD_NOT_ALLOWED), e.getStatusCode());
     }
 
     @ExceptionHandler(ConstraintDefinitionException.class)
@@ -79,39 +79,30 @@ public class MoonshotControllerAdvice {
     }
 
     /**
-     * 401 UNAUTHROZIED
-     */
-//    @ExceptionHandler(FeignException.class)
-//    public ResponseEntity<MoonshotResponse<?>> handlerFeignException(final FeignException e) {
-//        log.error(e.getMessage(), e);
-//        return new ResponseEntity<>(MoonshotResponse.error(ErrorType.INVALID_AUTHORIZATION_ERROR), HttpStatus.UNAUTHORIZED);
-//    }
-
-    /**
      * 500 INTERNEL_SERVER
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<MoonshotResponse<?>> handleException(final Exception e, final HttpServletRequest request) throws IOException {
         log.error(e.getMessage(), e);
-        return new ResponseEntity<>(MoonshotResponse.error(ErrorType.INTERNAL_SERVER_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(MoonshotResponse.error(ErrorType.INTERNAL_SERVER), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<MoonshotResponse<?>> handlerIllegalArgumentException(final IllegalArgumentException e, final HttpServletRequest request) {
         log.error(e.getMessage(), e);
-        return new ResponseEntity<>(MoonshotResponse.error(ErrorType.INTERNAL_SERVER_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(MoonshotResponse.error(ErrorType.INTERNAL_SERVER), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(IOException.class)
     public ResponseEntity<MoonshotResponse<?>> handlerIOException(final IOException e, final HttpServletRequest request) {
         log.error(e.getMessage(), e);
-        return new ResponseEntity<>(MoonshotResponse.error(ErrorType.INTERNAL_SERVER_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(MoonshotResponse.error(ErrorType.INTERNAL_SERVER), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<MoonshotResponse<?>> handlerRuntimeException(final RuntimeException e, final HttpServletRequest request) {
         log.error(e.getMessage(), e);
-        return new ResponseEntity<>(MoonshotResponse.error(ErrorType.INTERNAL_SERVER_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(MoonshotResponse.error(ErrorType.INTERNAL_SERVER), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
