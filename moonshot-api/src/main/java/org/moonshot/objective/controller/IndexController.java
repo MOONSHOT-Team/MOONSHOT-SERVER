@@ -1,9 +1,7 @@
 package org.moonshot.objective.controller;
 
 import jakarta.validation.Valid;
-import java.security.Principal;
 import lombok.RequiredArgsConstructor;
-import org.moonshot.jwt.JwtTokenProvider;
 import org.moonshot.objective.dto.request.ModifyIndexRequestDto;
 import org.moonshot.objective.model.IndexService;
 import org.moonshot.objective.service.IndexTargetProvider;
