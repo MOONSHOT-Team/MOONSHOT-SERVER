@@ -1,5 +1,13 @@
 package org.moonshot.jwt;
 
+import static org.moonshot.response.ErrorType.DISCORD_LOG_APPENDER;
+import static org.moonshot.response.ErrorType.EXPIRED_TOKEN;
+import static org.moonshot.response.ErrorType.INVALID_REFRESH_TOKEN;
+import static org.moonshot.response.ErrorType.UNKNOWN_TOKEN;
+import static org.moonshot.response.ErrorType.UNSUPPORTED_TOKEN;
+import static org.moonshot.response.ErrorType.WRONG_SIGNATURE_TOKEN;
+import static org.moonshot.response.ErrorType.WRONG_TYPE_TOKEN;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Header;
@@ -17,9 +25,8 @@ import javax.crypto.SecretKey;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.moonshot.constants.JWTConstants;
-import org.moonshot.exception.global.auth.InvalidRefreshTokenException;
-import org.moonshot.exception.global.common.MoonshotException;
-import org.moonshot.response.ErrorType;
+import org.moonshot.exception.InternalServerException;
+import org.moonshot.exception.UnauthorizedException;
 import org.moonshot.security.UserAuthentication;
 import org.moonshot.security.service.UserPrincipalDetailsService;
 import org.moonshot.user.model.UserPrincipal;
@@ -103,7 +110,7 @@ public class JwtTokenProvider {
         if (redisTemplate.hasKey(String.valueOf(userId))) {
             return userId;
         } else {
-            throw new InvalidRefreshTokenException();
+            throw new UnauthorizedException(INVALID_REFRESH_TOKEN);
         }
     }
 
@@ -115,17 +122,17 @@ public class JwtTokenProvider {
             } else if (claims.get(JWTConstants.TOKEN_TYPE).toString().equals(JWTConstants.REFRESH_TOKEN)) {
                 return JwtValidationType.VALID_REFRESH;
             }
-            throw new MoonshotException(ErrorType.WRONG_TYPE_TOKEN_ERROR);
+            throw new UnauthorizedException(WRONG_TYPE_TOKEN);
         } catch (MalformedJwtException e) {
-            throw new MoonshotException(ErrorType.WRONG_TYPE_TOKEN_ERROR);
+            throw new UnauthorizedException(WRONG_TYPE_TOKEN);
         } catch (ExpiredJwtException e) {
-            throw new MoonshotException(ErrorType.EXPIRED_TOKEN_ERROR);
+            throw new UnauthorizedException(EXPIRED_TOKEN);
         } catch (IllegalArgumentException e) {
-            throw new MoonshotException(ErrorType.UNKNOWN_TOKEN_ERROR);
+            throw new UnauthorizedException(UNKNOWN_TOKEN);
         } catch (UnsupportedJwtException e) {
-            throw new MoonshotException(ErrorType.UNSUPPORTED_TOKEN_ERROR);
+            throw new UnauthorizedException(UNSUPPORTED_TOKEN);
         } catch (SignatureException e) {
-            throw new MoonshotException(ErrorType.WRONG_SIGNATURE_TOKEN_ERROR);
+            throw new UnauthorizedException(WRONG_SIGNATURE_TOKEN);
         }
     }
 
@@ -135,7 +142,7 @@ public class JwtTokenProvider {
             String refreshToken = valueOperations.get(String.valueOf(userId));
             redisTemplate.delete(refreshToken);
         } else {
-            throw new InvalidRefreshTokenException();
+            throw new InternalServerException(DISCORD_LOG_APPENDER);
         }
     }
     private Claims getBody(final String token) {

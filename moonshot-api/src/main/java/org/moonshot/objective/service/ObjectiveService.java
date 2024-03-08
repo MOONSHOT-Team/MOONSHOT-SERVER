@@ -1,7 +1,12 @@
 package org.moonshot.objective.service;
 
-import static org.moonshot.objective.service.validator.ObjectiveValidator.*;
-import static org.moonshot.user.service.validator.UserValidator.*;
+import static org.moonshot.objective.service.validator.ObjectiveValidator.validateActiveObjectiveSizeExceeded;
+import static org.moonshot.objective.service.validator.ObjectiveValidator.validateIndexWithInRange;
+import static org.moonshot.response.ErrorType.INVALID_EXPIRE_AT;
+import static org.moonshot.response.ErrorType.NOT_FOUND_OBJECTIVE;
+import static org.moonshot.response.ErrorType.NOT_FOUND_USER;
+import static org.moonshot.response.ErrorType.REQUIRED_EXPIRE_AT;
+import static org.moonshot.user.service.validator.UserValidator.validateUserAuthorization;
 import static org.moonshot.validator.IndexValidator.isIndexIncreased;
 import static org.moonshot.validator.IndexValidator.isSameIndex;
 
@@ -13,10 +18,8 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.moonshot.common.model.Period;
-import org.moonshot.exception.objective.DateInputRequiredException;
-import org.moonshot.exception.objective.InvalidExpiredAtException;
-import org.moonshot.exception.objective.ObjectiveNotFoundException;
-import org.moonshot.exception.user.UserNotFoundException;
+import org.moonshot.exception.BadRequestException;
+import org.moonshot.exception.NotFoundException;
 import org.moonshot.keyresult.service.KeyResultService;
 import org.moonshot.objective.dto.request.ModifyIndexRequestDto;
 import org.moonshot.objective.dto.request.ModifyObjectiveRequestDto;
@@ -24,7 +27,10 @@ import org.moonshot.objective.dto.request.OKRCreateRequestDto;
 import org.moonshot.objective.dto.response.DashboardResponseDto;
 import org.moonshot.objective.dto.response.HistoryResponseDto;
 import org.moonshot.objective.dto.response.ObjectiveGroupByYearDto;
-import org.moonshot.objective.model.*;
+import org.moonshot.objective.model.Category;
+import org.moonshot.objective.model.Criteria;
+import org.moonshot.objective.model.IndexService;
+import org.moonshot.objective.model.Objective;
 import org.moonshot.objective.repository.ObjectiveRepository;
 import org.moonshot.user.model.User;
 import org.moonshot.user.repository.UserRepository;
@@ -42,7 +48,7 @@ public class ObjectiveService implements IndexService {
 
     public void createObjective(final Long userId, final OKRCreateRequestDto request) {
         User user =  userRepository.findById(userId)
-                .orElseThrow(UserNotFoundException::new);
+                .orElseThrow(() -> new NotFoundException(NOT_FOUND_USER));
 
         List<Objective> objectives = objectiveRepository.findAllByUserId(userId);
         validateActiveObjectiveSizeExceeded(objectives.size());
@@ -60,7 +66,7 @@ public class ObjectiveService implements IndexService {
 
     public DashboardResponseDto deleteObjective(final Long userId, final Long objectiveId) {
         Objective objective = objectiveRepository.findObjectiveAndUserById(objectiveId)
-                .orElseThrow(ObjectiveNotFoundException::new);
+                .orElseThrow(() -> new NotFoundException(NOT_FOUND_OBJECTIVE));
         validateUserAuthorization(objective.getUser().getId(), userId);
 
         keyResultService.deleteKeyResult(objective);
@@ -76,15 +82,15 @@ public class ObjectiveService implements IndexService {
 
     public void modifyObjective(final Long userId, final ModifyObjectiveRequestDto request) {
         Objective objective = objectiveRepository.findObjectiveAndUserById(request.objectiveId())
-                .orElseThrow(ObjectiveNotFoundException::new);
+                .orElseThrow(() -> new NotFoundException(NOT_FOUND_OBJECTIVE));
         validateUserAuthorization(objective.getUser().getId(), userId);
 
         objective.modifyClosed(request.isClosed());
         if (!request.isClosed()) {
             if (request.expireAt() == null) {
-                throw new DateInputRequiredException();
+                throw new BadRequestException(REQUIRED_EXPIRE_AT);
             } else if (request.expireAt().isBefore(LocalDate.now())) {
-                throw new InvalidExpiredAtException();
+                throw new BadRequestException(INVALID_EXPIRE_AT);
             }
             objective.modifyPeriod(Period.of(objective.getPeriod().getStartAt(), request.expireAt()));
         }
@@ -95,13 +101,13 @@ public class ObjectiveService implements IndexService {
         List<Objective> objList = objectiveRepository.findAllByUserId(userId);
         if (objList.isEmpty()) {
             User user = userRepository.findById(userId)
-                    .orElseThrow(UserNotFoundException::new);
+                    .orElseThrow(() -> new NotFoundException(NOT_FOUND_USER));
             return DashboardResponseDto.ofNull(user.getNickname());
         }
 
         Long treeId = objectiveId == null ? objList.get(0).getId() : objectiveId;
         Objective objective = objectiveRepository.findByIdWithKeyResultsAndTasks(treeId)
-                .orElseThrow(ObjectiveNotFoundException::new);
+                .orElseThrow(() -> new NotFoundException(NOT_FOUND_OBJECTIVE));
         validateUserAuthorization(objective.getUser().getId(), userId);
 
         return DashboardResponseDto.of(objective, objList, objective.getUser().getNickname());
@@ -143,7 +149,7 @@ public class ObjectiveService implements IndexService {
         validateIndexWithInRange(objectiveCount, request.idx());
 
         Objective objective = objectiveRepository.findObjectiveAndUserById(request.id())
-                .orElseThrow(ObjectiveNotFoundException::new);
+                .orElseThrow(() -> new NotFoundException(NOT_FOUND_OBJECTIVE));
         validateUserAuthorization(objective.getUser().getId(), userId);
 
         int prevIdx = objective.getIdx();

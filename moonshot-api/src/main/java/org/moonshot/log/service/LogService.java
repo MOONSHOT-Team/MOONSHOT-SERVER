@@ -1,11 +1,17 @@
 package org.moonshot.log.service;
 
+import static org.moonshot.keyresult.service.validator.KeyResultValidator.isKeyResultAchieved;
+import static org.moonshot.log.service.validator.LogValidator.isCreateLog;
+import static org.moonshot.log.service.validator.LogValidator.validateLogNum;
+import static org.moonshot.response.ErrorType.NOT_FOUND_KEY_RESULT;
+import static org.moonshot.user.service.validator.UserValidator.validateUserAuthorization;
+
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.moonshot.exception.keyresult.KeyResultNotFoundException;
+import org.moonshot.exception.NotFoundException;
 import org.moonshot.keyresult.dto.request.KeyResultCreateRequestDto;
 import org.moonshot.keyresult.dto.request.KeyResultCreateRequestInfoDto;
 import org.moonshot.keyresult.dto.request.KeyResultModifyRequestDto;
@@ -21,11 +27,6 @@ import org.moonshot.objective.model.Objective;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.moonshot.keyresult.service.validator.KeyResultValidator.isKeyResultAchieved;
-import static org.moonshot.log.service.validator.LogValidator.isCreateLog;
-import static org.moonshot.log.service.validator.LogValidator.validateLogNum;
-import static org.moonshot.user.service.validator.UserValidator.validateUserAuthorization;
-
 
 @Service
 @Transactional
@@ -37,7 +38,7 @@ public class LogService {
 
     public Optional<AchieveResponseDto> createRecordLog(final Long userId, final LogCreateRequestDto request) {
         KeyResult keyResult = keyResultRepository.findKeyResultAndObjective(request.keyResultId())
-                .orElseThrow(KeyResultNotFoundException::new);
+                .orElseThrow(() -> new NotFoundException(NOT_FOUND_KEY_RESULT));
         validateUserAuthorization(keyResult.getObjective().getUser().getId(), userId);
         Optional<Log> prevLog = logRepository.findLatestLogByKeyResultId(LogState.RECORD, request.keyResultId());
         long prevNum = -1;
@@ -63,7 +64,7 @@ public class LogService {
 
     public Log createUpdateLog(final KeyResultModifyRequestDto request, final Long keyResultId) {
         KeyResult keyResult = keyResultRepository.findById(keyResultId)
-                .orElseThrow(KeyResultNotFoundException::new);
+                .orElseThrow(() -> new NotFoundException(NOT_FOUND_KEY_RESULT));
         return logRepository.save(Log.builder()
                 .date(LocalDateTime.now())
                 .state(LogState.UPDATE)
@@ -76,7 +77,7 @@ public class LogService {
 
     public void createKRLog(final Object request, final Long keyResultId) {
         KeyResult keyResult = keyResultRepository.findById(keyResultId)
-                .orElseThrow(KeyResultNotFoundException::new);
+                .orElseThrow(() -> new NotFoundException(NOT_FOUND_KEY_RESULT));
 
         if (request instanceof KeyResultCreateRequestInfoDto) {
             KeyResultCreateRequestInfoDto dto = (KeyResultCreateRequestInfoDto) request;

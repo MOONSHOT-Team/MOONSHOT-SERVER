@@ -1,7 +1,9 @@
 package org.moonshot.objective.service.validator;
 
-import org.moonshot.exception.objective.ObjectiveInvalidIndexException;
-import org.moonshot.exception.objective.ObjectiveNumberExceededException;
+import static org.moonshot.response.ErrorType.ACTIVE_OBJECTIVE_NUMBER_EXCEEDED;
+import static org.moonshot.response.ErrorType.INVALID_OBJECTIVE_INDEX;
+
+import org.moonshot.exception.BadRequestException;
 
 public class ObjectiveValidator {
 
@@ -9,13 +11,13 @@ public class ObjectiveValidator {
 
     public static void validateIndexWithInRange(final Long objectiveCount, final int idx) {
         if ((objectiveCount <= idx) || (idx < 0)) {
-            throw new ObjectiveInvalidIndexException();
+            throw new BadRequestException(INVALID_OBJECTIVE_INDEX);
         }
     }
 
     public static void validateActiveObjectiveSizeExceeded(final int objListSize) {
         if (objListSize >= ACTIVE_OBJECTIVE_NUMBER) {
-            throw new ObjectiveNumberExceededException();
+            throw new BadRequestException(ACTIVE_OBJECTIVE_NUMBER_EXCEEDED);
         }
     }
 

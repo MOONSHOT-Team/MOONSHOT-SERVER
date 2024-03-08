@@ -1,19 +1,19 @@
 package org.moonshot.user.service;
 
+import static org.moonshot.response.ErrorType.NOT_FOUND_USER;
 import static org.moonshot.user.service.validator.UserValidator.hasChange;
 import static org.moonshot.user.service.validator.UserValidator.isNewUser;
 import static org.moonshot.user.service.validator.UserValidator.validateUserAuthorization;
 import static org.moonshot.util.MDCUtil.USER_REQUEST_ORIGIN;
 import static org.moonshot.util.MDCUtil.get;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.moonshot.discord.SignUpEvent;
-import org.moonshot.exception.user.UserNotFoundException;
+import org.moonshot.exception.NotFoundException;
 import org.moonshot.jwt.JwtTokenProvider;
 import org.moonshot.jwt.TokenResponse;
 import org.moonshot.objective.service.ObjectiveService;
@@ -68,7 +68,7 @@ public class UserService {
     private final KakaoApiClient kakaoApiClient;
     private final JwtTokenProvider jwtTokenProvider;
 
-    public SocialLoginResponse login(final SocialLoginRequest request) throws IOException {
+    public SocialLoginResponse login(final SocialLoginRequest request) {
         return switch (request.socialPlatform().getValue()) {
             case "google" -> googleLogin(request);
             case "kakao" -> kakaoLogin(request);
@@ -143,7 +143,7 @@ public class UserService {
 
     public void logout(final Long userId) {
         User user =  userRepository.findById(userId)
-                .orElseThrow(UserNotFoundException::new);
+                .orElseThrow(() -> new NotFoundException(NOT_FOUND_USER));
         validateUserAuthorization(user.getId(), userId);
 
         jwtTokenProvider.deleteRefreshToken(userId);
@@ -151,7 +151,7 @@ public class UserService {
 
     public void withdrawal(final Long userId) {
         User user =  userRepository.findById(userId)
-                .orElseThrow(UserNotFoundException::new);
+                .orElseThrow(() -> new NotFoundException(NOT_FOUND_USER));
         validateUserAuthorization(user.getId(), userId);
 
         user.setDeleteAt();
@@ -159,7 +159,7 @@ public class UserService {
 
     public void modifyProfile(final Long userId, final UserInfoRequest request) {
         User user =  userRepository.findById(userId)
-                .orElseThrow(UserNotFoundException::new);
+                .orElseThrow(() -> new NotFoundException(NOT_FOUND_USER));
         validateUserAuthorization(user.getId(), userId);
 
         if (hasChange(request.nickname())) {
@@ -172,7 +172,7 @@ public class UserService {
 
     public UserInfoResponse getMyProfile(final Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(UserNotFoundException::new);
+                .orElseThrow(() -> new NotFoundException(NOT_FOUND_USER));
         return UserInfoResponse.of(user);
     }
 
