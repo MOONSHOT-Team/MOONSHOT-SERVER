@@ -1,7 +1,6 @@
 package org.moonshot.user.service.validator;
 
 import org.moonshot.exception.ForbiddenException;
-import org.moonshot.exception.global.auth.AccessDeniedException;
 import org.moonshot.user.model.User;
 
 import java.util.Optional;
