@@ -1,11 +1,13 @@
 package org.moonshot.keyresult.service.validator;
 
+import static org.moonshot.response.ErrorType.ACTIVE_KEY_RESULT_NUMBER_EXCEEDED;
+import static org.moonshot.response.ErrorType.INVALID_KEY_RESULT_INDEX;
+import static org.moonshot.response.ErrorType.INVALID_KEY_RESULT_PERIOD;
+
 import java.time.LocalDate;
 import java.util.List;
 import org.moonshot.common.model.Period;
-import org.moonshot.exception.keyresult.KeyResultInvalidIndexException;
-import org.moonshot.exception.keyresult.KeyResultInvalidPeriodException;
-import org.moonshot.exception.keyresult.KeyResultNumberExceededException;
+import org.moonshot.exception.BadRequestException;
 
 public class KeyResultValidator {
 
@@ -13,39 +15,39 @@ public class KeyResultValidator {
 
     public static void validateKeyResultIndex(final int index, final int requestIndex) {
         if (index != requestIndex) {
-            throw new KeyResultInvalidIndexException();
+            throw new BadRequestException(INVALID_KEY_RESULT_INDEX);
         }
     }
 
     public static void validateKRPeriodWithInObjPeriod(final Period objPeriod, final LocalDate start, final LocalDate end) {
         if (start.isBefore(objPeriod.getStartAt()) || end.isAfter(objPeriod.getExpireAt())
             || start.isAfter(objPeriod.getExpireAt()) || start.isAfter(end)) {
-            throw new KeyResultInvalidPeriodException();
+            throw new BadRequestException(INVALID_KEY_RESULT_PERIOD);
         }
     }
 
     public static void validateActiveKRSizeExceeded(final int krListSize) {
         if (krListSize >= ACTIVE_KEY_RESULT_NUMBER) {
-            throw new KeyResultNumberExceededException();
+            throw new BadRequestException(ACTIVE_KEY_RESULT_NUMBER_EXCEEDED);
         }
     }
 
     public static void validateIndexUnderMaximum(final int requestIndex, final int totalKRListSize) {
         if (requestIndex > totalKRListSize) {
-            throw new KeyResultInvalidIndexException();
+            throw new BadRequestException(INVALID_KEY_RESULT_INDEX);
         }
     }
 
     public static void validateKeyResultPeriod(final Period objPeriod, final LocalDate start, final LocalDate end) {
         if (start.isAfter(end) || start.isBefore(objPeriod.getStartAt()) || start.isAfter(objPeriod.getExpireAt())
             || end.isBefore(start) || end.isBefore(objPeriod.getStartAt()) || end.isAfter(objPeriod.getExpireAt())) {
-            throw new KeyResultInvalidPeriodException();
+            throw new BadRequestException(INVALID_KEY_RESULT_PERIOD);
         }
     }
 
     public static void validateIndex(final Long keyResultCount, final Integer requestIndex) {
         if (keyResultCount <= requestIndex || requestIndex < 0) {
-            throw new KeyResultInvalidIndexException();
+            throw new BadRequestException(INVALID_KEY_RESULT_INDEX);
         }
     }
 
