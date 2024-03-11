@@ -1,5 +1,8 @@
 package org.moonshot.discord;
 
+import static org.moonshot.response.ErrorType.DISCORD_CONTENT;
+import static org.moonshot.response.ErrorType.DISCORD_LOG_APPENDER;
+
 import java.awt.Color;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -11,7 +14,7 @@ import org.moonshot.discord.model.Footer;
 import org.moonshot.discord.model.Image;
 import org.moonshot.discord.model.JsonObject;
 import org.moonshot.discord.model.Thumbnail;
-import org.moonshot.exception.global.external.discord.ErrorLogAppenderException;
+import org.moonshot.exception.InternalServerException;
 import org.moonshot.util.ApiCallUtil;
 
 public class DiscordWebHook {
@@ -35,7 +38,7 @@ public class DiscordWebHook {
 
     public void execute() throws IOException {
         if (this.embeds.isEmpty()) {
-            throw new RuntimeException("컨텐츠를 설정하거나 하나 이상의 Embed Object를 추가해야 합니다.");
+            throw new InternalServerException(DISCORD_CONTENT);
         }
 
         try {
@@ -50,7 +53,7 @@ public class DiscordWebHook {
 
     public void executeSignIn(String signinWebhookUrl) throws IOException {
         if (this.embeds.isEmpty()) {
-            throw new RuntimeException("컨텐츠를 설정하거나 하나 이상의 Embed Object를 추가해야 합니다.");
+            throw new InternalServerException(DISCORD_CONTENT);
         }
 
         try {
@@ -73,7 +76,7 @@ public class DiscordWebHook {
 
     private JsonObject createDiscordEmbedObject(List<EmbedObject> embeds, JsonObject json) {
         if (embeds.isEmpty()) {
-            throw new ErrorLogAppenderException();
+            throw new InternalServerException(DISCORD_LOG_APPENDER);
         }
 
         List<JsonObject> embedObjects = new ArrayList<>();

@@ -1,18 +1,19 @@
 package org.moonshot.user.service;
 
-import static org.moonshot.user.service.validator.UserValidator.*;
+import static org.moonshot.response.ErrorType.NOT_FOUND_USER;
+import static org.moonshot.user.service.validator.UserValidator.hasChange;
+import static org.moonshot.user.service.validator.UserValidator.isNewUser;
+import static org.moonshot.user.service.validator.UserValidator.validateUserAuthorization;
 import static org.moonshot.util.MDCUtil.USER_REQUEST_ORIGIN;
 import static org.moonshot.util.MDCUtil.get;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.moonshot.discord.DiscordAppender;
-import org.moonshot.exception.global.external.discord.ErrorLogAppenderException;
-import org.moonshot.exception.user.UserNotFoundException;
+import org.moonshot.discord.SignUpEvent;
+import org.moonshot.exception.NotFoundException;
 import org.moonshot.jwt.JwtTokenProvider;
 import org.moonshot.jwt.TokenResponse;
 import org.moonshot.objective.service.ObjectiveService;
@@ -24,7 +25,6 @@ import org.moonshot.openfeign.google.GoogleApiClient;
 import org.moonshot.openfeign.google.GoogleAuthApiClient;
 import org.moonshot.openfeign.kakao.KakaoApiClient;
 import org.moonshot.openfeign.kakao.KakaoAuthApiClient;
-import org.moonshot.security.UserAuthentication;
 import org.moonshot.user.dto.request.SocialLoginRequest;
 import org.moonshot.user.dto.request.UserInfoRequest;
 import org.moonshot.user.dto.response.SocialLoginResponse;
@@ -32,6 +32,7 @@ import org.moonshot.user.dto.response.UserInfoResponse;
 import org.moonshot.user.model.User;
 import org.moonshot.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,6 +60,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final ObjectiveService objectiveService;
+    private final ApplicationEventPublisher eventPublisher;
 
     private final GoogleAuthApiClient googleAuthApiClient;
     private final GoogleApiClient googleApiClient;
@@ -66,7 +68,7 @@ public class UserService {
     private final KakaoApiClient kakaoApiClient;
     private final JwtTokenProvider jwtTokenProvider;
 
-    public SocialLoginResponse login(final SocialLoginRequest request) throws IOException {
+    public SocialLoginResponse login(final SocialLoginRequest request) {
         return switch (request.socialPlatform().getValue()) {
             case "google" -> googleLogin(request);
             case "kakao" -> kakaoLogin(request);
@@ -74,7 +76,7 @@ public class UserService {
         };
     }
 
-    public SocialLoginResponse googleLogin(final SocialLoginRequest request) throws IOException {
+    public SocialLoginResponse googleLogin(final SocialLoginRequest request) {
         GoogleTokenResponse tokenResponse = googleAuthApiClient.googleAuth(
                 request.code(),
                 googleClientId,
@@ -94,13 +96,12 @@ public class UserService {
                             .email(userResponse.email())
                             .build());
             user = newUser;
-            sendDiscordAlert(newUser);
+            publishSignUpEvent(newUser);
         } else {
             user = findUser.get();
             user.resetDeleteAt();
         }
-        UserAuthentication userAuthentication = new UserAuthentication(user.getId(), null, null);
-        TokenResponse token = new TokenResponse(jwtTokenProvider.generateAccessToken(userAuthentication), jwtTokenProvider.generateRefreshToken(userAuthentication));
+        TokenResponse token = new TokenResponse(jwtTokenProvider.generateAccessToken(user.getId()), jwtTokenProvider.generateRefreshToken(user.getId()));
         return SocialLoginResponse.of(user.getId(), user.getName(), token);
     }
 
@@ -124,13 +125,12 @@ public class UserService {
                             .email(null)
                             .build());
             user = newUser;
-            sendDiscordAlert(newUser);
+            publishSignUpEvent(newUser);
         } else {
             user = findUser.get();
             user.resetDeleteAt();
         }
-        UserAuthentication userAuthentication = new UserAuthentication(user.getId(), null, null);
-        TokenResponse token = new TokenResponse(jwtTokenProvider.generateAccessToken(userAuthentication), jwtTokenProvider.generateRefreshToken(userAuthentication));
+        TokenResponse token = new TokenResponse(jwtTokenProvider.generateAccessToken(user.getId()), jwtTokenProvider.generateRefreshToken(user.getId()));
         return SocialLoginResponse.of(user.getId(), user.getName(), token);
     }
 
@@ -138,13 +138,12 @@ public class UserService {
         String token = refreshToken.substring("Bearer ".length());
         Long userId = jwtTokenProvider.validateRefreshToken(token);
         jwtTokenProvider.deleteRefreshToken(userId);
-        UserAuthentication userAuthentication = new UserAuthentication(userId, null, null);
-        return jwtTokenProvider.reissuedToken(userAuthentication);
+        return jwtTokenProvider.reissuedToken(userId);
     }
 
     public void logout(final Long userId) {
         User user =  userRepository.findById(userId)
-                .orElseThrow(UserNotFoundException::new);
+                .orElseThrow(() -> new NotFoundException(NOT_FOUND_USER));
         validateUserAuthorization(user.getId(), userId);
 
         jwtTokenProvider.deleteRefreshToken(userId);
@@ -152,7 +151,7 @@ public class UserService {
 
     public void withdrawal(final Long userId) {
         User user =  userRepository.findById(userId)
-                .orElseThrow(UserNotFoundException::new);
+                .orElseThrow(() -> new NotFoundException(NOT_FOUND_USER));
         validateUserAuthorization(user.getId(), userId);
 
         user.setDeleteAt();
@@ -160,7 +159,7 @@ public class UserService {
 
     public void modifyProfile(final Long userId, final UserInfoRequest request) {
         User user =  userRepository.findById(userId)
-                .orElseThrow(UserNotFoundException::new);
+                .orElseThrow(() -> new NotFoundException(NOT_FOUND_USER));
         validateUserAuthorization(user.getId(), userId);
 
         if (hasChange(request.nickname())) {
@@ -173,18 +172,19 @@ public class UserService {
 
     public UserInfoResponse getMyProfile(final Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(UserNotFoundException::new);
+                .orElseThrow(() -> new NotFoundException(NOT_FOUND_USER));
         return UserInfoResponse.of(user);
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void sendDiscordAlert(final User user) {
-        try {
-            DiscordAppender discordAppender = new DiscordAppender();
-            discordAppender.signInAppend(user.getName(), user.getEmail() == null ? "" : user.getEmail(), user.getSocialPlatform().getValue(), LocalDateTime.now(), user.getProfileImage());
-        } catch (ErrorLogAppenderException e) {
-            log.error("{}", e.getErrorType().getMessage());
-        }
+    public void publishSignUpEvent(final User user) {
+        eventPublisher.publishEvent(SignUpEvent.of(
+                user.getName(),
+                user.getEmail() == null ? "" : user.getEmail(),
+                user.getSocialPlatform().toString(),
+                LocalDateTime.now(),
+                user.getProfileImage()
+        ));
     }
 
     public void softDeleteUser(LocalDateTime currentDate) {

@@ -9,9 +9,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import java.security.Principal;
 import org.moonshot.response.MoonshotResponse;
 import org.moonshot.task.dto.request.TaskSingleCreateRequestDto;
+import org.moonshot.user.model.LoginUser;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,7 +25,7 @@ public interface TaskApi {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = MoonshotResponse.class)))
     })
     @Operation(summary = "Task 추가")
-    public ResponseEntity<MoonshotResponse<?>> createTask(Principal principal,
+    public ResponseEntity<MoonshotResponse<?>> createTask(@LoginUser Long userId,
                                                           @Parameter(in = ParameterIn.DEFAULT, name = "TaskSingleCreateRequest", description = "task 추가 요청 body")
                                                           @RequestBody @Valid TaskSingleCreateRequestDto request);
 
@@ -36,7 +36,7 @@ public interface TaskApi {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = MoonshotResponse.class)))
     })
     @Operation(summary = "Task 삭제")
-    public ResponseEntity<?> deleteTask(Principal principal, @PathVariable("taskId") Long taskId);
+    public ResponseEntity<?> deleteTask(@LoginUser Long userId, @PathVariable("taskId") Long taskId);
 }
 
 

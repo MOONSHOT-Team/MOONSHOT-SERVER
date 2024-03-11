@@ -1,7 +1,19 @@
 package org.moonshot.keyresult.service;
 
-import static org.moonshot.keyresult.service.validator.KeyResultValidator.*;
+import static org.moonshot.keyresult.service.validator.KeyResultValidator.hasChange;
+import static org.moonshot.keyresult.service.validator.KeyResultValidator.hasDateChange;
+import static org.moonshot.keyresult.service.validator.KeyResultValidator.hasKeyResultTask;
+import static org.moonshot.keyresult.service.validator.KeyResultValidator.isKeyResultAchieved;
+import static org.moonshot.keyresult.service.validator.KeyResultValidator.validateActiveKRSizeExceeded;
+import static org.moonshot.keyresult.service.validator.KeyResultValidator.validateIndex;
+import static org.moonshot.keyresult.service.validator.KeyResultValidator.validateIndexUnderMaximum;
+import static org.moonshot.keyresult.service.validator.KeyResultValidator.validateKRPeriodWithInObjPeriod;
+import static org.moonshot.keyresult.service.validator.KeyResultValidator.validateKeyResultIndex;
+import static org.moonshot.keyresult.service.validator.KeyResultValidator.validateKeyResultPeriod;
 import static org.moonshot.log.service.validator.LogValidator.validateLogNum;
+import static org.moonshot.response.ErrorType.NOT_FOUND_KEY_RESULT;
+import static org.moonshot.response.ErrorType.NOT_FOUND_OBJECTIVE;
+import static org.moonshot.response.ErrorType.REQUIRED_KEY_RESULT_VALUE;
 import static org.moonshot.task.service.validator.TaskValidator.validateTaskIndex;
 import static org.moonshot.user.service.validator.UserValidator.validateUserAuthorization;
 import static org.moonshot.validator.IndexValidator.isIndexIncreased;
@@ -13,10 +25,8 @@ import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.moonshot.common.model.Period;
-import org.moonshot.exception.keyresult.KeyResultNotFoundException;
-import org.moonshot.exception.keyresult.KeyResultRequiredException;
-import org.moonshot.exception.log.LogNotFoundException;
-import org.moonshot.exception.objective.ObjectiveNotFoundException;
+import org.moonshot.exception.BadRequestException;
+import org.moonshot.exception.NotFoundException;
 import org.moonshot.keyresult.dto.request.KeyResultCreateRequestDto;
 import org.moonshot.keyresult.dto.request.KeyResultCreateRequestInfoDto;
 import org.moonshot.keyresult.dto.request.KeyResultModifyRequestDto;
@@ -54,15 +64,15 @@ public class KeyResultService implements IndexService {
         List<KeyResultCreateRequestInfoDto> nonNullRequests = requests.stream().filter(Objects::nonNull).toList();
         for (int i = 0; i < nonNullRequests.size(); i++) {
             KeyResultCreateRequestInfoDto dto = nonNullRequests.get(i);
-            validateKeyResultIndex(i, dto.idx());
-            validateKRPeriodWithInObjPeriod(objective.getPeriod(), dto.startAt(), dto.expireAt());
+            validateKeyResultIndex(i, dto.krIdx());
+            validateKRPeriodWithInObjPeriod(objective.getPeriod(), dto.krStartAt(), dto.krExpireAt());
 
             KeyResult keyResult = keyResultRepository.save(KeyResult.builder()
-                    .title(dto.title())
-                    .period(Period.of(dto.startAt(), dto.expireAt()))
-                    .idx(dto.idx())
-                    .target(dto.target())
-                    .metric(dto.metric())
+                    .title(dto.krTitle())
+                    .period(Period.of(dto.krStartAt(), dto.krExpireAt()))
+                    .idx(dto.krIdx())
+                    .target(dto.krTarget())
+                    .metric(dto.krMetric())
                     .objective(objective)
                     .build());
             logService.createKRLog(dto, keyResult.getId());
@@ -75,7 +85,7 @@ public class KeyResultService implements IndexService {
 
     public void createKeyResult(final KeyResultCreateRequestDto request, final Long userId) {
         Objective objective = objectiveRepository.findObjectiveAndUserById(request.objectiveId())
-                .orElseThrow(ObjectiveNotFoundException::new);
+                .orElseThrow(() -> new NotFoundException(NOT_FOUND_OBJECTIVE));
         validateUserAuthorization(objective.getUser().getId(), userId);
 
         List<KeyResult> krList = keyResultRepository.findAllByObjective(objective);
@@ -92,12 +102,12 @@ public class KeyResultService implements IndexService {
                 .idx(request.idx())
                 .target(request.target())
                 .metric(request.metric()).build());
-      logService.createKRLog(request, keyResult.getId());
+        logService.createKRLog(request, keyResult.getId());
     }
 
     public void deleteKeyResult(final Long keyResultId, final Long userId) {
         KeyResult keyResult = keyResultRepository.findKeyResultAndObjective(keyResultId)
-                .orElseThrow(KeyResultNotFoundException::new);
+                .orElseThrow(() -> new NotFoundException(NOT_FOUND_KEY_RESULT));
         validateUserAuthorization(keyResult.getObjective().getUser().getId(), userId);
 
         logRepository.deleteAllInBatch(logRepository.findAllByKeyResult(keyResult));
@@ -127,7 +137,7 @@ public class KeyResultService implements IndexService {
 
     public Optional<AchieveResponseDto> modifyKeyResult(final KeyResultModifyRequestDto request, final Long userId) {
         KeyResult keyResult = keyResultRepository.findKeyResultAndObjective(request.keyResultId())
-                .orElseThrow(KeyResultNotFoundException::new);
+                .orElseThrow(() -> new NotFoundException(NOT_FOUND_KEY_RESULT));
         validateUserAuthorization(keyResult.getObjective().getUser().getId(), userId);
 
         if (hasChange(request.title())) {
@@ -149,7 +159,7 @@ public class KeyResultService implements IndexService {
         }
 
         if (request.target() == null || request.logContent() == null){
-            throw new KeyResultRequiredException();
+            throw new BadRequestException(REQUIRED_KEY_RESULT_VALUE);
         }
 
         Log updateLog = logService.createUpdateLog(request, keyResult.getId());
@@ -173,7 +183,7 @@ public class KeyResultService implements IndexService {
     @Override
     public void modifyIdx(final ModifyIndexRequestDto request, final Long userId) {
         KeyResult keyResult = keyResultRepository.findKeyResultAndObjective(request.id())
-                .orElseThrow(KeyResultNotFoundException::new);
+                .orElseThrow(() -> new NotFoundException(NOT_FOUND_KEY_RESULT));
         validateUserAuthorization(keyResult.getObjective().getUser().getId(), userId);
 
         Long krCount = keyResultRepository.countAllByObjectiveId(keyResult.getObjective().getId());
@@ -195,7 +205,7 @@ public class KeyResultService implements IndexService {
     @Transactional(readOnly = true)
     public KRDetailResponseDto getKRDetails(final Long userId, final Long keyResultId) {
         KeyResult keyResult = keyResultRepository.findKeyResultAndObjective(keyResultId)
-                .orElseThrow(KeyResultNotFoundException::new);
+                .orElseThrow(() -> new NotFoundException(NOT_FOUND_KEY_RESULT));
         validateUserAuthorization(keyResult.getObjective().getUser().getId(), userId);
 
         List<Log> logList = logService.getLogList(keyResult);
@@ -220,7 +230,7 @@ public class KeyResultService implements IndexService {
         List<TaskCreateRequestDto> nonNullTaskList = taskList.stream().filter(Objects::nonNull).toList();
         for (int i = 0; i < nonNullTaskList.size(); i++) {
             TaskCreateRequestDto taskDto = nonNullTaskList.get(i);
-            validateTaskIndex(i, taskDto.idx());
+            validateTaskIndex(i, taskDto.taskIdx());
             taskService.saveTask(keyResult, taskDto);
         }
     }

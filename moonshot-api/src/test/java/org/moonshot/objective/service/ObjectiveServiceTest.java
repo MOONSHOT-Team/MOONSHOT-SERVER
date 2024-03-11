@@ -198,7 +198,7 @@ class ObjectiveServiceTest {
         ObjectiveGroupByYearDto dto = response.groups().get(0);
         assertThat(dto.year()).isEqualTo(2023);
         assertThat(dto.objList().size()).isEqualTo(2);
-        assertThat(dto.objList().get(0).title()).isEqualTo("Objective 2");
+        assertThat(dto.objList().get(0).objTitle()).isEqualTo("Objective 2");
     }
 
 }

@@ -1,6 +1,6 @@
 package org.moonshot.objective.service.converter;
 
-import org.moonshot.exception.global.common.MoonshotException;
+import org.moonshot.exception.MoonshotException;
 import org.moonshot.objective.model.Category;
 import org.moonshot.response.ErrorType;
 import org.springframework.core.convert.converter.Converter;

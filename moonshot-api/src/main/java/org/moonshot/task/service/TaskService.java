@@ -1,8 +1,17 @@
 package org.moonshot.task.service;
 
+import static org.moonshot.response.ErrorType.NOT_FOUND_KEY_RESULT;
+import static org.moonshot.response.ErrorType.NOT_FOUND_TASK;
+import static org.moonshot.task.service.validator.TaskValidator.validateActiveTaskSizeExceeded;
+import static org.moonshot.task.service.validator.TaskValidator.validateIndex;
+import static org.moonshot.task.service.validator.TaskValidator.validateIndexUnderMaximum;
+import static org.moonshot.user.service.validator.UserValidator.validateUserAuthorization;
+import static org.moonshot.validator.IndexValidator.isIndexIncreased;
+import static org.moonshot.validator.IndexValidator.isSameIndex;
+
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.moonshot.exception.task.TaskNotFoundException;
+import org.moonshot.exception.NotFoundException;
 import org.moonshot.keyresult.model.KeyResult;
 import org.moonshot.keyresult.repository.KeyResultRepository;
 import org.moonshot.objective.dto.request.ModifyIndexRequestDto;
@@ -14,11 +23,6 @@ import org.moonshot.task.repository.TaskRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.moonshot.task.service.validator.TaskValidator.*;
-import static org.moonshot.user.service.validator.UserValidator.validateUserAuthorization;
-import static org.moonshot.validator.IndexValidator.isIndexIncreased;
-import static org.moonshot.validator.IndexValidator.isSameIndex;
-
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -28,7 +32,7 @@ public class TaskService implements IndexService {
     private final TaskRepository taskRepository;
     public void createTask(final TaskSingleCreateRequestDto request, final Long userId) {
         KeyResult keyResult = keyResultRepository.findKeyResultAndObjective(request.keyResultId())
-                .orElseThrow();
+                .orElseThrow(() -> new NotFoundException(NOT_FOUND_KEY_RESULT));
         validateUserAuthorization(keyResult.getObjective().getUser().getId(), userId);
 
         List<Task> taskList = taskRepository.findAllByKeyResultOrderByIdx(keyResult);
@@ -50,10 +54,10 @@ public class TaskService implements IndexService {
     }
 
     public void saveTask(final KeyResult keyResult, final TaskCreateRequestDto request) {
-        if (!request.title().isEmpty()) {
+        if (!request.taskTitle().isEmpty()) {
             taskRepository.save(Task.builder()
-                    .title(request.title())
-                    .idx(request.idx())
+                    .title(request.taskTitle())
+                    .idx(request.taskIdx())
                     .keyResult(keyResult)
                     .build());
         }
@@ -62,7 +66,7 @@ public class TaskService implements IndexService {
     @Override
     public void modifyIdx(final ModifyIndexRequestDto request, final Long userId) {
         Task task = taskRepository.findTaskWithFetchJoin(request.id())
-                .orElseThrow(TaskNotFoundException::new);
+                .orElseThrow(() -> new NotFoundException(NOT_FOUND_TASK));
         validateUserAuthorization(task.getKeyResult().getObjective().getUser().getId(), userId);
 
         Long taskCount = taskRepository.countAllByKeyResultId(task.getKeyResult().getId());
@@ -82,7 +86,7 @@ public class TaskService implements IndexService {
 
     public void deleteTask(final Long userId, Long taskId) {
         Task task = taskRepository.findTaskWithFetchJoin(taskId)
-                        .orElseThrow(TaskNotFoundException::new);
+                        .orElseThrow(() -> new NotFoundException(NOT_FOUND_TASK));
         validateUserAuthorization(task.getKeyResult().getObjective().getUser().getId(), userId);
 
         taskRepository.deleteById(taskId);

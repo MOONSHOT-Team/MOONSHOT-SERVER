@@ -1,5 +1,13 @@
 package org.moonshot.jwt;
 
+import static org.moonshot.response.ErrorType.DISCORD_LOG_APPENDER;
+import static org.moonshot.response.ErrorType.EXPIRED_TOKEN;
+import static org.moonshot.response.ErrorType.INVALID_REFRESH_TOKEN;
+import static org.moonshot.response.ErrorType.UNKNOWN_TOKEN;
+import static org.moonshot.response.ErrorType.UNSUPPORTED_TOKEN;
+import static org.moonshot.response.ErrorType.WRONG_SIGNATURE_TOKEN;
+import static org.moonshot.response.ErrorType.WRONG_TYPE_TOKEN;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Header;
@@ -10,19 +18,18 @@ import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.annotation.PostConstruct;
 import java.nio.charset.StandardCharsets;
-import java.security.Principal;
 import java.util.Base64;
 import java.util.Date;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import javax.crypto.SecretKey;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.moonshot.constants.JWTConstants;
-import org.moonshot.exception.global.auth.InvalidAuthException;
-import org.moonshot.exception.global.auth.InvalidRefreshTokenException;
-import org.moonshot.exception.global.common.MoonshotException;
-import org.moonshot.response.ErrorType;
+import org.moonshot.exception.InternalServerException;
+import org.moonshot.exception.UnauthorizedException;
+import org.moonshot.security.UserAuthentication;
+import org.moonshot.security.service.UserPrincipalDetailsService;
+import org.moonshot.user.model.UserPrincipal;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -36,6 +43,7 @@ import org.springframework.stereotype.Component;
 public class JwtTokenProvider {
 
     private final RedisTemplate<String, String> redisTemplate;
+    private final UserPrincipalDetailsService userPrincipalDetailsService;
 
     @Value("${jwt.secret}")
     private String JWT_SECRET;
@@ -45,19 +53,20 @@ public class JwtTokenProvider {
         JWT_SECRET = Base64.getEncoder().encodeToString(JWT_SECRET.getBytes(StandardCharsets.UTF_8));
     }
 
-    public TokenResponse reissuedToken(Authentication authentication) {
+    public TokenResponse reissuedToken(Long userId) {
         return TokenResponse.of(
-                generateAccessToken(authentication),
-                generateRefreshToken(authentication));
+                generateAccessToken(userId),
+                generateRefreshToken(userId));
     }
 
-    public String generateAccessToken(Authentication authentication) {
+    public String generateAccessToken(Long userId) {
         final Date now = new Date();
         final Claims claims = Jwts.claims()
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + JWTConstants.ACCESS_TOKEN_EXPIRATION_TIME));
 
-        claims.put(JWTConstants.USER_ID, authentication.getPrincipal());
+        claims.put(JWTConstants.USER_ID, userId);
+        claims.put(JWTConstants.TOKEN_TYPE, JWTConstants.ACCESS_TOKEN);
 
         return Jwts.builder()
                 .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
@@ -66,13 +75,14 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public String generateRefreshToken(Authentication authentication) {
+    public String generateRefreshToken(Long userId) {
         final Date now = new Date();
         final Claims claims = Jwts.claims()
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + JWTConstants.REFRESH_TOKEN_EXPIRATION_TIME));
 
-        claims.put(JWTConstants.USER_ID, authentication.getPrincipal());
+        claims.put(JWTConstants.USER_ID, userId);
+        claims.put(JWTConstants.TOKEN_TYPE, JWTConstants.REFRESH_TOKEN);
 
         String refreshToken = Jwts.builder()
                 .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
@@ -81,7 +91,7 @@ public class JwtTokenProvider {
                 .compact();
 
         redisTemplate.opsForValue().set(
-                authentication.getName(),
+                String.valueOf(userId),
                 refreshToken,
                 JWTConstants.REFRESH_TOKEN_EXPIRATION_TIME,
                 TimeUnit.MILLISECONDS
@@ -94,29 +104,35 @@ public class JwtTokenProvider {
         return Keys.hmacShaKeyFor(encodedKey.getBytes());
     }
 
-    public JwtValidationType validateAccessToken(String token) {
-        try {
-            final Claims claims = getBody(token);
-            return JwtValidationType.VALID_JWT;
-        } catch (MalformedJwtException e) {
-            throw new MoonshotException(ErrorType.WRONG_TYPE_TOKEN_ERROR);
-        } catch (ExpiredJwtException e) {
-            throw new MoonshotException(ErrorType.EXPIRED_TOKEN_ERROR);
-        } catch (IllegalArgumentException e) {
-            throw new MoonshotException(ErrorType.UNKNOWN_TOKEN_ERROR);
-        } catch (UnsupportedJwtException e) {
-            throw new MoonshotException(ErrorType.UNSUPPORTED_TOKEN_ERROR);
-        } catch (SignatureException e) {
-            throw new MoonshotException(ErrorType.WRONG_SIGNATURE_TOKEN_ERROR);
-        }
-    }
-
     public Long validateRefreshToken(String refreshToken) {
+        validateToken(refreshToken);
         Long userId = getUserFromJwt(refreshToken);
         if (redisTemplate.hasKey(String.valueOf(userId))) {
             return userId;
         } else {
-            throw new InvalidRefreshTokenException();
+            throw new UnauthorizedException(INVALID_REFRESH_TOKEN);
+        }
+    }
+
+    public JwtValidationType validateToken(String token) {
+        try {
+            final Claims claims = getBody(token);
+            if (claims.get(JWTConstants.TOKEN_TYPE).toString().equals(JWTConstants.ACCESS_TOKEN)) {
+                return JwtValidationType.VALID_ACCESS;
+            } else if (claims.get(JWTConstants.TOKEN_TYPE).toString().equals(JWTConstants.REFRESH_TOKEN)) {
+                return JwtValidationType.VALID_REFRESH;
+            }
+            throw new UnauthorizedException(WRONG_TYPE_TOKEN);
+        } catch (MalformedJwtException e) {
+            throw new UnauthorizedException(WRONG_TYPE_TOKEN);
+        } catch (ExpiredJwtException e) {
+            throw new UnauthorizedException(EXPIRED_TOKEN);
+        } catch (IllegalArgumentException e) {
+            throw new UnauthorizedException(UNKNOWN_TOKEN);
+        } catch (UnsupportedJwtException e) {
+            throw new UnauthorizedException(UNSUPPORTED_TOKEN);
+        } catch (SignatureException e) {
+            throw new UnauthorizedException(WRONG_SIGNATURE_TOKEN);
         }
     }
 
@@ -126,18 +142,9 @@ public class JwtTokenProvider {
             String refreshToken = valueOperations.get(String.valueOf(userId));
             redisTemplate.delete(refreshToken);
         } else {
-            throw new InvalidRefreshTokenException();
+            throw new InternalServerException(DISCORD_LOG_APPENDER);
         }
     }
-
-    private Claims parseClaims(String accessToken) {
-        try {
-            return Jwts.parserBuilder().setSigningKey(JWT_SECRET).build().parseClaimsJws(accessToken).getBody();
-        } catch (ExpiredJwtException e) {
-            return e.getClaims();
-        }
-    }
-
     private Claims getBody(final String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
@@ -151,11 +158,9 @@ public class JwtTokenProvider {
         return Long.parseLong(claims.get(JWTConstants.USER_ID).toString());
     }
 
-    public static Long getUserIdFromPrincipal(Principal principal) {
-        if (Objects.isNull(principal)) {
-            throw new InvalidAuthException();
-        }
-        return Long.valueOf(principal.getName());
+    public Authentication getAuthentication(Long userId) {
+        UserPrincipal userDetails = (UserPrincipal) userPrincipalDetailsService.loadUserByUsername(String.valueOf(userId));
+        return new UserAuthentication(userDetails);
     }
 
 }

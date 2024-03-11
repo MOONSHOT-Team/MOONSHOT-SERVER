@@ -9,9 +9,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import java.security.Principal;
 import org.moonshot.log.dto.request.LogCreateRequestDto;
 import org.moonshot.response.MoonshotResponse;
+import org.moonshot.user.model.LoginUser;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -26,7 +26,7 @@ public interface LogApi {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = MoonshotResponse.class)))
     })
     @Operation(summary = "Log 생성")
-    public ResponseEntity<MoonshotResponse<?>> create(Principal principal,
+    public ResponseEntity<MoonshotResponse<?>> create(@LoginUser Long userId,
                                                       @Parameter(in = ParameterIn.DEFAULT, name = "TaskSingleCreateRequest", description = "task 추가 요청 body")
                                                       @RequestBody @Valid LogCreateRequestDto logCreateRequestDto);
 

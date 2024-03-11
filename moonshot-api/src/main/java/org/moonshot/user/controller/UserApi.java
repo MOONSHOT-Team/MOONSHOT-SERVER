@@ -12,13 +12,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import java.io.IOException;
-import java.security.Principal;
 import org.moonshot.jwt.TokenResponse;
 import org.moonshot.response.MoonshotResponse;
 import org.moonshot.user.dto.request.SocialLoginRequest;
 import org.moonshot.user.dto.request.UserInfoRequest;
 import org.moonshot.user.dto.response.SocialLoginResponse;
 import org.moonshot.user.dto.response.UserInfoResponse;
+import org.moonshot.user.model.LoginUser;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -38,7 +38,7 @@ public interface UserApi {
 
     @ApiResponse(responseCode = "200", description = "로그아웃에 성공하였습니다.")
     @Operation(summary = "로그아웃")
-    public ResponseEntity<MoonshotResponse<?>> logout(Principal principal);
+    public ResponseEntity<MoonshotResponse<?>> logout(@LoginUser Long userId);
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "로그아웃에 성공하였습니다."),
@@ -46,7 +46,7 @@ public interface UserApi {
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = MoonshotResponse.class)))
     })
     @Operation(summary = "로그아웃")
-    public ResponseEntity<?> withdrawal(Principal principal);
+    public ResponseEntity<?> withdrawal(@LoginUser Long userId);
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "사용자 프로필 업데이트에 성공하였습니다."),
@@ -54,7 +54,7 @@ public interface UserApi {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = MoonshotResponse.class)))
     })
     @Operation(summary = "프로필 수정")
-    public ResponseEntity<?> modifyProfile(Principal principal,
+    public ResponseEntity<?> modifyProfile(@LoginUser Long userId,
                                            @Parameter(in = ParameterIn.DEFAULT, name = "UserInfoRequest", description = "유저 정보 요청 body")
                                            @Valid @RequestBody UserInfoRequest userInfoRequest);
 
@@ -64,10 +64,6 @@ public interface UserApi {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = MoonshotResponse.class)))
     })
     @Operation(summary = "프로필 조회")
-    public ResponseEntity<MoonshotResponse<UserInfoResponse>> getMyProfile(Principal principal);
-
-    @ApiResponse(responseCode = "200", description = "구글 로그인에 성공하였습니다.")
-    @Operation(summary = "구글 로그인")
-    public String authTest(HttpServletRequest request, HttpServletResponse response);
+    public ResponseEntity<MoonshotResponse<UserInfoResponse>> getMyProfile(@LoginUser Long userId);
 
 }

@@ -1,5 +1,7 @@
 package org.moonshot.discord;
 
+import static org.moonshot.response.ErrorType.DISCORD_LOG_APPENDER;
+
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.IThrowableProxy;
 import ch.qos.logback.classic.spi.ThrowableProxyUtil;
@@ -15,12 +17,14 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.moonshot.constants.DiscordConstants;
 import org.moonshot.discord.model.EmbedObject;
-import org.moonshot.exception.global.external.discord.ErrorLogAppenderException;
+import org.moonshot.exception.InternalServerException;
 import org.moonshot.util.MDCUtil;
 import org.moonshot.util.StringUtil;
+import org.springframework.stereotype.Component;
 
 @Slf4j
 @Setter
+@Component
 @RequiredArgsConstructor
 public class DiscordAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 
@@ -110,7 +114,7 @@ public class DiscordAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
         try {
             discordWebhook.execute();
         } catch (IOException ioException) {
-            throw new ErrorLogAppenderException();
+            throw new InternalServerException(DISCORD_LOG_APPENDER);
         }
     }
 
@@ -131,7 +135,7 @@ public class DiscordAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
         try {
             discordWebhook.executeSignIn(DiscordConstants.signInWebhookUrl);
         } catch (IOException ioException) {
-            throw new ErrorLogAppenderException();
+            throw new InternalServerException(DISCORD_LOG_APPENDER);
         }
     }
 
