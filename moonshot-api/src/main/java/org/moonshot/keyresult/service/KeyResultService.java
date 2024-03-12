@@ -112,6 +112,7 @@ public class KeyResultService implements IndexService {
         logRepository.deleteAllInBatch(logRepository.findAllByKeyResult(keyResult));
         taskRepository.deleteAllInBatch(taskRepository.findAllByKeyResult(keyResult));
         keyResultRepository.delete(keyResult);
+        keyResultRepository.bulkUpdateIdxDecrease(keyResult.getIdx(), 3, keyResult.getObjective().getId(), -1L);
     }
 
     public void deleteKeyResult(final Objective objective) {
