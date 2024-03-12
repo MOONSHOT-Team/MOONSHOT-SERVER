@@ -2,14 +2,12 @@ package org.moonshot.objective.repository;
 
 import java.util.List;
 import java.util.Optional;
-
-import org.moonshot.keyresult.model.KeyResult;
 import org.moonshot.objective.model.Objective;
+import org.moonshot.user.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.moonshot.user.model.User;
 
 public interface ObjectiveJpaRepository extends JpaRepository<Objective, Long> {
 
@@ -30,6 +28,9 @@ public interface ObjectiveJpaRepository extends JpaRepository<Objective, Long> {
     @Modifying(clearAutomatically = true)
     @Query("UPDATE Objective o SET o.idx = o.idx - 1 WHERE o.idx >= :lBound AND o.idx <= :uBound AND o.user.id = :userId AND o.id != :targetId")
     void bulkUpdateIdxDecrease(@Param("lBound") int lowerBound, @Param("uBound") int upperBound, @Param("userId") Long userId, @Param("targetId") Long targetId);
+    @Modifying(clearAutomatically = true)
+    @Query("UPDATE Objective  o SET o.idx = o.idx - 1 WHERE o.idx >= :lBound AND o.user.id = :userId")
+    void bulkUpdateIdxDecreaseAfter(@Param("lBound") int lowerBound, @Param("userId") Long userId);
     List<Objective> findAllByUserIn(List<User> userList);
 
 }
