@@ -14,7 +14,7 @@ public enum Criteria {
 
     LATEST("최신순"),
     OLDEST("오래된 순"),
-    ACCOMPLISH("달성률");
+    ACCOMPLISH("달성률 순");
 
     private final String value;
 
