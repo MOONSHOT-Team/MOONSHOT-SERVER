@@ -71,6 +71,8 @@ public class ObjectiveService implements IndexService {
 
         keyResultService.deleteKeyResult(objective);
         objectiveRepository.delete(objective);
+        objectiveRepository.bulkUpdateIdxDecreaseAfter(objective.getIdx(), userId);
+
         return getObjectiveInDashboard(userId, null);
     }
 
