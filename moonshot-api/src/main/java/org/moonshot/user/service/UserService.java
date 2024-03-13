@@ -92,7 +92,7 @@ public class UserService {
                             .socialId(userResponse.sub())
                             .socialPlatform(request.socialPlatform())
                             .name(userResponse.name())
-                            .imageUrl(userResponse.imageUrl())
+                            .imageUrl(userResponse.picture())
                             .email(userResponse.email())
                             .build());
             user = newUser;
@@ -121,7 +121,7 @@ public class UserService {
                             .socialId(userResponse.id())
                             .socialPlatform(request.socialPlatform())
                             .name(userResponse.kakaoAccount().profile().nickname())
-                            .imageUrl(userResponse.kakaoAccount().profile().imageUrl())
+                            .imageUrl(userResponse.kakaoAccount().profile().profileImageUrl())
                             .email(null)
                             .build());
             user = newUser;
