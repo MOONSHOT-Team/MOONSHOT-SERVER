@@ -5,6 +5,7 @@ import org.moonshot.model.Logging;
 import org.moonshot.response.MoonshotResponse;
 import org.moonshot.response.SuccessType;
 import org.moonshot.s3.S3Service;
+import org.moonshot.s3.dto.request.GetPresignedUrlRequestDto;
 import org.moonshot.s3.dto.request.NotifyImageSaveSuccessRequestDto;
 import org.moonshot.s3.dto.response.PresignedUrlVO;
 import org.moonshot.user.model.LoginUser;
@@ -25,9 +26,9 @@ public class ImageController {
 
     @GetMapping
     @Logging(item = "Image", action = "Get")
-    public ResponseEntity<MoonshotResponse<PresignedUrlVO>> getPresignedUrl(@LoginUser Long userId) {
+    public ResponseEntity<MoonshotResponse<PresignedUrlVO>> getPresignedUrl(@LoginUser Long userId, @RequestBody GetPresignedUrlRequestDto request) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(MoonshotResponse.success(SuccessType.GET_PRESIGNED_URL_SUCCESS, s3Service.getUploadPreSignedUrl("test", userId)));
+                .body(MoonshotResponse.success(SuccessType.GET_PRESIGNED_URL_SUCCESS, s3Service.getUploadPreSignedUrl(request, userId)));
     }
 
     @PostMapping

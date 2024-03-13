@@ -5,6 +5,7 @@ import java.time.Duration;
 import java.util.Date;
 import org.moonshot.config.AWSConfig;
 import org.moonshot.constants.AWSConstants;
+import org.moonshot.s3.dto.request.GetPresignedUrlRequestDto;
 import org.moonshot.s3.dto.request.NotifyImageSaveSuccessRequestDto;
 import org.moonshot.s3.dto.response.PresignedUrlVO;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,9 +33,9 @@ public class S3Service {
         this.eventPublisher = eventPublisher;
     }
 
-    public PresignedUrlVO getUploadPreSignedUrl(final String prefix, final Long userId) {
+    public PresignedUrlVO getUploadPreSignedUrl(final GetPresignedUrlRequestDto request, final Long userId) {
         final String fileName = generateFileName(userId);
-        final String key = prefix + "/" + fileName;
+        final String key = request.imageType().toString() + "/" + fileName;
 
         S3Presigner preSigner = awsConfig.getS3Presigner();
 
