@@ -3,12 +3,16 @@ package org.moonshot.s3;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.Date;
-import org.springframework.beans.factory.annotation.Value;
 import org.moonshot.config.AWSConfig;
 import org.moonshot.constants.AWSConstants;
 import org.moonshot.s3.dto.request.NotifyImageSaveSuccessRequestDto;
 import org.moonshot.s3.dto.response.PresignedUrlVO;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
@@ -18,16 +22,18 @@ public class S3Service {
 
     private final String bucketName;
     private final AWSConfig awsConfig;
+    private final ApplicationEventPublisher eventPublisher;
     private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSSS");
 
     public S3Service(@Value("${aws.s3-bucket-name}") final String bucketName,
-                     AWSConfig awsConfig) {
+                     AWSConfig awsConfig, ApplicationEventPublisher eventPublisher) {
         this.bucketName = bucketName;
         this.awsConfig = awsConfig;
+        this.eventPublisher = eventPublisher;
     }
 
-    public PresignedUrlVO getUploadPreSignedUrl(String prefix, String username) {
-        final String fileName = generateFileName(username);
+    public PresignedUrlVO getUploadPreSignedUrl(final String prefix, final Long userId) {
+        final String fileName = generateFileName(userId);
         final String key = prefix + "/" + fileName;
 
         S3Presigner preSigner = awsConfig.getS3Presigner();
@@ -47,16 +53,23 @@ public class S3Service {
         return PresignedUrlVO.of(key, url);
     }
 
-    public void notifyImageSaveSuccess(final NotifyImageSaveSuccessRequestDto request) {
-        //TODO
-        // 추후 User 엔티티 개발 후
-        // username 아이디를 가진 User 정보에 profile image를 bucketName + key로 삽입하면 됨.
-        // 이는 UserService로 위임하여 데이터 처리하도록 하면 됨.
-        // 또한 기존의 S3에 저장되어 있던 이미지를 삭제해야 함.
+    @Transactional
+    @Retryable(maxAttempts = 3, backoff = @Backoff(2000))
+    public void notifyImageSaveSuccess(final Long userId, final NotifyImageSaveSuccessRequestDto request) {
+        String imageUrl = getImageUrl(request.fileName());
+        publishImageEvent(userId, imageUrl, request.imageType());
     }
 
-    private String generateFileName(String username) {
-        return username + "-" + simpleDateFormat.format(new Date());
+    private String generateFileName(final Long userId) {
+        return userId + "-" + simpleDateFormat.format(new Date());
+    }
+
+    private String getImageUrl(final String fileName) {
+        return "https://" + bucketName + ".s3.ap-northeast-2.amazonaws.com/" + fileName;
+    }
+
+    private void publishImageEvent(final Long userId, final String imageUrl, final ImageType imageType) {
+        eventPublisher.publishEvent(ImageEvent.of(userId, imageUrl, imageType));
     }
 
 }

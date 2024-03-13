@@ -176,6 +176,11 @@ public class UserService {
         return UserInfoResponse.of(user);
     }
 
+    public void updateUserProfileImage(final Long userId, final String imageUrl) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException(NOT_FOUND_USER));
+        user.modifyProfileImage(imageUrl);
+    }
+
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void publishSignUpEvent(final User user) {
         eventPublisher.publishEvent(SignUpEvent.of(

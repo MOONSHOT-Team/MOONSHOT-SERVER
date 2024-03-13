@@ -1,10 +1,18 @@
 package org.moonshot.user.model;
 
-import jakarta.persistence.*;
-import lombok.*;
-
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import java.time.LocalDateTime;
-import java.util.List;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
@@ -69,9 +77,14 @@ public class User {
 
     public void modifyDescription(String description) { this.description = description; }
 
+    public void modifyProfileImage(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
     public void resetDeleteAt() {
         this.deleteAt = null;
     }
+
     public void setDeleteAt(){
         this.deleteAt = LocalDateTime.now().plusDays(USER_RETENTION_PERIOD);
     }
