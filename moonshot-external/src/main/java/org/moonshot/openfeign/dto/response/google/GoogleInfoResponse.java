@@ -9,12 +9,12 @@ public record GoogleInfoResponse(
         String name,
         String givenName,
         String familyName,
-        String imageUrl,
+        String picture,
         String email,
         Boolean emailVerified,
         String locale
 ) {
-    public static GoogleInfoResponse of(String sub, String name, String givenName, String familyName, String imageUrl, String email, Boolean emailVerified, String locale) {
-        return new GoogleInfoResponse(sub, name, givenName, familyName, imageUrl, email, emailVerified, locale);
+    public static GoogleInfoResponse of(String sub, String name, String givenName, String familyName, String picture, String email, Boolean emailVerified, String locale) {
+        return new GoogleInfoResponse(sub, name, givenName, familyName, picture, email, emailVerified, locale);
     }
 }
