@@ -32,7 +32,7 @@ public class User {
     private String name;
 
     @Column(nullable = false)
-    private String profileImage;
+    private String imageUrl;
 
     private String email;
 
@@ -43,24 +43,24 @@ public class User {
     private LocalDateTime deleteAt;
 
     @Builder
-    private User(String socialId, SocialPlatform socialPlatform, String name, String profileImage, String email,
+    private User(String socialId, SocialPlatform socialPlatform, String name, String imageUrl, String email,
                 String nickname, String description) {
         this.socialId = socialId;
         this.socialPlatform = socialPlatform;
         this.name = name;
-        this.profileImage = profileImage;
+        this.imageUrl = imageUrl;
         this.email = email;
         this.nickname = nickname;
         this.description = description;
     }
 
     @Builder(builderMethodName = "builderWithSignIn")
-    public static User of(String socialId, SocialPlatform socialPlatform, String name, String profileImage, String email) {
+    public static User of(String socialId, SocialPlatform socialPlatform, String name, String imageUrl, String email) {
         return builder()
                 .socialId(socialId)
                 .socialPlatform(socialPlatform)
                 .name(name)
-                .profileImage(profileImage)
+                .imageUrl(imageUrl)
                 .email(email)
                 .build();
     }

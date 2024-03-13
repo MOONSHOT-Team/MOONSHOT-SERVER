@@ -12,7 +12,7 @@ public record UserInfoResponse(
     public static UserInfoResponse of(User user) {
         return new UserInfoResponse(
                 user.getSocialPlatform().getValue(),
-                user.getProfileImage(),
+                user.getImageUrl(),
                 user.getNickname(),
                 user.getDescription());
     }

@@ -1,0 +1,1 @@
+ALTER TABLE user CHANGE profile_image image_url varchar(255);
