@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.moonshot.exception.MoonshotException;
+import org.moonshot.exception.BadRequestException;
 import org.moonshot.response.ErrorType;
 
 @Getter
@@ -33,7 +33,7 @@ public enum Category {
                 return category;
             }
         }
-        throw new MoonshotException(ErrorType.INVALID_TYPE);
+        throw new BadRequestException(ErrorType.INVALID_TYPE);
     }
 
 }
