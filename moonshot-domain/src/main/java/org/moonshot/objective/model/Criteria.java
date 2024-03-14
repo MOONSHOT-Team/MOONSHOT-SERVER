@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.moonshot.exception.MoonshotException;
+import org.moonshot.exception.BadRequestException;
 import org.moonshot.response.ErrorType;
 
 @Getter
@@ -14,7 +14,7 @@ public enum Criteria {
 
     LATEST("최신순"),
     OLDEST("오래된 순"),
-    ACCOMPLISH("달성률");
+    ACCOMPLISH("달성률 순");
 
     private final String value;
 
@@ -30,7 +30,7 @@ public enum Criteria {
                 return criteria;
             }
         }
-        throw new MoonshotException(ErrorType.INVALID_TYPE);
+        throw new BadRequestException(ErrorType.INVALID_TYPE);
     }
 
 }

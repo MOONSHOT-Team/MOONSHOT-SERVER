@@ -39,9 +39,8 @@ public class TaskService implements IndexService {
         validateActiveTaskSizeExceeded(taskList.size());
         validateIndexUnderMaximum(request.idx(), taskList.size());
 
-        for (int i = request.idx(); i < taskList.size(); i++) {
-            taskList.get(i).incrementIdx();
-        }
+        taskRepository.bulkUpdateTaskIdxIncrease(request.idx(), taskList.size(), keyResult.getId(), -1L);
+
         saveTask(keyResult, request);
     }
 
@@ -90,6 +89,7 @@ public class TaskService implements IndexService {
         validateUserAuthorization(task.getKeyResult().getObjective().getUser().getId(), userId);
 
         taskRepository.deleteById(taskId);
+        taskRepository.bulkUpdateTaskIdxDecrease(task.getIdx(), 3, task.getKeyResult().getId(), -1L);
     }
     
 }
