@@ -37,17 +37,17 @@ public class TaskService implements IndexService {
 
         List<Task> taskList = taskRepository.findAllByKeyResultOrderByIdx(keyResult);
         validateActiveTaskSizeExceeded(taskList.size());
-        validateIndexUnderMaximum(request.idx(), taskList.size());
+        validateIndexUnderMaximum(request.taskIdx(), taskList.size());
 
-        taskRepository.bulkUpdateTaskIdxIncrease(request.idx(), taskList.size(), keyResult.getId(), -1L);
+        taskRepository.bulkUpdateTaskIdxIncrease(request.taskIdx(), taskList.size(), keyResult.getId(), -1L);
 
         saveTask(keyResult, request);
     }
 
     public void saveTask(final KeyResult keyResult, final TaskSingleCreateRequestDto request) {
         taskRepository.save(Task.builder()
-                .title(request.title())
-                .idx(request.idx())
+                .title(request.taskTitle())
+                .idx(request.taskIdx())
                 .keyResult(keyResult)
                 .build());
     }
