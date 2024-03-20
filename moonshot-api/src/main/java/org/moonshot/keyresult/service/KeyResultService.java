@@ -96,7 +96,7 @@ public class KeyResultService implements IndexService {
 
         KeyResult keyResult = keyResultRepository.save(KeyResult.builder()
                 .objective(objective)
-                .title(request.ktTitle())
+                .title(request.krTitle())
                 .period(Period.of(request.krStartAt(), request.krExpireAt()))
                 .idx(request.krIdx())
                 .target(request.krTarget())

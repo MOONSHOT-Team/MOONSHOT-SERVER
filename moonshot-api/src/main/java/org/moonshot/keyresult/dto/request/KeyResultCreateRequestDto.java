@@ -10,7 +10,7 @@ public record KeyResultCreateRequestDto(
         @NotNull(message = "KR이 생성될 ObjectiveId를 입력해주세요.")
         Long objectiveId,
         @Size(min = 1, max = 30, message = "KR은 30자 이하여야 합니다.")
-        String ktTitle,
+        String krTitle,
         @NotNull(message = "KR 시작 날짜를 선택해주세요.")
         @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
         LocalDate krStartAt,
