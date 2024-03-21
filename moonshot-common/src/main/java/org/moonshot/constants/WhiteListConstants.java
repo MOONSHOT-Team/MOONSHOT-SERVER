@@ -8,9 +8,7 @@ public class WhiteListConstants {
             "/login/oauth2/code/kakao",
             "/login/oauth2/code/google",
             "/v1/user/login",
-            "/v1/user/googleLogin",
             "/login",
-            "/googleLogin",
             "/oauth/authorize",
             "/actuator/health",
             "/error",
@@ -29,8 +27,7 @@ public class WhiteListConstants {
             "/swagger-resources/**",
             "/api-docs/**",
             "/v3/api-docs/**",
-            "/webjars/**",
-            "/googleLogin"
+            "/webjars/**"
     };
 
 }
