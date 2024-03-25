@@ -10,12 +10,12 @@ public record KeyResultModifyRequestDto(
         @NotNull(message = "수정할 KeyResult Id를 입력해주세요")
         Long keyResultId,
         @Size(min = 1, max = 30, message = "KR은 30자 이하여야 합니다.")
-        String title,
-        LocalDate startAt,
-        LocalDate expireAt,
+        String krTitle,
+        LocalDate krStartAt,
+        LocalDate krExpireAt,
         @Range(min = 1, max = 999999L, message = "수치는 999,999 이하여야 합니다.")
-        Long target,
-        KRState state,
+        Long krTarget,
+        KRState krState,
         @Size(min = 1, max = 100, message = "본문은 100자 이하여야 합니다.")
         String logContent
 ) {

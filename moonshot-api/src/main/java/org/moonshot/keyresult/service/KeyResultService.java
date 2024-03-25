@@ -90,17 +90,17 @@ public class KeyResultService implements IndexService {
 
         List<KeyResult> krList = keyResultRepository.findAllByObjective(objective);
         validateActiveKRSizeExceeded(krList.size());
-        validateIndexUnderMaximum(request.idx(), krList.size());
+        validateIndexUnderMaximum(request.krIdx(), krList.size());
 
-        keyResultRepository.bulkUpdateIdxIncrease(request.idx(), krList.size(), objective.getId(), -1L);
+        keyResultRepository.bulkUpdateIdxIncrease(request.krIdx(), krList.size(), objective.getId(), -1L);
 
         KeyResult keyResult = keyResultRepository.save(KeyResult.builder()
                 .objective(objective)
-                .title(request.title())
-                .period(Period.of(request.startAt(), request.expireAt()))
-                .idx(request.idx())
-                .target(request.target())
-                .metric(request.metric()).build());
+                .title(request.krTitle())
+                .period(Period.of(request.krStartAt(), request.krExpireAt()))
+                .idx(request.krIdx())
+                .target(request.krTarget())
+                .metric(request.krMetric()).build());
         logService.createKRLog(request, keyResult.getId());
     }
 
@@ -140,33 +140,33 @@ public class KeyResultService implements IndexService {
                 .orElseThrow(() -> new NotFoundException(NOT_FOUND_KEY_RESULT));
         validateUserAuthorization(keyResult.getObjective().getUser().getId(), userId);
 
-        if (hasChange(request.title())) {
-            keyResult.modifyTitle(request.title());
+        if (hasChange(request.krTitle())) {
+            keyResult.modifyTitle(request.krTitle());
         }
 
-        if (hasChange(request.state())) {
-            keyResult.modifyState(request.state());
+        if (hasChange(request.krState())) {
+            keyResult.modifyState(request.krState());
             return Optional.empty();
         }
 
-        if (hasDateChange(request.startAt(), request.expireAt())) {
-            LocalDate newStartAt = getLatestDate(request.startAt(), keyResult.getPeriod().getStartAt());
-            LocalDate newExpireAt = getLatestDate(request.expireAt(), keyResult.getPeriod().getExpireAt());
+        if (hasDateChange(request.krStartAt(), request.krExpireAt())) {
+            LocalDate newStartAt = getLatestDate(request.krStartAt(), keyResult.getPeriod().getStartAt());
+            LocalDate newExpireAt = getLatestDate(request.krExpireAt(), keyResult.getPeriod().getExpireAt());
             validateKeyResultPeriod(keyResult.getObjective().getPeriod(), newStartAt, newExpireAt);
 
             keyResult.modifyPeriod(Period.of(newStartAt, newExpireAt));
             return Optional.empty();
         }
 
-        if (request.target() == null || request.logContent() == null){
+        if (request.krTarget() == null || request.logContent() == null){
             throw new BadRequestException(REQUIRED_KEY_RESULT_VALUE);
         }
 
         Log updateLog = logService.createUpdateLog(request, keyResult.getId());
-        validateLogNum(request.target(), updateLog.getKeyResult().getTarget());
+        validateLogNum(request.krTarget(), updateLog.getKeyResult().getTarget());
 
         Optional<Log> prevLog = logRepository.findLatestLogByKeyResultId(LogState.RECORD, request.keyResultId());
-        keyResult.modifyTarget(request.target());
+        keyResult.modifyTarget(request.krTarget());
         if(prevLog.isPresent()) {
             keyResult.modifyProgress(logService.calculateKRProgressBar(prevLog.get(), keyResult.getTarget()));
         }

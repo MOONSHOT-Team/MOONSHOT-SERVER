@@ -68,7 +68,7 @@ public class LogService {
         return logRepository.save(Log.builder()
                 .date(LocalDateTime.now())
                 .state(LogState.UPDATE)
-                .currNum(request.target())
+                .currNum(request.krTarget())
                 .prevNum(keyResult.getTarget())
                 .content(request.logContent())
                 .keyResult(keyResult)
@@ -94,7 +94,7 @@ public class LogService {
             logRepository.save(Log.builder()
                     .date(LocalDateTime.now())
                     .state(LogState.CREATE)
-                    .currNum(dto.target())
+                    .currNum(dto.krTarget())
                     .content("")
                     .keyResult(keyResult)
                     .build());
