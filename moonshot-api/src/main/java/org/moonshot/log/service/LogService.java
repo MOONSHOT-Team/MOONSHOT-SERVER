@@ -62,9 +62,7 @@ public class LogService {
         return Optional.empty();
     }
 
-    public Log createUpdateLog(final KeyResultModifyRequestDto request, final Long keyResultId) {
-        KeyResult keyResult = keyResultRepository.findById(keyResultId)
-                .orElseThrow(() -> new NotFoundException(NOT_FOUND_KEY_RESULT));
+    public Log createUpdateLog(final KeyResultModifyRequestDto request, final KeyResult keyResult) {
         return logRepository.save(Log.builder()
                 .date(LocalDateTime.now())
                 .state(LogState.UPDATE)
