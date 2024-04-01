@@ -160,7 +160,7 @@ class ObjectiveServiceTest {
     @Test
     @DisplayName("Objective의 히스토리를 조회합니다")
     void Objective의_히스토리를_조회합니다() {
-        //given
+        // given
         Objective objective1 = Objective.builder()
                 .user(fakeUser)
                 .title("Objective 1")
