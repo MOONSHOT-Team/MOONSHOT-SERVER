@@ -156,8 +156,6 @@ class KeyResultServiceTest {
 
         // when, then
         assertThatThrownBy(() -> keyResultService.createKeyResult(request, fakeUser.getId()))
-                .isInstanceOf(BadRequestException.class);
-        assertThatThrownBy(() -> keyResultService.createKeyResult(request, fakeUser.getId()))
                 .isInstanceOf(BadRequestException.class)
                 .hasMessage("허용된 Key Result 개수를 초과하였습니다");
     }
@@ -181,8 +179,6 @@ class KeyResultServiceTest {
         given(testUser.getId()).willReturn(1L);
 
         // when, then
-        assertThatThrownBy(() -> keyResultService.createKeyResult(request, fakeUser.getId()))
-                .isInstanceOf(BadRequestException.class);
         assertThatThrownBy(() -> keyResultService.createKeyResult(request, fakeUser.getId()))
                 .isInstanceOf(BadRequestException.class)
                 .hasMessage("정상적이지 않은 KeyResult 위치입니다.");
@@ -281,8 +277,6 @@ class KeyResultServiceTest {
         given(testObjective.getUser()).willReturn(fakeUser);
 
         // when, then
-        assertThatThrownBy(() -> keyResultService.modifyKeyResult(request, fakeUser.getId()))
-                .isInstanceOf(BadRequestException.class);
         assertThatThrownBy(() -> keyResultService.modifyKeyResult(request, fakeUser.getId()))
                 .isInstanceOf(BadRequestException.class)
                 .hasMessage("KR 수정시 목표값과 체크인 로그는 필수 입력값입니다.");
