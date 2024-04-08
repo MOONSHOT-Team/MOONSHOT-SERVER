@@ -14,7 +14,6 @@ import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.moonshot.common.model.Period;
@@ -120,11 +119,6 @@ public class ObjectiveService implements IndexService {
         List<Objective> objectives = objectiveRepository.findObjectives(userId, year, category, criteria);
         Map<Integer, List<Objective>> groups = objectives.stream()
                 .collect(Collectors.groupingBy(objective -> objective.getPeriod().getStartAt().getYear()));
-        Map<Integer, Integer> years = groups.entrySet().stream()
-                .collect(Collectors.toMap(
-                        Entry::getKey,
-                        entry -> entry.getValue().size()
-                ));
         List<String> categories = objectives.stream().map(objective -> objective.getCategory().getValue()).toList();
 
         List<ObjectiveGroupByYearDto> groupList = groups.entrySet().stream()
@@ -142,7 +136,7 @@ public class ObjectiveService implements IndexService {
                     .sorted(Comparator.comparingInt(ObjectiveGroupByYearDto::year).reversed()).toList();
         }
 
-        return HistoryResponseDto.of(groupsSortedByCriteria, years, categories, criteria);
+        return HistoryResponseDto.of(groupsSortedByCriteria, categories);
     }
 
     @Override
