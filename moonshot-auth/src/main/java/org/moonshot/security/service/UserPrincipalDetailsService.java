@@ -17,7 +17,7 @@ public class UserPrincipalDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findById(Long.parseLong(username))
+        return userRepository.findByIdWithCache(Long.parseLong(username))
                 .map(UserPrincipal::new)
                 .orElseThrow(UnauthorizedException::new);
     }

@@ -1,0 +1,25 @@
+package org.moonshot.user.repository;
+
+import static org.moonshot.user.model.QUser.user;
+
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.Optional;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.moonshot.user.model.User;
+import org.springframework.cache.annotation.Cacheable;
+
+@Slf4j
+@RequiredArgsConstructor
+public class UserCustomRepositoryImpl implements UserCustomRepository {
+
+    private final JPAQueryFactory queryFactory;
+
+    @Override
+    @Cacheable(value = "user", cacheManager = "redisCacheManager")
+    public Optional<User> findByIdWithCache(final Long id) {
+        log.info("id : " + id);
+        return Optional.ofNullable(queryFactory.selectFrom(user)
+                .where(user.id.eq(id)).fetchOne());
+    }
+}
