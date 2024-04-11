@@ -5,7 +5,6 @@ import static org.moonshot.user.model.QUser.user;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.moonshot.user.model.User;
 import org.springframework.cache.annotation.Cacheable;
 
