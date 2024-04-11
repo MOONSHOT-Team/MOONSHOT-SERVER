@@ -20,4 +20,5 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
         return Optional.ofNullable(queryFactory.selectFrom(user)
                 .where(user.id.eq(id)).fetchOne());
     }
+
 }
