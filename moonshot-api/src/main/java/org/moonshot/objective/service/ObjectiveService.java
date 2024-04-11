@@ -46,7 +46,7 @@ public class ObjectiveService implements IndexService {
     private final ObjectiveRepository objectiveRepository;
 
     public void createObjective(final Long userId, final OKRCreateRequestDto request) {
-        User user =  userRepository.findById(userId)
+        User user =  userRepository.findByIdWithCache(userId)
                 .orElseThrow(() -> new NotFoundException(NOT_FOUND_USER));
 
         List<Objective> objectives = objectiveRepository.findAllByUserId(userId);
