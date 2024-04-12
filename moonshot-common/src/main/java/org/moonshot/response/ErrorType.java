@@ -30,6 +30,7 @@ public enum ErrorType {
     INVALID_KEY_RESULT_PERIOD(HttpStatus.BAD_REQUEST, 4016, "KeyResult 기간 설정이 올바르지 않습니다."),
     REQUIRED_EXPIRE_AT(HttpStatus.BAD_REQUEST, 4017, "기간 연장시 목표 종료 기간은 필수 입력값입니다."),
     REQUIRED_KEY_RESULT_VALUE(HttpStatus.BAD_REQUEST, 4018, "KR 수정시 목표값과 체크인 로그는 필수 입력값입니다."),
+    NOT_SUPPORTED_LOGIN_PLATFORM(HttpStatus.BAD_REQUEST, 4019, "지원하지 않는 소셜 로그인 플랫폼입니다."),
 
     /**
      * 401 UNAUTHROZIED (4100 ~ 4199)
