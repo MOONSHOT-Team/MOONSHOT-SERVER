@@ -1,5 +1,7 @@
 package org.moonshot.user.model;
 
+import static org.moonshot.constants.UserConstants.USER_RETENTION_PERIOD;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -20,9 +22,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder(builderMethodName = "buildWithId")
 public class User {
-
-    // TODO 기획 측 약관 확정 이후 수정 필요
-    private static final Long USER_RETENTION_PERIOD = 14L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
