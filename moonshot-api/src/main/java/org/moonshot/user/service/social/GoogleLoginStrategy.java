@@ -2,10 +2,8 @@ package org.moonshot.user.service.social;
 
 import static org.moonshot.user.service.validator.UserValidator.isNewUser;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.moonshot.discord.SignUpEvent;
 import org.moonshot.jwt.JwtTokenProvider;
 import org.moonshot.jwt.TokenResponse;
 import org.moonshot.openfeign.dto.response.google.GoogleInfoResponse;
@@ -16,10 +14,9 @@ import org.moonshot.user.dto.request.SocialLoginRequest;
 import org.moonshot.user.dto.response.SocialLoginResponse;
 import org.moonshot.user.model.User;
 import org.moonshot.user.repository.UserRepository;
+import org.moonshot.user.service.UserSignUpService;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -28,19 +25,17 @@ public class GoogleLoginStrategy implements SocialLoginStrategy {
 
     @Value("${google.client-id}")
     private String googleClientId;
-
     @Value("${google.client-secret}")
     private String googleClientSecret;
-
     @Value("${google.redirect-url}")
     private String googleRedirectUrl;
 
     private final GoogleAuthApiClient googleAuthApiClient;
     private final GoogleApiClient googleApiClient;
 
-    private final ApplicationEventPublisher eventPublisher;
     private final JwtTokenProvider jwtTokenProvider;
     private final UserRepository userRepository;
+    private final UserSignUpService userSignUpService;
 
     @Override
     @Transactional
@@ -64,7 +59,7 @@ public class GoogleLoginStrategy implements SocialLoginStrategy {
                     .email(userResponse.email())
                     .build());
             user = newUser;
-            publishSignUpEvent(newUser);
+            userSignUpService.publishSignUpEvent(newUser);
         } else {
             user = findUser.get();
             user.resetDeleteAt();
@@ -76,18 +71,6 @@ public class GoogleLoginStrategy implements SocialLoginStrategy {
     @Override
     public boolean support(String provider) {
         return provider.equals("GOOGLE");
-    }
-
-    @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void publishSignUpEvent(User user) {
-        eventPublisher.publishEvent(SignUpEvent.of(
-                user.getName(),
-                user.getEmail() == null ? "" : user.getEmail(),
-                user.getSocialPlatform().toString(),
-                LocalDateTime.now(),
-                user.getImageUrl()
-        ));
     }
 
 }
