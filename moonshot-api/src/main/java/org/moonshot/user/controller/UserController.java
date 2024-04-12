@@ -1,9 +1,6 @@
 package org.moonshot.user.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.moonshot.jwt.TokenResponse;
@@ -16,7 +13,6 @@ import org.moonshot.user.dto.response.SocialLoginResponse;
 import org.moonshot.user.dto.response.UserInfoResponse;
 import org.moonshot.user.model.LoginUser;
 import org.moonshot.user.service.UserService;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,7 +34,7 @@ public class UserController implements UserApi {
     @PostMapping("/login")
     @Logging(item = "User", action = "Post")
     public ResponseEntity<MoonshotResponse<SocialLoginResponse>> login(@RequestHeader("Authorization") final String authorization,
-                                                                       @RequestBody final SocialLoginRequest socialLoginRequest) throws IOException {
+                                                                       @RequestBody final SocialLoginRequest socialLoginRequest) {
         return ResponseEntity.ok(MoonshotResponse.success(SuccessType.POST_LOGIN_SUCCESS, userService.login(SocialLoginRequest.of(socialLoginRequest.socialPlatform(), authorization))));
     }
 
