@@ -4,10 +4,8 @@ import static org.moonshot.user.service.validator.UserValidator.isNewUser;
 import static org.moonshot.util.MDCUtil.USER_REQUEST_ORIGIN;
 import static org.moonshot.util.MDCUtil.get;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.moonshot.discord.SignUpEvent;
 import org.moonshot.jwt.JwtTokenProvider;
 import org.moonshot.jwt.TokenResponse;
 import org.moonshot.openfeign.dto.response.kakao.KakaoTokenResponse;
@@ -18,10 +16,9 @@ import org.moonshot.user.dto.request.SocialLoginRequest;
 import org.moonshot.user.dto.response.SocialLoginResponse;
 import org.moonshot.user.model.User;
 import org.moonshot.user.repository.UserRepository;
+import org.moonshot.user.service.UserSignUpService;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -30,16 +27,15 @@ public class KakaoLoginStrategy implements SocialLoginStrategy {
 
     @Value("${kakao.client-id}")
     private String kakaoClientId;
-
     @Value("${kakao.redirect-uri}")
     private String kakaoRedirectUri;
 
     private final KakaoAuthApiClient kakaoAuthApiClient;
     private final KakaoApiClient kakaoApiClient;
 
-    private final ApplicationEventPublisher eventPublisher;
     private final JwtTokenProvider jwtTokenProvider;
     private final UserRepository userRepository;
+    private final UserSignUpService userSignUpService;
 
     @Override
     @Transactional
@@ -63,7 +59,7 @@ public class KakaoLoginStrategy implements SocialLoginStrategy {
                     .email(null)
                     .build());
             user = newUser;
-            publishSignUpEvent(newUser);
+            userSignUpService.publishSignUpEvent(newUser);
         } else {
             user = findUser.get();
             user.resetDeleteAt();
@@ -75,18 +71,6 @@ public class KakaoLoginStrategy implements SocialLoginStrategy {
     @Override
     public boolean support(String provider) {
         return provider.equals("KAKAO");
-    }
-
-    @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void publishSignUpEvent(User user) {
-        eventPublisher.publishEvent(SignUpEvent.of(
-                user.getName(),
-                user.getEmail() == null ? "" : user.getEmail(),
-                user.getSocialPlatform().toString(),
-                LocalDateTime.now(),
-                user.getImageUrl()
-        ));
     }
 
 }
