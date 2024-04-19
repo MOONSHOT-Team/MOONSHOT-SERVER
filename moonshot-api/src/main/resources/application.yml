@@ -84,3 +84,7 @@ springdoc:
 
 mybatis:
   mapper-locations: mappers/*.xml
+
+sentry:
+  dsn: ${SENTRY_DSN}
+  traces-sample-rate: 1.0

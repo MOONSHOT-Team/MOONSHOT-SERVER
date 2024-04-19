@@ -5,9 +5,11 @@
     <springProfile name="prod">
         <include resource="console-appender.xml"/>
         <include resource="discord-appender.xml"/>
+        <include resource="sentry-appender.xml"/>
         <root level="INFO">
             <appender-ref ref="CONSOLE"/>
-            <appender-ref ref="ASYNC_DISCORD" />
+            <appender-ref ref="ASYNC_DISCORD"/>
+            <appender-ref ref="SENTRY"/>
         </root>
     </springProfile>
 </configuration>
