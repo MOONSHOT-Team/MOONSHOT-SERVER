@@ -66,4 +66,48 @@ public class TaskServiceTest {
         verify(taskRepository, times(1)).bulkUpdateTaskIdxIncrease(any(Integer.class), any(Integer.class), eq(1L), eq(-1L));
     }
 
+    @Test
+    @DisplayName("Task 생성 시 최대 보유 갯수를 넘어 예외가 발생합니다")
+    void Task_생성_시_최대_보유_갯수를_넘어_예외가_발생합니다() {
+        // given
+        Objective testObjective = mock(Objective.class);
+        KeyResult testKeyResult = mock(KeyResult.class);
+        List taskList = mock(List.class);
+        TaskSingleCreateRequestDto request = new TaskSingleCreateRequestDto(
+                1L, "test task", 0);
+
+        given(keyResultRepository.findKeyResultAndObjective(request.keyResultId())).willReturn(Optional.of(testKeyResult));
+        given(testKeyResult.getObjective()).willReturn(testObjective);
+        given(testObjective.getUser()).willReturn(fakeUser);
+        given(taskList.size()).willReturn(3);
+        given(taskRepository.findAllByKeyResultOrderByIdx(testKeyResult)).willReturn(taskList);
+
+        // when, then
+        assertThatThrownBy(() -> taskService.createTask(request, fakeUser.getId()))
+                .isInstanceOf(BadRequestException.class)
+                .hasMessage("허용된 Task 개수를 초과하였습니다.");
+    }
+
+    @Test
+    @DisplayName("Task 생성 시 인덱스가 0 ~ ListSize(최대 개수의 범위)를 벗어나 요청된 경우 예외가 발생합니다")
+    void Task_생성_시_인덱스가_0_ListSize를_벗어나_요청된_경우_예외가_발생합니다() {
+        // given
+        Objective testObjective = mock(Objective.class);
+        KeyResult testKeyResult = mock(KeyResult.class);
+        List taskList = mock(List.class);
+        TaskSingleCreateRequestDto request = new TaskSingleCreateRequestDto(
+                1L, "test task", -1);
+
+        given(keyResultRepository.findKeyResultAndObjective(request.keyResultId())).willReturn(Optional.of(testKeyResult));
+        given(testKeyResult.getObjective()).willReturn(testObjective);
+        given(testObjective.getUser()).willReturn(fakeUser);
+        given(taskList.size()).willReturn(2);
+        given(taskRepository.findAllByKeyResultOrderByIdx(testKeyResult)).willReturn(taskList);
+
+        // when, then
+        assertThatThrownBy(() -> taskService.createTask(request, fakeUser.getId()))
+                .isInstanceOf(BadRequestException.class)
+                .hasMessage("정상적이지 않은 Task 위치입니다.");
+    }
+
 }
