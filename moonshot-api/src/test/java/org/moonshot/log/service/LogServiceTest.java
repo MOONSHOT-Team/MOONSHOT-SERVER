@@ -103,4 +103,18 @@ public class LogServiceTest {
                 .hasMessage("Log 입력값은 이전 값과 동일할 수 없습니다.");
     }
 
+    @Test
+    @DisplayName("KeyResult가 수정되면 체크인 로그를 추가합니다.")
+    void KeyResult가_수정되면_체크인_로그를_추가합니다() {
+        //given
+        KeyResult testKeyResult = mock(KeyResult.class);
+        KeyResultModifyRequestDto request = new KeyResultModifyRequestDto(
+                1L, null, null, null, 100000L, null, "new check-in");
+        //when
+        logService.createUpdateLog(request, testKeyResult);
+
+        //then
+        verify(logRepository, times(1)).save(any(Log.class));
+    }
+    
 }
