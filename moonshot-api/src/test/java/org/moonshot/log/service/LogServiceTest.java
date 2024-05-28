@@ -165,4 +165,18 @@ public class LogServiceTest {
         assertThat(logService.calculateKRProgressBar(testLog, testKeyResult.getTarget())).isEqualTo((short)10);
     }
 
+    @Test
+    @DisplayName("KeyResult에 대한 Log를 조회합니다.")
+    void KeyResult에_대한_Log를_조회합니다() {
+        //given
+        KeyResult testKeyResult = mock(KeyResult.class);
+        List<Log> testLogList = mock(List.class);
+
+        given(testLogList.size()).willReturn(2);
+        given(logRepository.findAllByKeyResultOrderByIdDesc(testKeyResult)).willReturn(testLogList);
+
+        //when,then
+        assertThat(logService.getLogList(testKeyResult).size()).isEqualTo(2);
+    }
+
 }
