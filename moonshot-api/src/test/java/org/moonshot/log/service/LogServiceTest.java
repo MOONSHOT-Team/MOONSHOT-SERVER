@@ -116,5 +116,38 @@ public class LogServiceTest {
         //then
         verify(logRepository, times(1)).save(any(Log.class));
     }
-    
+
+    @Test
+    @DisplayName("Objective와 함께 KeyResult가 생성되면 체크인 로그를 추가합니다.")
+    void Objective와_함께_KeyResult가_생성되면_체크인_로그를_추가합니다() {
+        //given
+        KeyResult testKeyResult = mock(KeyResult.class);
+        Long testKeyResultId = 1L;
+        KeyResultCreateRequestInfoDto request = new KeyResultCreateRequestInfoDto("test KR", LocalDate.now(), LocalDate.now(), 0, 2000L, "건", null);
+
+        given(keyResultRepository.findById(testKeyResultId)).willReturn(Optional.of(testKeyResult));
+
+        //when
+        logService.createKRLog(request, testKeyResultId);
+
+        //then
+        verify(logRepository, times(1)).save(any(Log.class));
+    }
+
+    @Test
+    @DisplayName("KeyResult가 추가적으로 생성되면 체크인 로그를 추가합니다.")
+    void KeyResult가_추가적으로_생성되면_체크인_로그를_추가합니다() {
+        //given
+        KeyResult testKeyResult = mock(KeyResult.class);
+        Long testKeyResultId = 1L;
+        KeyResultCreateRequestDto request = new KeyResultCreateRequestDto(1L, "test KR", LocalDate.now(), LocalDate.now(), 0, 2000L, "건");
+
+        given(keyResultRepository.findById(testKeyResultId)).willReturn(Optional.of(testKeyResult));
+
+        //when
+        logService.createKRLog(request, testKeyResultId);
+
+        //then
+        verify(logRepository, times(1)).save(any(Log.class));
+    }
 }
