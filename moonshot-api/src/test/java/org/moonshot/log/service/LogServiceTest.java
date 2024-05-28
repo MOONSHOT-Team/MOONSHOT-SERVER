@@ -81,4 +81,26 @@ public class LogServiceTest {
         assertThat(response.isEmpty()).isEqualTo(true);
     }
 
+    @Test
+    @DisplayName("KeyResult의 진척 상황의 값이 이전 진척 상황 값과 동일하여 예외가 발생합니다.")
+    void KeyResult의_진척상황_값이_이전_진척상황_값과_동일하여_예외가_발생합니다() {
+        //given
+        Objective testObjective = mock(Objective.class);
+        KeyResult testKeyResult = mock(KeyResult.class);
+        Log testPrevLog = mock(Log.class);
+        LogCreateRequestDto request = new LogCreateRequestDto(1L, 1000L, "new log content");
+
+        given(keyResultRepository.findKeyResultAndObjective(request.keyResultId())).willReturn(Optional.of(testKeyResult));
+        given(testKeyResult.getObjective()).willReturn(testObjective);
+        given(testObjective.getUser()).willReturn(fakeUser);
+
+        given(logRepository.findLatestLogByKeyResultId(eq(LogState.RECORD), anyLong())).willReturn(Optional.of(testPrevLog));
+        given(testPrevLog.getCurrNum()).willReturn(1000L);
+
+        //when, then
+        assertThatThrownBy(() -> logService.createRecordLog(fakeUser.getId(), request))
+                .isInstanceOf(BadRequestException.class)
+                .hasMessage("Log 입력값은 이전 값과 동일할 수 없습니다.");
+    }
+
 }
