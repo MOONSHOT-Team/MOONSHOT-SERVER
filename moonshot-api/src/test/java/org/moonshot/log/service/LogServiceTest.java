@@ -4,6 +4,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -52,9 +54,10 @@ public class LogServiceTest {
         fakeUser = User.buildWithId().id(fakeUserId).nickname(fakeUserNickname).build();
     }
 
-    @Test
+    @ParameterizedTest
     @DisplayName("KeyResult의 진척 상황을 기록하고 체크인 로그를 추가합니다.")
-    void KeyResult의_진척상황을_기록하고_체크인_로그를_추가합니다() {
+    @CsvSource(value = {"1, true", "100, false"})
+    void KeyResult의_진척상황을_기록하고_체크인_로그를_추가합니다(short progress, boolean expected) {
         // given
         Objective testObjective = mock(Objective.class);
         KeyResult testKeyResult = mock(KeyResult.class);
@@ -70,7 +73,7 @@ public class LogServiceTest {
         given(logRepository.save(any(Log.class))).willReturn(testLog);
         given(testObjective.getKeyResultList()).willReturn(List.of(testKeyResult));
 
-        given(testObjective.getProgress()).willReturn((short)1);
+        given(testObjective.getProgress()).willReturn((short)progress);
 
         //when
         Optional<AchieveResponseDto> response = logService.createRecordLog(fakeUser.getId(), request);
@@ -78,7 +81,7 @@ public class LogServiceTest {
         //then
         verify(testKeyResult, times(1)).modifyProgress(anyShort());
         verify(testObjective, times(1)).modifyProgress(anyShort());
-        assertThat(response.isEmpty()).isEqualTo(true);
+        assertThat(response.isEmpty()).isEqualTo(expected);
     }
 
     @Test
