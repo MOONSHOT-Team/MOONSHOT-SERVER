@@ -150,4 +150,19 @@ public class LogServiceTest {
         //then
         verify(logRepository, times(1)).save(any(Log.class));
     }
+
+    @Test
+    @DisplayName("진척 상황값이 입력되면 KR 달성률을 계산합니다.")
+    void 진척상황_값이_입력되면_KR_달성률을_계산합니다() {
+        //given
+        KeyResult testKeyResult = mock(KeyResult.class);
+        Log testLog = mock(Log.class);
+
+        given(testKeyResult.getTarget()).willReturn(1000L);
+        given(testLog.getCurrNum()).willReturn(100L);
+
+        //when, then
+        assertThat(logService.calculateKRProgressBar(testLog, testKeyResult.getTarget())).isEqualTo((short)10);
+    }
+
 }
