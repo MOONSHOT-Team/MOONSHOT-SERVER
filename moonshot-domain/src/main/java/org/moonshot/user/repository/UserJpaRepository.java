@@ -11,7 +11,6 @@ import org.springframework.data.jpa.repository.Query;
 public interface UserJpaRepository extends JpaRepository<User, Long> {
 
     Optional<User> findUserBySocialId(String socialId);
-    Optional<User> findUserByNickname(String nickname);
     @Query("SELECT u FROM User u WHERE u.deleteAt < :currentDate")
     List<User> findIdByDeletedAtBefore(LocalDateTime currentDate);
 
