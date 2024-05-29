@@ -21,9 +21,9 @@ public class UserSignUpService {
     @Async
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void publishSignUpEvent(User user) {
-        Long totalUsers = userRepository.count();
+        Long totalUserCount = userRepository.count();
         eventPublisher.publishEvent(SignUpEvent.of(
-                totalUsers,
+                totalUserCount,
                 user.getName(),
                 user.getEmail() == null ? "" : user.getEmail(),
                 user.getSocialPlatform().toString(),
