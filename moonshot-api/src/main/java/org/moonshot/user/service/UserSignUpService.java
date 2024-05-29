@@ -15,15 +15,13 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class UserSignUpService {
 
-    private final UserRepository userRepository;
     private final ApplicationEventPublisher eventPublisher;
 
     @Async
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void publishSignUpEvent(User user) {
-        Long totalUserCount = userRepository.count();
         eventPublisher.publishEvent(SignUpEvent.of(
-                totalUserCount,
+                user.getId(),
                 user.getName(),
                 user.getEmail() == null ? "" : user.getEmail(),
                 user.getSocialPlatform().toString(),
