@@ -15,6 +15,7 @@ public class SignUpEventListener {
     @EventListener
     public void handleSignUpEvent(SignUpEvent event) {
         discordAppender.signInAppend(
+                event.totalUsers(),
                 event.name(),
                 event.email(),
                 event.socialPlatform(),
