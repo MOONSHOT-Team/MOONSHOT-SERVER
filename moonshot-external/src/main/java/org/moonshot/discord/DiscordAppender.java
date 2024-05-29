@@ -122,7 +122,7 @@ public class DiscordAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
         DiscordWebHook discordWebhook = new DiscordWebHook(DiscordConstants.signInWebhookUrl, username, avatarUrl, false);
 
         discordWebhook.addEmbed(new EmbedObject()
-                .setTitle("🚀[회원 가입] " + totalUserCount + "번쨰 유저가 가입하였습니다.🚀")
+                .setTitle("🚀[회원 가입] " + totalUserCount + "번째 유저가 가입하였습니다.🚀")
                 .setColor(Color.CYAN)
                 .setDescription("moonshot에 새로운 유저가 가입하였습니다.")
                 .setThumbnail(imgUrl)
