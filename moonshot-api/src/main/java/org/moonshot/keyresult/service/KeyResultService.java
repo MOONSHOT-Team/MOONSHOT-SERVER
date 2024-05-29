@@ -162,7 +162,7 @@ public class KeyResultService implements IndexService {
             throw new BadRequestException(REQUIRED_KEY_RESULT_VALUE);
         }
 
-        Log updateLog = logService.createUpdateLog(request, keyResult.getId());
+        Log updateLog = logService.createUpdateLog(request, keyResult);
         validateLogNum(request.krTarget(), updateLog.getKeyResult().getTarget());
 
         Optional<Log> prevLog = logRepository.findLatestLogByKeyResultId(LogState.RECORD, request.keyResultId());

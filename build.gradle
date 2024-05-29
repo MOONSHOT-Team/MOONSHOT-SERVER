@@ -29,8 +29,6 @@ subprojects {
 	}
 
 	dependencies {
-		// Spring Security
-
 		//Spring Security
 		implementation 'org.springframework.boot:spring-boot-starter-security'
 
@@ -43,6 +41,10 @@ subprojects {
 		// test
 		testImplementation 'org.springframework.boot:spring-boot-starter-test'
 		testImplementation 'org.mockito:mockito-core:5.9.0'
+
+		// Sentry
+		implementation 'io.sentry:sentry-spring-boot-starter-jakarta:6.28.0'
+		implementation 'io.sentry:sentry-logback:6.28.0'
 	}
 
 	tasks.named('test') {

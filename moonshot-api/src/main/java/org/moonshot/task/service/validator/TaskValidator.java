@@ -22,7 +22,7 @@ public class TaskValidator {
     }
 
     public static void validateIndexUnderMaximum(final int requestIndex, final int totalTaskListSize) {
-        if (requestIndex > totalTaskListSize) {
+        if (requestIndex > totalTaskListSize || requestIndex < 0) {
             throw new BadRequestException(INVALID_TASK_INDEX);
         }
     }
