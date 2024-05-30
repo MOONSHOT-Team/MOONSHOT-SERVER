@@ -11,14 +11,14 @@ public record SocialOKRResponseDto(
     String userIntro,
     SocialObjectiveDto okrTreeData
 ) {
-    public static SocialOKRResponseDto of(Objective objective, User user, SocialObjectiveDto okrTreeData) {
+    public static SocialOKRResponseDto of(Objective objective) {
         return new SocialOKRResponseDto(
                 objective.getCategory().getValue(),
-                user.getName(),
-                user.getImageUrl(),
+                objective.getUser().getNickname(),
+                objective.getUser().getImageUrl(),
                 objective.getHeartCount(),
-                user.getDescription(),
-                okrTreeData
+                objective.getUser().getDescription(),
+                SocialObjectiveDto.of(objective)
         );
     }
 
