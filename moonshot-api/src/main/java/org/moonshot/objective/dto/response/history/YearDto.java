@@ -1,4 +1,4 @@
-package org.moonshot.objective.dto.response;
+package org.moonshot.objective.dto.response.history;
 
 import java.util.List;
 import java.util.Map;

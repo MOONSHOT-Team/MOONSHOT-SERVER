@@ -11,7 +11,7 @@ import jakarta.validation.Valid;
 import org.moonshot.objective.dto.request.ModifyObjectiveRequestDto;
 import org.moonshot.objective.dto.request.OKRCreateRequestDto;
 import org.moonshot.objective.dto.response.DashboardResponseDto;
-import org.moonshot.objective.dto.response.HistoryResponseDto;
+import org.moonshot.objective.dto.response.history.HistoryResponseDto;
 import org.moonshot.objective.model.Category;
 import org.moonshot.objective.model.Criteria;
 import org.moonshot.response.MoonshotResponse;
