@@ -12,6 +12,7 @@ import org.moonshot.objective.dto.request.ModifyObjectiveRequestDto;
 import org.moonshot.objective.dto.request.OKRCreateRequestDto;
 import org.moonshot.objective.dto.response.DashboardResponseDto;
 import org.moonshot.objective.dto.response.history.HistoryResponseDto;
+import org.moonshot.objective.dto.response.social.SocialOKRResponseDto;
 import org.moonshot.objective.model.Category;
 import org.moonshot.objective.model.Criteria;
 import org.moonshot.response.MoonshotResponse;
@@ -20,6 +21,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
 
 @Tag(name = "Objective", description = "Objective 관련 API")
 interface ObjectiveApi {
@@ -71,4 +74,11 @@ interface ObjectiveApi {
                                                                              @RequestParam(required = false) final Category category,
                                                                              @RequestParam(required = false) final Criteria criteria);
 
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "2012", description = "소셜 조회에 성공하였습니다."),
+            @ApiResponse(responseCode = "4100", description = "인증토큰이 존재하지 않습니다.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MoonshotResponse.class)))
+    })
+    @Operation(summary = "소셜 목록 조회")
+    ResponseEntity<MoonshotResponse<List<SocialOKRResponseDto>>> getObjectiveSocial();
+    
 }
