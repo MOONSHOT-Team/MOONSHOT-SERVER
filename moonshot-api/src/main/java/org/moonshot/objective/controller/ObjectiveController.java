@@ -77,7 +77,7 @@ public class ObjectiveController implements ObjectiveApi {
 
     @GetMapping("/social")
     @Logging(item = "Social", action = "Get")
-    public ResponseEntity<MoonshotResponse<List<SocialOKRResponseDto>>> getObjectiveSocial(@LoginUser Long userId) {
+    public ResponseEntity<MoonshotResponse<List<SocialOKRResponseDto>>> getObjectiveSocial() {
         List<SocialOKRResponseDto> response = objectiveService.getObjectiveSocial();
         return ResponseEntity.ok(MoonshotResponse.success(SuccessType.GET_SOCIAL_SUCCESS, response));
     }
