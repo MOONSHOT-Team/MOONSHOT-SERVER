@@ -9,4 +9,6 @@ public interface ObjectiveCustomRepository {
 
     List<Objective> findObjectives(Long userId, Integer year, Category category, Criteria criteria);
 
+    List<Objective> findSocialObjectives();
+
 }
