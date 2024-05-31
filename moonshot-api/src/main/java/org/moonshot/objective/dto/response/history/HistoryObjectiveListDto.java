@@ -1,7 +1,8 @@
-package org.moonshot.objective.dto.response;
+package org.moonshot.objective.dto.response.history;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+
 import org.moonshot.objective.model.Objective;
 
 public record HistoryObjectiveListDto(

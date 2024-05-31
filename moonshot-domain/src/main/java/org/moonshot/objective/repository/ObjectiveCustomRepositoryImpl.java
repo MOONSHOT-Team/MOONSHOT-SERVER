@@ -66,4 +66,16 @@ public class ObjectiveCustomRepositoryImpl implements ObjectiveCustomRepository 
         return orderSpecifier;
     }
 
+    @Override
+    public List<Objective> findSocialObjectives() {
+        return queryFactory.selectFrom(objective).distinct()
+                .join(objective.user).fetchJoin()
+                .join(objective.keyResultList, keyResult).fetchJoin()
+                .join(keyResult.taskList, task)
+                .where(objective.isPublic.eq(true))
+                .orderBy(objective.heartCount.desc(), objective.id.desc())
+                .limit(10)
+                .fetch();
+    }
+
 }
