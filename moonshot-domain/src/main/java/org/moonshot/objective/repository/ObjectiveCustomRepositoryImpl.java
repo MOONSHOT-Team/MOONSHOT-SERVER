@@ -73,7 +73,7 @@ public class ObjectiveCustomRepositoryImpl implements ObjectiveCustomRepository 
                 .join(objective.keyResultList, keyResult).fetchJoin()
                 .join(keyResult.taskList, task)
                 .where(objective.isPublic.eq(true))
-                .orderBy(objective.id.desc())
+                .orderBy(objective.heartCount.desc(), objective.id.desc())
                 .limit(10)
                 .fetch();
     }
