@@ -73,7 +73,7 @@ public class ObjectiveCustomRepositoryImpl implements ObjectiveCustomRepository 
     @Override
     public List<Objective> findSocialObjectives() {
         return queryFactory.selectFrom(objective).distinct()
-                .leftJoin(objective.user).fetchJoin()
+                .join(objective.user).fetchJoin()
                 .leftJoin(objective.keyResultList, keyResult).fetchJoin()
                 .leftJoin(keyResult.taskList, task)
                 .where(objective.isPublic.eq(true))
