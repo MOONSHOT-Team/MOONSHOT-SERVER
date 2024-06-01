@@ -10,9 +10,13 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
+import org.moonshot.keyresult.model.QKeyResult;
 import org.moonshot.objective.model.Category;
 import org.moonshot.objective.model.Criteria;
 import org.moonshot.objective.model.Objective;
+import org.moonshot.task.model.QTask;
+import org.moonshot.user.model.QUser;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -70,10 +74,10 @@ public class ObjectiveCustomRepositoryImpl implements ObjectiveCustomRepository 
     public List<Objective> findSocialObjectives() {
         return queryFactory.selectFrom(objective).distinct()
                 .join(objective.user).fetchJoin()
-                .join(objective.keyResultList, keyResult).fetchJoin()
-                .join(keyResult.taskList, task)
+                .leftJoin(objective.keyResultList, keyResult).fetchJoin()
+                .leftJoin(keyResult.taskList, task)
                 .where(objective.isPublic.eq(true))
-                .orderBy(objective.heartCount.desc(), objective.id.desc())
+                .orderBy(objective.heartCount.desc(), objective.id.desc(), keyResult.idx.asc(), task.id.asc())
                 .limit(10)
                 .fetch();
     }
