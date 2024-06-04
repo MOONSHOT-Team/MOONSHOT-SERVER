@@ -1,4 +1,4 @@
-package org.moonshot.objective.dto.response;
+package org.moonshot.objective.dto.response.history;
 
 import org.moonshot.task.model.Task;
 

@@ -24,6 +24,7 @@ public enum SuccessType {
     PATCH_KR_ACHIEVE_SUCCESS(HttpStatus.OK, 2009, "KeyResult 수정 후 목표를 달성하였습니다."),
     POST_LOG_ACHIEVE_SUCCESS(HttpStatus.OK, 2010, "체크인 Log 생성 후 목표를 달성하였습니다."),
     DELETE_OBJECTIVE_SUCCESS(HttpStatus.OK, 2011, "Objective 삭제를 성공하였습니다."),
+    GET_SOCIAL_SUCCESS(HttpStatus.OK, 2012,"소셜 조회에 성공하였습니다."),
 
     /**
      * 201 CREATED (2100 ~ 2199)

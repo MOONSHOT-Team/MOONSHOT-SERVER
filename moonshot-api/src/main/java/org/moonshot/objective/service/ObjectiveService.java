@@ -11,21 +11,21 @@ import static org.moonshot.validator.IndexValidator.isIndexIncreased;
 import static org.moonshot.validator.IndexValidator.isSameIndex;
 
 import java.time.LocalDate;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.moonshot.common.model.Period;
 import org.moonshot.exception.BadRequestException;
 import org.moonshot.exception.NotFoundException;
 import org.moonshot.keyresult.service.KeyResultService;
+import org.moonshot.log.dto.response.LogResponseDto;
 import org.moonshot.objective.dto.request.ModifyIndexRequestDto;
 import org.moonshot.objective.dto.request.ModifyObjectiveRequestDto;
 import org.moonshot.objective.dto.request.OKRCreateRequestDto;
 import org.moonshot.objective.dto.response.DashboardResponseDto;
-import org.moonshot.objective.dto.response.HistoryResponseDto;
-import org.moonshot.objective.dto.response.ObjectiveGroupByYearDto;
+import org.moonshot.objective.dto.response.history.HistoryResponseDto;
+import org.moonshot.objective.dto.response.history.ObjectiveGroupByYearDto;
+import org.moonshot.objective.dto.response.social.SocialOKRResponseDto;
 import org.moonshot.objective.model.Category;
 import org.moonshot.objective.model.Criteria;
 import org.moonshot.objective.model.IndexService;
@@ -137,6 +137,17 @@ public class ObjectiveService implements IndexService {
         }
 
         return HistoryResponseDto.of(groupsSortedByCriteria, categories);
+    }
+
+    @Transactional(readOnly = true)
+    public List<SocialOKRResponseDto> getObjectiveSocial() {
+        List<Objective> objectives = objectiveRepository.findSocialObjectives();
+        Set<Long> objectiveIds = new LinkedHashSet<>();
+
+        return objectives.stream()
+                .filter(objective -> objectiveIds.add(objective.getId()))
+                .map(SocialOKRResponseDto::of)
+                .toList();
     }
 
     @Override

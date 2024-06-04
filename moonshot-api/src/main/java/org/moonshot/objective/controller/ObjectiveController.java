@@ -8,7 +8,8 @@ import org.moonshot.model.Logging;
 import org.moonshot.objective.dto.request.ModifyObjectiveRequestDto;
 import org.moonshot.objective.dto.request.OKRCreateRequestDto;
 import org.moonshot.objective.dto.response.DashboardResponseDto;
-import org.moonshot.objective.dto.response.HistoryResponseDto;
+import org.moonshot.objective.dto.response.history.HistoryResponseDto;
+import org.moonshot.objective.dto.response.social.SocialOKRResponseDto;
 import org.moonshot.objective.model.Category;
 import org.moonshot.objective.model.Criteria;
 import org.moonshot.objective.service.ObjectiveService;
@@ -26,6 +27,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -69,7 +72,14 @@ public class ObjectiveController implements ObjectiveApi {
                                                                                     @RequestParam(required = false, name = "category") final Category category,
                                                                                     @RequestParam(required = false, name = "criteria") final Criteria criteria) {
         HistoryResponseDto response = objectiveService.getObjectiveHistory(userId, year, category, criteria);
-        return ResponseEntity.ok(MoonshotResponse.success(SuccessType.OK, response));
+        return ResponseEntity.ok(MoonshotResponse.success(SuccessType.GET_HISTORY_SUCCESS, response));
+    }
+
+    @GetMapping("/social")
+    @Logging(item = "Social", action = "Get")
+    public ResponseEntity<MoonshotResponse<List<SocialOKRResponseDto>>> getObjectiveSocial() {
+        List<SocialOKRResponseDto> response = objectiveService.getObjectiveSocial();
+        return ResponseEntity.ok(MoonshotResponse.success(SuccessType.GET_SOCIAL_SUCCESS, response));
     }
 
 }

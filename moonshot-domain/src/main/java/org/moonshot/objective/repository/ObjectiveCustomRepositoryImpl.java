@@ -3,16 +3,26 @@ package org.moonshot.objective.repository;
 import static org.moonshot.keyresult.model.QKeyResult.keyResult;
 import static org.moonshot.objective.model.QObjective.objective;
 import static org.moonshot.task.model.QTask.task;
+import static org.moonshot.user.model.QUser.user;
 
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
+import org.moonshot.keyresult.model.QKeyResult;
 import org.moonshot.objective.model.Category;
 import org.moonshot.objective.model.Criteria;
 import org.moonshot.objective.model.Objective;
+import org.moonshot.task.model.QTask;
+import org.moonshot.user.model.QUser;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -64,6 +74,18 @@ public class ObjectiveCustomRepositoryImpl implements ObjectiveCustomRepository 
                 break;
         }
         return orderSpecifier;
+    }
+
+    @Override
+    public List<Objective> findSocialObjectives() {
+        return queryFactory.selectFrom(objective)
+                .join(objective.user, user).fetchJoin()
+                .leftJoin(objective.keyResultList, keyResult).fetchJoin()
+                .leftJoin(keyResult.taskList, task)
+                .where(objective.isPublic.eq(true))
+                .orderBy(objective.heartCount.desc(), objective.id.desc(), keyResult.idx.asc(), task.idx.asc())
+                .limit(10)
+                .fetch();
     }
 
 }
