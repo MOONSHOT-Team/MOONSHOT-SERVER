@@ -20,7 +20,7 @@ public record SocialObjectiveDto(
                 objective.getContent(),
                 objective.getPeriod().getStartAt().format(DateTimeFormatter.ISO_LOCAL_DATE),
                 objective.getPeriod().getExpireAt().format(DateTimeFormatter.ISO_LOCAL_DATE),
-                objective.getKeyResultList().stream().map(SocialKeyResultDto::of).toList()
+                objective.getKeyResultList().stream().distinct().map(SocialKeyResultDto::of).toList()
         );
     }
 }
