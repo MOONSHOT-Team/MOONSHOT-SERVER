@@ -28,7 +28,7 @@ public record SocialKeyResultDto(
                 keyResult.getIdx(),
                 keyResult.getTarget(),
                 keyResult.getMetric(),
-                keyResult.getTaskList().stream().map(SocialTaskDto::of).toList()
+                keyResult.getTaskList().stream().distinct().map(SocialTaskDto::of).toList()
         );
     }
 }
