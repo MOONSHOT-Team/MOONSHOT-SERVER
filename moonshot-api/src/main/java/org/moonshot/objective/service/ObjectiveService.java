@@ -11,9 +11,7 @@ import static org.moonshot.validator.IndexValidator.isIndexIncreased;
 import static org.moonshot.validator.IndexValidator.isSameIndex;
 
 import java.time.LocalDate;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.moonshot.common.model.Period;
@@ -144,7 +142,10 @@ public class ObjectiveService implements IndexService {
     @Transactional(readOnly = true)
     public List<SocialOKRResponseDto> getObjectiveSocial() {
         List<Objective> objectives = objectiveRepository.findSocialObjectives();
+        Set<Long> objectiveIds = new LinkedHashSet<>();
+
         return objectives.stream()
+                .filter(objective -> objectiveIds.add(objective.getId()))
                 .map(SocialOKRResponseDto::of)
                 .toList();
     }
