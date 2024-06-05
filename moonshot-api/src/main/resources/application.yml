@@ -28,7 +28,7 @@ spring:
 
   flyway:
     baseline-on-migrate: false
-    baseline-version: 2
+    baseline-version: 3
     enabled: false
 
 google:
