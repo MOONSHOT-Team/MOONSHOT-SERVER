@@ -38,7 +38,7 @@ public class User {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 512)
     private String imageUrl;
 
     private String email;
