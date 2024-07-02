@@ -58,7 +58,7 @@ public class UserService {
                 .orElseThrow(() -> new NotFoundException(NOT_FOUND_USER));
 
         user.setDeleteAt();
-        logout(userId);
+        jwtTokenProvider.deleteRefreshToken(userId);
     }
 
     public void modifyProfile(final Long userId, final UserInfoRequest request) {
