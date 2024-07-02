@@ -1,12 +1,23 @@
 package org.moonshot.jwt;
 
-import static org.moonshot.response.ErrorType.DISCORD_LOG_APPENDER;
-import static org.moonshot.response.ErrorType.EXPIRED_TOKEN;
-import static org.moonshot.response.ErrorType.INVALID_REFRESH_TOKEN;
-import static org.moonshot.response.ErrorType.UNKNOWN_TOKEN;
-import static org.moonshot.response.ErrorType.UNSUPPORTED_TOKEN;
-import static org.moonshot.response.ErrorType.WRONG_SIGNATURE_TOKEN;
-import static org.moonshot.response.ErrorType.WRONG_TYPE_TOKEN;
+import static org.moonshot.response.ErrorType.*;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
+
+import javax.crypto.SecretKey;
+
+import org.moonshot.constants.JWTConstants;
+import org.moonshot.exception.UnauthorizedException;
+import org.moonshot.security.UserAuthentication;
+import org.moonshot.security.service.UserPrincipalDetailsService;
+import org.moonshot.user.model.UserPrincipal;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -17,24 +28,8 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.annotation.PostConstruct;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
-import javax.crypto.SecretKey;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.moonshot.constants.JWTConstants;
-import org.moonshot.exception.InternalServerException;
-import org.moonshot.exception.UnauthorizedException;
-import org.moonshot.security.UserAuthentication;
-import org.moonshot.security.service.UserPrincipalDetailsService;
-import org.moonshot.user.model.UserPrincipal;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Component;
 
 
 @Slf4j
@@ -137,14 +132,9 @@ public class JwtTokenProvider {
     }
 
     public void deleteRefreshToken(Long userId) {
-        if (redisTemplate.hasKey(String.valueOf(userId))) {
-            ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
-            String refreshToken = valueOperations.get(String.valueOf(userId));
-            redisTemplate.delete(refreshToken);
-        } else {
-            throw new InternalServerException(DISCORD_LOG_APPENDER);
-        }
+        redisTemplate.delete(String.valueOf(userId));
     }
+
     private Claims getBody(final String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())

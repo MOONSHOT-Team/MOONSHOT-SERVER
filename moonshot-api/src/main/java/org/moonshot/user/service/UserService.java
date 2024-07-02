@@ -1,14 +1,11 @@
 package org.moonshot.user.service;
 
-import static org.moonshot.response.ErrorType.NOT_FOUND_USER;
-import static org.moonshot.response.ErrorType.NOT_SUPPORTED_LOGIN_PLATFORM;
-import static org.moonshot.user.service.validator.UserValidator.hasChange;
-import static org.moonshot.user.service.validator.UserValidator.validateUserAuthorization;
+import static org.moonshot.response.ErrorType.*;
+import static org.moonshot.user.service.validator.UserValidator.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+
 import org.moonshot.exception.BadRequestException;
 import org.moonshot.exception.NotFoundException;
 import org.moonshot.jwt.JwtTokenProvider;
@@ -23,6 +20,9 @@ import org.moonshot.user.repository.UserRepository;
 import org.moonshot.user.service.social.SocialLoginContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -50,25 +50,20 @@ public class UserService {
     }
 
     public void logout(final Long userId) {
-        User user =  userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException(NOT_FOUND_USER));
-        validateUserAuthorization(user.getId(), userId);
-
         jwtTokenProvider.deleteRefreshToken(userId);
     }
 
     public void withdrawal(final Long userId) {
-        User user =  userRepository.findById(userId)
+        User user = userRepository.findByIdWithCache(userId)
                 .orElseThrow(() -> new NotFoundException(NOT_FOUND_USER));
-        validateUserAuthorization(user.getId(), userId);
 
         user.setDeleteAt();
+        jwtTokenProvider.deleteRefreshToken(userId);
     }
 
     public void modifyProfile(final Long userId, final UserInfoRequest request) {
-        User user =  userRepository.findById(userId)
+        User user = userRepository.findByIdWithCache(userId)
                 .orElseThrow(() -> new NotFoundException(NOT_FOUND_USER));
-        validateUserAuthorization(user.getId(), userId);
 
         if (hasChange(request.nickname())) {
             user.modifyNickname(request.nickname());
@@ -79,13 +74,13 @@ public class UserService {
     }
 
     public UserInfoResponse getMyProfile(final Long userId) {
-        User user = userRepository.findById(userId)
+        User user = userRepository.findByIdWithCache(userId)
                 .orElseThrow(() -> new NotFoundException(NOT_FOUND_USER));
         return UserInfoResponse.of(user);
     }
 
     public void updateUserProfileImage(final Long userId, final String imageUrl) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException(NOT_FOUND_USER));
+        User user = userRepository.findByIdWithCache(userId).orElseThrow(() -> new NotFoundException(NOT_FOUND_USER));
         user.modifyProfileImage(imageUrl);
     }
 
