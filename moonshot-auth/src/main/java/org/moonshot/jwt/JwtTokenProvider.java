@@ -1,29 +1,14 @@
 package org.moonshot.jwt;
 
-import static org.moonshot.response.ErrorType.DISCORD_LOG_APPENDER;
-import static org.moonshot.response.ErrorType.EXPIRED_TOKEN;
-import static org.moonshot.response.ErrorType.INVALID_REFRESH_TOKEN;
-import static org.moonshot.response.ErrorType.UNKNOWN_TOKEN;
-import static org.moonshot.response.ErrorType.UNSUPPORTED_TOKEN;
-import static org.moonshot.response.ErrorType.WRONG_SIGNATURE_TOKEN;
-import static org.moonshot.response.ErrorType.WRONG_TYPE_TOKEN;
+import static org.moonshot.response.ErrorType.*;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Header;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.UnsupportedJwtException;
-import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.security.SignatureException;
-import jakarta.annotation.PostConstruct;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
+
 import javax.crypto.SecretKey;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+
 import org.moonshot.constants.JWTConstants;
 import org.moonshot.exception.InternalServerException;
 import org.moonshot.exception.UnauthorizedException;
@@ -35,6 +20,18 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Header;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
+import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 
 @Slf4j
@@ -145,6 +142,7 @@ public class JwtTokenProvider {
             throw new InternalServerException(DISCORD_LOG_APPENDER);
         }
     }
+
     private Claims getBody(final String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
