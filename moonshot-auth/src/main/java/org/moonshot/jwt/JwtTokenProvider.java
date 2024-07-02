@@ -10,14 +10,12 @@ import java.util.concurrent.TimeUnit;
 import javax.crypto.SecretKey;
 
 import org.moonshot.constants.JWTConstants;
-import org.moonshot.exception.InternalServerException;
 import org.moonshot.exception.UnauthorizedException;
 import org.moonshot.security.UserAuthentication;
 import org.moonshot.security.service.UserPrincipalDetailsService;
 import org.moonshot.user.model.UserPrincipal;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
@@ -134,13 +132,7 @@ public class JwtTokenProvider {
     }
 
     public void deleteRefreshToken(Long userId) {
-        if (redisTemplate.hasKey(String.valueOf(userId))) {
-            ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
-            String refreshToken = valueOperations.get(String.valueOf(userId));
-            redisTemplate.delete(refreshToken);
-        } else {
-            throw new InternalServerException(DISCORD_LOG_APPENDER);
-        }
+        redisTemplate.delete(String.valueOf(userId));
     }
 
     private Claims getBody(final String token) {
