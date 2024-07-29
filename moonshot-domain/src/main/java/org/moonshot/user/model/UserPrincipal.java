@@ -8,12 +8,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 public class UserPrincipal implements UserDetails {
 
-    private final User user;
+    private final Long userId;
     private final List<GrantedAuthority> grantedAuthorities;
 
-    public UserPrincipal(User user) {
-        this.user = user;
-        this.grantedAuthorities = user.getId() == null ?
+    public UserPrincipal(Long userId) {
+        this.userId = userId;
+        this.grantedAuthorities = this.userId == null ?
                                 List.of(new SimpleGrantedAuthority("ANONYMOUS")) :
                                 List.of(new SimpleGrantedAuthority("USER"));
     }
@@ -30,7 +30,7 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getName();
+        return String.valueOf(userId);
     }
 
     @Override
@@ -54,7 +54,7 @@ public class UserPrincipal implements UserDetails {
     }
 
     public Long getUserId() {
-        return user.getId();
+        return this.userId;
     }
 
 }

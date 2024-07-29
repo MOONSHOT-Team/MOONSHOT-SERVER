@@ -15,18 +15,23 @@ import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.moonshot.constants.DiscordConstants;
 import org.moonshot.discord.model.EmbedObject;
 import org.moonshot.exception.InternalServerException;
 import org.moonshot.util.MDCUtil;
 import org.moonshot.util.StringUtil;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Slf4j
 @Setter
 @Component
+@Profile("!local")
 @RequiredArgsConstructor
 public class DiscordAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
+
+    @Value("${logging.discord.signin.webhook-uri}")
+    private String signInWebhookUrl;
 
     private String discordWebhookUrl;
     private String username;
@@ -119,7 +124,7 @@ public class DiscordAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
     }
 
     public void signInAppend(Long totalUserCount, String name, String email, String socialPlatform, LocalDateTime createdAt, String imgUrl){
-        DiscordWebHook discordWebhook = new DiscordWebHook(DiscordConstants.signInWebhookUrl, username, avatarUrl, false);
+        DiscordWebHook discordWebhook = new DiscordWebHook(signInWebhookUrl, username, avatarUrl, false);
 
         discordWebhook.addEmbed(new EmbedObject()
                 .setTitle("🚀[회원 가입] " + totalUserCount + "번째 유저가 가입하였습니다.🚀")
@@ -133,7 +138,7 @@ public class DiscordAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
         );
 
         try {
-            discordWebhook.executeSignIn(DiscordConstants.signInWebhookUrl);
+            discordWebhook.executeSignIn(signInWebhookUrl);
         } catch (IOException ioException) {
             throw new InternalServerException(DISCORD_LOG_APPENDER);
         }
