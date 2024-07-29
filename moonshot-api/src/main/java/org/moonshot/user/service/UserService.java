@@ -54,7 +54,7 @@ public class UserService {
     }
 
     public void withdrawal(final Long userId) {
-        User user = userRepository.findByIdWithCache(userId)
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(NOT_FOUND_USER));
 
         user.setDeleteAt();
@@ -62,7 +62,7 @@ public class UserService {
     }
 
     public void modifyProfile(final Long userId, final UserInfoRequest request) {
-        User user = userRepository.findByIdWithCache(userId)
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(NOT_FOUND_USER));
 
         if (hasChange(request.nickname())) {
@@ -74,13 +74,13 @@ public class UserService {
     }
 
     public UserInfoResponse getMyProfile(final Long userId) {
-        User user = userRepository.findByIdWithCache(userId)
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(NOT_FOUND_USER));
         return UserInfoResponse.of(user);
     }
 
     public void updateUserProfileImage(final Long userId, final String imageUrl) {
-        User user = userRepository.findByIdWithCache(userId).orElseThrow(() -> new NotFoundException(NOT_FOUND_USER));
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException(NOT_FOUND_USER));
         user.modifyProfileImage(imageUrl);
     }
 

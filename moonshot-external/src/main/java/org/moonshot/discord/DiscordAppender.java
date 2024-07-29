@@ -20,11 +20,13 @@ import org.moonshot.exception.InternalServerException;
 import org.moonshot.util.MDCUtil;
 import org.moonshot.util.StringUtil;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Slf4j
 @Setter
 @Component
+@Profile("!local")
 @RequiredArgsConstructor
 public class DiscordAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 
